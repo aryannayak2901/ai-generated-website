@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Send, ShieldCheck, Clock, Users } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -28,7 +27,25 @@ const formSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
-export default function ContactForm() {
+export interface ContactFormProps {
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  features?:
+    | {
+        icon?: string | null;
+        title: string;
+        description?: string | null;
+      }[]
+    | null;
+}
+
+export default function ContactForm({
+  badge,
+  title,
+  subtitle,
+  features: payloadFeatures,
+}: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -70,44 +87,70 @@ export default function ContactForm() {
           >
             <div>
               <span className="text-gold font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block">
-                Direct Inquiry
+                {badge || "Direct Inquiry"}
               </span>
               <h2 className="font-serif text-5xl md:text-7xl font-bold text-navy dark:text-white mb-8 leading-tight">
-                Send Us an <br />
-                <span className="text-gold italic font-medium">Inquiry</span>
+                {title ? (
+                  title
+                ) : (
+                  <>
+                    Send Us an <br />
+                    <span className="text-gold italic font-medium">
+                      Inquiry
+                    </span>
+                  </>
+                )}
               </h2>
               <p className="text-slate-600 dark:text-slate-400 text-xl leading-relaxed max-w-md font-light">
-                Have a complex legal question? Fill
-                out the form and our specialist team will reach out with a 
-                strategic roadmap.
+                {subtitle ||
+                  "Have a complex legal question? Fill out the form and our specialist team will reach out with a strategic roadmap."}
               </p>
             </div>
 
             <div className="space-y-10">
-              {[
-                {
-                  icon: ShieldCheck,
-                  title: "Strict Confidentiality",
-                  desc: "Your legal inquiries are handled with absolute discretion."
-                },
-                {
-                  icon: Clock,
-                  title: "24-Hour Response",
-                  desc: "Our senior strategists review all submissions within one business day."
-                },
-                {
-                  icon: Users,
-                  title: "Expert Allocation",
-                  desc: "Your matter is assigned to the specialist most qualified for your case."
-                }
-              ].map((item, idx) => (
+              {(payloadFeatures && payloadFeatures.length > 0
+                ? payloadFeatures.map((f) => ({
+                    icon:
+                      f.icon === "Clock"
+                        ? Clock
+                        : f.icon === "Users"
+                          ? Users
+                          : ShieldCheck,
+                    title: f.title,
+                    desc: f.description || "",
+                  }))
+                : [
+                    {
+                      icon: ShieldCheck,
+                      title: "Strict Confidentiality",
+                      desc: "Your legal inquiries are handled with absolute discretion.",
+                    },
+                    {
+                      icon: Clock,
+                      title: "24-Hour Response",
+                      desc: "Our senior strategists review all submissions within one business day.",
+                    },
+                    {
+                      icon: Users,
+                      title: "Expert Allocation",
+                      desc: "Your matter is assigned to the specialist most qualified for your case.",
+                    },
+                  ]
+              ).map((item, idx) => (
                 <div key={idx} className="flex items-start gap-6 group">
                   <div className="w-14 h-14 rounded-2xl bg-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gold group-hover:text-navy transition-all duration-500 shadow-xl shadow-gold/5">
-                    <item.icon className="h-6 w-6 text-gold group-hover:text-navy transition-colors duration-500" strokeWidth={1.5} />
+                    <item.icon
+                      className="h-6 w-6 text-gold group-hover:text-navy transition-colors duration-500"
+                      strokeWidth={1.5}
+                    />
                   </div>
                   <div>
-                    <h4 className="font-serif text-xl font-bold text-navy dark:text-white mb-2">{item.title}</h4>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                    <h3 className="font-serif text-xl font-bold text-navy dark:text-white mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                      {item.desc}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -124,14 +167,19 @@ export default function ContactForm() {
           >
             <div className="bg-white/80 dark:bg-white/5 backdrop-blur-2xl p-8 md:p-16 rounded-3xl border border-navy/5 dark:border-white/10 shadow-2xl transition-colors duration-500">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">Full Name</FormLabel>
+                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">
+                            Full Name
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="John Doe"
@@ -148,7 +196,9 @@ export default function ContactForm() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">Email Address</FormLabel>
+                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">
+                            Email Address
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="john@example.com"
@@ -168,7 +218,9 @@ export default function ContactForm() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">Phone Number</FormLabel>
+                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">
+                            Phone Number
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="+91 00000 00000"
@@ -185,7 +237,9 @@ export default function ContactForm() {
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">Subject</FormLabel>
+                          <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">
+                            Subject
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Legal Matter"
@@ -204,7 +258,9 @@ export default function ContactForm() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">Your Message</FormLabel>
+                        <FormLabel className="text-navy dark:text-slate-300 font-bold uppercase tracking-widest text-[10px]">
+                          Your Message
+                        </FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Describe your legal requirements..."

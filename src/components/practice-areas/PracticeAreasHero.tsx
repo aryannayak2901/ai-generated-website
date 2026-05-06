@@ -4,7 +4,14 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-export function PracticeAreasHero({ className }: { className?: string }) {
+export interface PracticeAreasHeroProps {
+  className?: string;
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+}
+
+export function PracticeAreasHero({ className, tag, title, subtitle }: PracticeAreasHeroProps) {
   return (
     <section
       className={cn(
@@ -28,30 +35,23 @@ export function PracticeAreasHero({ className }: { className?: string }) {
       />
 
       <div className="max-w-4xl mx-auto flex flex-col items-center justify-center pt-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
+        <div className="animate-fade-in-up">
           <span className="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-[0.3em] uppercase text-gold bg-gold/10 rounded-full border border-gold/20 backdrop-blur-sm">
-            Expertise & Excellence
+            {tag || "Expertise & Excellence"}
           </span>
           <h1 className="font-serif text-5xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
-            Practice <span className="text-gold italic font-medium">Areas</span>
+            {title ? title : (
+              <>Practice <span className="text-gold italic font-medium">Areas</span></>
+            )}
           </h1>
           <div className="w-24 h-1 bg-gold mx-auto mb-10 shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
-        </motion.div>
+        </div>
         
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-          className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed font-sans"
+        <p 
+          className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed font-sans animate-fade-in-up [animation-delay:200ms]"
         >
-          Comprehensive consulting, advisory, and litigation services across
-          multiple legal domains. We provide tailored, strategic legal solutions
-          designed to navigate the most complex legal landscapes.
-        </motion.p>
+          {subtitle || "Comprehensive consulting, advisory, and litigation services across multiple legal domains. We provide tailored, strategic legal solutions designed to navigate the most complex legal landscapes."}
+        </p>
       </div>
 
       {/* Decorative scroll indicator line */}

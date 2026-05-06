@@ -16,13 +16,16 @@ export function DisclaimerModal() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const hasAccepted = localStorage.getItem(
-      "chambers_bhatt_disclaimer_accepted",
-    );
-    if (!hasAccepted) {
-      setIsOpen(true);
-    }
-    setIsMounted(true);
+    const frameId = requestAnimationFrame(() => {
+      const hasAccepted = localStorage.getItem(
+        "chambers_bhatt_disclaimer_accepted",
+      );
+      if (!hasAccepted) {
+        setIsOpen(true);
+      }
+      setIsMounted(true);
+    });
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
   const handleAccept = () => {

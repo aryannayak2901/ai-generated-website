@@ -1,9 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 
-export const OfficeHero = () => {
+export interface OfficeHeroProps {
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+}
+
+export const OfficeHero = ({ tag, title, subtitle }: OfficeHeroProps) => {
   return (
     <section className="relative h-[75vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-navy dark:bg-navy transition-colors duration-500">
       {/* Dynamic Background Elements */}
@@ -39,12 +44,13 @@ export const OfficeHero = () => {
             className="inline-flex items-center gap-3 px-6 py-2.5 mb-10 text-[10px] font-bold tracking-[0.3em] uppercase rounded-full bg-gold/10 text-gold border border-gold/20 backdrop-blur-md shadow-lg shadow-gold/5"
           >
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            Distinguished Chambers
+            {tag || "Distinguished Chambers"}
           </motion.div>
           
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif text-white mb-10 leading-[0.95] tracking-tight">
-            Our <span className="relative inline-block">
-              <span className="text-gold italic font-medium">Chambers</span>
+            {title ? title : (
+              <>Our <span className="relative inline-block">
+                <span className="text-gold italic font-medium">Chambers</span>
               <motion.svg 
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
@@ -55,12 +61,14 @@ export const OfficeHero = () => {
               >
                 <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="2" />
               </motion.svg>
-            </span>
+            </span></>
+            )}
           </h1>
           
           <p className="text-xl md:text-3xl text-slate-300 font-sans leading-relaxed max-w-3xl font-light mx-auto">
-            Strategically located at the heart of Gujarat&apos;s legal landscape, providing 
-            <span className="text-white font-medium"> unmatched expertise</span> and accessibility.
+            {subtitle ? subtitle : (
+              <>Strategically located at the heart of Gujarat&apos;s legal landscape, providing <span className="text-white font-medium"> unmatched expertise</span> and accessibility.</>
+            )}
           </p>
         </motion.div>
       </div>

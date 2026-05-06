@@ -21,9 +21,9 @@ export function Footer() {
 
           {/* Column 2: Contact */}
           <div className="space-y-4">
-            <h4 className="font-serif text-lg font-semibold text-navy dark:text-white">
+            <h3 className="font-serif text-lg font-semibold text-navy dark:text-white">
               Contact
-            </h4>
+            </h3>
             <ul className="space-y-3">
               <li className="flex items-start text-slate-gray dark:text-slate-gray/80 text-sm">
                 <MapPin className="h-5 w-5 mr-3 flex-shrink-0 text-gold" />
@@ -46,9 +46,9 @@ export function Footer() {
 
           {/* Column 3: Quick Links */}
           <div className="space-y-4">
-            <h4 className="font-serif text-lg font-semibold text-navy dark:text-white">
+            <h3 className="font-serif text-lg font-semibold text-navy dark:text-white">
               Quick Links
-            </h4>
+            </h3>
             <ul className="space-y-3">
               <li>
                 <Link

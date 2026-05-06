@@ -7,7 +7,25 @@ import { ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
-export function CTASection({ className }: { className?: string }) {
+export interface CTASectionProps {
+  className?: string;
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  ctaText?: string | null;
+  ctaLink?: string | null;
+  phoneNumber?: string | null;
+}
+
+export function CTASection({ 
+  className, 
+  badge, 
+  title, 
+  subtitle, 
+  ctaText, 
+  ctaLink,
+  phoneNumber 
+}: CTASectionProps) {
   return (
     <section
       className={cn(
@@ -27,16 +45,16 @@ export function CTASection({ className }: { className?: string }) {
         className="max-w-4xl mx-auto text-center flex flex-col items-center justify-center relative z-10"
       >
         <span className="text-gold font-bold tracking-[0.3em] uppercase text-xs mb-6">
-          Take the next step
+          {badge || "Take the next step"}
         </span>
         <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 tracking-tight leading-tight">
-          Ready to Discuss Your <br className="hidden md:block" /> 
-          <span className="text-gold italic font-medium">Legal Strategy?</span>
+          {title ? title : (
+            <>Ready to Discuss Your <br className="hidden md:block" /> 
+            <span className="text-gold italic font-medium">Legal Strategy?</span></>
+          )}
         </h2>
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-12 mx-auto font-sans leading-relaxed">
-          Our experienced attorneys are ready to help you navigate your legal
-          challenges. Contact us today for a strategic consultation focused on
-          your success.
+          {subtitle || "Our experienced attorneys are ready to help you navigate your legal challenges. Contact us today for a strategic consultation focused on your success."}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-5 justify-center w-full sm:w-auto">
@@ -45,8 +63,8 @@ export function CTASection({ className }: { className?: string }) {
             size="lg"
             className="bg-gold text-navy hover:bg-white transition-all duration-300 font-bold tracking-[0.1em] uppercase rounded-none h-14 px-10 shadow-[0_10px_30px_rgba(212,175,55,0.2)] group"
           >
-            <Link href="/contact">
-              Schedule Consultation
+            <Link href={ctaLink || "/contact"}>
+              {ctaText || "Schedule Consultation"}
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
@@ -57,7 +75,7 @@ export function CTASection({ className }: { className?: string }) {
             size="lg"
             className="text-white border-white/20 hover:bg-white/10 transition-all duration-300 font-bold tracking-[0.1em] uppercase rounded-none h-14 px-10"
           >
-            <a href="tel:+919876543210">
+            <a href={`tel:${phoneNumber || "+919876543210"}`}>
               <Phone className="mr-2 w-4 h-4" />
               Call Now
             </a>

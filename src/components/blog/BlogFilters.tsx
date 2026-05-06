@@ -43,6 +43,7 @@ export function BlogFilters({
         <input
           type="text"
           placeholder="Search articles, topics or insights..."
+          aria-label="Search articles, topics or insights"
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full pl-12 pr-5 py-4 bg-white dark:bg-navy/50 backdrop-blur-sm border border-slate-200 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold/50 transition-all duration-300 font-sans text-navy dark:text-white placeholder:text-slate-400 shadow-sm"
         />

@@ -37,7 +37,7 @@ const containerVariants = {
       staggerChildren: 0.2,
     },
   },
-};
+} as const;
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -49,9 +49,50 @@ const itemVariants = {
       ease: "easeOut",
     },
   },
-};
+} as const;
 
-export function AboutValues({ className }: { className?: string }) {
+import { LucideIcon } from "lucide-react";
+
+export interface AboutValuesProps {
+  className?: string;
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  values?:
+    | {
+        title: string;
+        description?: string | null;
+        icon?: string | null;
+      }[]
+    | null;
+}
+
+export function AboutValues({
+  className,
+  tag,
+  title,
+  subtitle,
+  values: payloadValues,
+}: AboutValuesProps) {
+  const iconMap: Record<string, LucideIcon> = {
+    Shield: ShieldCheck,
+    Award: Award,
+    Handshake: Handshake,
+    Scale: ShieldCheck, // Fallback
+    Target: Award, // Fallback
+    Users: Handshake, // Fallback
+  };
+
+  const activeValues =
+    payloadValues && payloadValues.length > 0
+      ? payloadValues.map((v) => ({
+          title: v.title,
+          description: v.description || "",
+          icon: v.icon && iconMap[v.icon] ? iconMap[v.icon] : ShieldCheck,
+          color: "gold",
+        }))
+      : values;
+
   return (
     <section
       className={cn(
@@ -73,14 +114,24 @@ export function AboutValues({ className }: { className?: string }) {
           >
             <Award className="w-12 h-12 text-gold mx-auto mb-6" />
           </motion.div>
+          {tag && (
+            <span className="text-gold text-xs font-bold tracking-[0.2em] uppercase mb-2 block">
+              {tag}
+            </span>
+          )}
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4"
           >
-            Our Core Values
+            {title || "Our Core Values"}
           </motion.h2>
+          {subtitle && (
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+              {subtitle}
+            </p>
+          )}
           <motion.div
             initial={{ width: 0 }}
             whileInView={{ width: 80 }}
@@ -97,7 +148,7 @@ export function AboutValues({ className }: { className?: string }) {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
         >
-          {values.map((value, index) => {
+          {activeValues.map((value, index) => {
             const Icon = value.icon;
             return (
               <motion.div
@@ -106,7 +157,7 @@ export function AboutValues({ className }: { className?: string }) {
                 className="group relative flex flex-col items-center text-center p-8 lg:p-10 rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-border/50 hover:border-gold/30 transition-all duration-500 hover:shadow-2xl hover:shadow-gold/5"
               >
                 <div className="absolute inset-0 bg-linear-to-b from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-                
+
                 <div className="relative w-20 h-20 rounded-full bg-navy/5 dark:bg-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 border border-border/50 group-hover:border-gold/50 shadow-inner">
                   <Icon className="w-10 h-10 text-gold" />
                 </div>

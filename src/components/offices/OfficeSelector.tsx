@@ -4,17 +4,20 @@ import { useState } from "react";
 import { OfficeCard } from "./OfficeCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import type { Media } from "@/payload-types";
 
 const OFFICES = [
   {
     id: "ahmedabad",
     label: "Ahmedabad",
     name: "Chambers of Jeet Bhatt - Ahmedabad",
-    address: "E-501, 5th Floor, SG Business Hub, Sola, Near Gota Overbridge SG Highway, Ahmedabad, GJ 380001",
+    address:
+      "E-501, 5th Floor, SG Business Hub, Sola, Near Gota Overbridge SG Highway, Ahmedabad, GJ 380001",
     phone: ["+91 9408282982", "+91 7935732455"],
     email: "jeetbhatt@gmail.com",
     mapUrl: "https://maps.app.goo.gl/DvbBvdqVzPXPYiZp9",
-    imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200",
+    imageUrl:
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200",
     hours: [
       { day: "Mon - Fri", time: "10:00 AM - 6:00 PM" },
       { day: "Saturday", time: "10:00 AM - 3:00 PM" },
@@ -25,11 +28,13 @@ const OFFICES = [
     id: "gandhinagar",
     label: "Gandhinagar",
     name: "Chambers of Jeet Bhatt - Gandhinagar",
-    address: "Plot no 754, nr. Maharashtra Samaj Bhavan, Vastunirman Society, Sector 21, Gandhinagar, Gujarat 382021",
+    address:
+      "Plot no 754, nr. Maharashtra Samaj Bhavan, Vastunirman Society, Sector 21, Gandhinagar, Gujarat 382021",
     phone: ["+91 9408282982"],
     email: "jeetbhatt@gmail.com",
     mapUrl: "https://maps.app.goo.gl/some-gandhinagar-link",
-    imageUrl: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&q=80&w=1200",
+    imageUrl:
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&q=80&w=1200",
     hours: [
       { day: "Mon - Fri", time: "9:00 AM - 7:00 PM" },
       { day: "Saturday", time: "10:00 AM - 4:00 PM" },
@@ -38,8 +43,54 @@ const OFFICES = [
   },
 ];
 
-export const OfficeSelector = () => {
-  const [activeTab, setActiveTab] = useState("ahmedabad");
+export interface OfficeSelectorProps {
+  title?: string | null;
+  subtitle?: string | null;
+  offices?:
+    | {
+        id: string;
+        label: string;
+        name: string;
+        address: string;
+        phone?: { number: string }[] | null;
+        email?: string | null;
+        mapUrl?: string | null;
+        image?: string | Media | null;
+        hours?: { day: string; time: string }[] | null;
+      }[]
+    | null;
+}
+
+export const OfficeSelector = ({
+  title,
+  subtitle,
+  offices: payloadOffices,
+}: OfficeSelectorProps) => {
+  const activeOffices =
+    payloadOffices && payloadOffices.length > 0
+      ? payloadOffices.map((o) => ({
+          id: o.id,
+          label: o.label,
+          name: o.name,
+          address: o.address,
+          phone: o.phone?.map((p) => p.number) || [],
+          email: o.email || "",
+          mapUrl: o.mapUrl || "",
+          imageUrl:
+            (typeof o.image === "object" ? o.image?.url : o.image) ||
+            "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200",
+          hours: o.hours || [],
+        }))
+      : OFFICES;
+
+  const [selectedTabId, setSelectedTabId] = useState<string | null>(null);
+
+  // Derive the active tab ID: use selectedTabId if it exists in activeOffices,
+  // otherwise fallback to the first office ID.
+  const activeTabId =
+    selectedTabId && activeOffices.find((o) => o.id === selectedTabId)
+      ? selectedTabId
+      : activeOffices[0]?.id;
 
   return (
     <section className="py-24 md:py-32 bg-background dark:bg-navy transition-colors duration-500 relative overflow-hidden">
@@ -55,29 +106,36 @@ export const OfficeSelector = () => {
             className="mb-12"
           >
             <span className="text-gold font-bold tracking-[0.3em] uppercase text-xs mb-6 block">
-              Global Presence
+              {subtitle || "Global Presence"}
             </span>
             <h2 className="text-4xl md:text-6xl font-serif text-navy dark:text-white mb-8">
-              Select Your <span className="text-gold italic font-medium">Location</span>
+              {title ? (
+                title
+              ) : (
+                <>
+                  Select Your{" "}
+                  <span className="text-gold italic font-medium">Location</span>
+                </>
+              )}
             </h2>
             <div className="w-24 h-1 bg-gold mx-auto rounded-full shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
           </motion.div>
 
           {/* Premium Segmented Control */}
           <div className="relative p-1.5 bg-slate-100 dark:bg-white/5 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-white/10 flex gap-2 w-full max-w-lg shadow-inner">
-            {OFFICES.map((office) => (
+            {activeOffices.map((office) => (
               <button
                 key={office.id}
-                onClick={() => setActiveTab(office.id)}
+                onClick={() => setSelectedTabId(office.id)}
                 className={cn(
                   "relative z-10 flex-1 py-4 px-8 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-500 rounded-xl",
-                  activeTab === office.id 
-                    ? "text-navy dark:text-navy" 
-                    : "text-slate-500 dark:text-slate-400 hover:text-navy dark:hover:text-white"
+                  activeTabId === office.id
+                    ? "text-navy dark:text-navy"
+                    : "text-slate-500 dark:text-slate-400 hover:text-navy dark:hover:text-white",
                 )}
               >
                 {office.label}
-                {activeTab === office.id && (
+                {activeTabId === office.id && (
                   <motion.div
                     layoutId="activeTab"
                     className="absolute inset-0 bg-gold rounded-xl -z-10 shadow-xl shadow-gold/20"
@@ -88,11 +146,11 @@ export const OfficeSelector = () => {
             ))}
           </div>
         </div>
-
+ 
         <div className="relative">
           <AnimatePresence mode="wait">
-            {OFFICES.map((office) => 
-              activeTab === office.id ? (
+            {activeOffices.map((office) =>
+              activeTabId === office.id ? (
                 <motion.div
                   key={office.id}
                   initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
@@ -102,7 +160,7 @@ export const OfficeSelector = () => {
                 >
                   <OfficeCard {...office} />
                 </motion.div>
-              ) : null
+              ) : null,
             )}
           </AnimatePresence>
         </div>

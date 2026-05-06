@@ -3,7 +3,23 @@
 import { motion } from "framer-motion";
 import { Search, Compass } from "lucide-react";
 
-export const MapSection = () => {
+export interface MapSectionProps {
+  title?: string | null;
+  subtitle?: string | null;
+  features?: { text: string }[] | null;
+  mapOverlayTitle?: string | null;
+  mapOverlayDescription?: string | null;
+}
+
+export const MapSection = ({ title, subtitle, features: payloadFeatures, mapOverlayTitle, mapOverlayDescription }: MapSectionProps) => {
+  const activeFeatures = payloadFeatures && payloadFeatures.length > 0 
+    ? payloadFeatures.map(f => f.text) 
+    : [
+        "Reserved Client Parking Available",
+        "Accessible Entry Points",
+        "Strategic Business Hubs"
+      ];
+
   return (
     <section className="py-24 md:py-32 bg-background dark:bg-navy relative overflow-hidden transition-colors duration-500">
       {/* Decorative vertical lines */}
@@ -23,19 +39,16 @@ export const MapSection = () => {
                 <Compass size={32} strokeWidth={1.5} />
               </div>
               <h2 className="text-4xl md:text-5xl font-serif text-navy dark:text-white">
-                Find <span className="text-gold italic font-medium">Us</span>
+                {title ? title : (
+                  <>Find <span className="text-gold italic font-medium">Us</span></>
+                )}
               </h2>
             </div>
             <p className="text-slate-600 dark:text-slate-400 font-sans text-lg mb-10 leading-relaxed">
-              Our chambers are located in premium business districts, ensuring ease of access 
-              and absolute confidentiality for all our distinguished clients.
+              {subtitle || "Our chambers are located in premium business districts, ensuring ease of access and absolute confidentiality for all our distinguished clients."}
             </p>
             <div className="space-y-5">
-              {[
-                "Reserved Client Parking Available",
-                "Accessible Entry Points",
-                "Strategic Business Hubs"
-              ].map((item, idx) => (
+              {activeFeatures.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-4 text-slate-700 dark:text-slate-300 text-sm font-medium">
                   <div className="w-2 h-2 rounded-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.6)]" />
                   {item}
@@ -65,10 +78,9 @@ export const MapSection = () => {
                   <div className="absolute inset-0 rounded-full animate-ping bg-gold/20" />
                   <Search size={44} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-3xl font-serif text-navy dark:text-white mb-6 italic tracking-wide">Interactive Global View</h3>
+                <h3 className="text-3xl font-serif text-navy dark:text-white mb-6 italic tracking-wide">{mapOverlayTitle || "Interactive Global View"}</h3>
                 <p className="text-slate-500 dark:text-slate-500 font-sans max-w-sm mx-auto leading-relaxed text-sm font-medium">
-                  Interactive precision markers for our Ahmedabad and Gandhinagar chambers. 
-                  View individual locations above for specific directions.
+                  {mapOverlayDescription || "Interactive precision markers for our Ahmedabad and Gandhinagar chambers. View individual locations above for specific directions."}
                 </p>
               </div>
             </div>

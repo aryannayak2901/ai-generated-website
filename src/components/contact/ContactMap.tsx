@@ -3,18 +3,31 @@
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 
-export default function ContactMap() {
+export interface ContactMapProps {
+  mapUrl?: string | null;
+  locationTitle?: string | null;
+  locationAddress?: string | null;
+}
+
+export default function ContactMap({
+  mapUrl,
+  locationTitle,
+  locationAddress,
+}: ContactMapProps) {
   return (
     <section className="h-[500px] md:h-[700px] w-full relative bg-background dark:bg-navy overflow-hidden transition-colors duration-500">
       {/* Google Maps Iframe with Premium Filters */}
       <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.697926017772!2d72.5222!3d23.0784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e833444444445%3A0x6b74ad4a4e63480e!2sSG+Business+Hub!5e0!3m2!1sen!2sin!4v1710450000000!5m2!1sen!2sin"
+        src={
+          mapUrl ||
+          "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.697926017772!2d72.5222!3d23.0784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e833444444445%3A0x6b74ad4a4e63480e!2sSG+Business+Hub!5e0!3m2!1sen!2sin!4v1710450000000!5m2!1sen!2sin"
+        }
         width="100%"
         height="100%"
-        style={{ 
-          border: 0, 
+        style={{
+          border: 0,
           filter: "grayscale(1) contrast(1.2) opacity(0.6) invert(0)",
-          mixBlendMode: "luminosity"
+          mixBlendMode: "luminosity",
         }}
         className="dark:invert dark:opacity-40"
         allowFullScreen
@@ -38,10 +51,23 @@ export default function ContactMap() {
           <MapPin className="h-8 w-8 text-navy" strokeWidth={1.5} />
         </div>
         <div>
-          <h4 className="font-serif text-2xl font-bold text-navy dark:text-white leading-tight mb-2 italic">Main Chamber</h4>
+          <h4 className="font-serif text-2xl font-bold text-navy dark:text-white leading-tight mb-2 italic">
+            {locationTitle || "Main Chamber"}
+          </h4>
           <p className="text-slate-600 dark:text-slate-400 text-sm font-medium leading-relaxed">
-            SG Business Hub, Sola, <br />
-            SG Highway, Ahmedabad
+            {locationAddress ? (
+              locationAddress.split("\n").map((line, i) => (
+                <span key={i}>
+                  {line}
+                  <br />
+                </span>
+              ))
+            ) : (
+              <>
+                SG Business Hub, Sola, <br />
+                SG Highway, Ahmedabad
+              </>
+            )}
           </p>
         </div>
       </motion.div>

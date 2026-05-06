@@ -67,7 +67,7 @@ const containerVariants = {
       staggerChildren: 0.1,
     },
   },
-};
+} as const;
 
 const itemVariants = {
   hidden: { opacity: 0, scale: 0.95 },
@@ -79,27 +79,64 @@ const itemVariants = {
       ease: "easeOut",
     },
   },
-};
+} as const;
 
-export function AboutTeam({ className }: { className?: string }) {
+import type { Team } from "@/payload-types";
+
+export interface AboutTeamProps {
+  className?: string;
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  teamMembers?: (string | Team)[] | null;
+}
+
+export function AboutTeam({
+  className,
+  tag,
+  title,
+  subtitle,
+  teamMembers: payloadMembers,
+}: AboutTeamProps) {
+  const activeMembers =
+    payloadMembers && payloadMembers.length > 0
+      ? payloadMembers.map((m) => {
+          // Handle relationship data which could be an object if populated
+          const member = typeof m === 'object' ? m : null;
+          if (!member) return null;
+
+          return {
+            name: member.name,
+            designation: member.designation,
+            experience: member.subtitle || "",
+            image:
+              (typeof member.image === 'object' && member.image?.url) ? member.image.url : 
+              (typeof member.image === 'string' ? member.image : "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=500"),
+            profileUrl: `/team/${member.slug}`,
+          };
+        }).filter((m): m is NonNullable<typeof m> => !!m)
+      : teamMembers;
+
   return (
-    <section className={cn("py-24 px-6 bg-background overflow-hidden", className)}>
+    <section
+      className={cn("py-24 px-6 bg-background overflow-hidden", className)}
+    >
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3 text-gold">
               <Users className="w-6 h-6" />
               <span className="text-xs font-bold tracking-[0.2em] uppercase">
-                Legal Experts
+                {tag || "Legal Experts"}
               </span>
             </div>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground">
-              Meet Our Team
+              {title || "Meet Our Team"}
             </h2>
           </div>
           <p className="text-muted-foreground max-w-md font-sans">
-            Our firm is comprised of highly specialized advocates with a deep
-            understanding of complex legal frameworks.
+            {subtitle ||
+              "Our firm is comprised of highly specialized advocates with a deep understanding of complex legal frameworks."}
           </p>
         </div>
 
@@ -110,7 +147,7 @@ export function AboutTeam({ className }: { className?: string }) {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {teamMembers.map((member, index) => (
+          {activeMembers.map((member, index) => (
             <motion.div key={index} variants={itemVariants}>
               <Link href={member.profileUrl} className="block group">
                 <Card className="flex flex-col h-full rounded-2xl bg-white dark:bg-navy border-border/50 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-gold/10 hover:-translate-y-2 border-b-4 hover:border-b-gold">
@@ -121,9 +158,10 @@ export function AboutTeam({ className }: { className?: string }) {
                       fill
                       className="object-cover object-center grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-navy/20 group-hover:bg-transparent transition-colors duration-700" />
-                    
+
                     {/* Floating LinkedIn Icon on Hover */}
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20">

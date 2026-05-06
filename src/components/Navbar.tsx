@@ -28,7 +28,10 @@ export function Navbar() {
 
   // Avoid hydration mismatch
   useEffect(() => {
-    setMounted(true);
+    const frameId = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
   return (
@@ -80,9 +83,9 @@ export function Navbar() {
                 </span>
               </div>
               <div className="flex flex-col justify-center overflow-hidden">
-                <h1 className="font-serif text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-navy dark:text-white leading-tight group-hover:text-gold transition-colors duration-300 whitespace-nowrap">
+                <span className="font-serif text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-navy dark:text-white leading-tight group-hover:text-gold transition-colors duration-300 whitespace-nowrap">
                   Chambers of Jeet Bhatt
-                </h1>
+                </span>
                 <p className="text-slate-500 dark:text-slate-400 font-sans text-[7px] sm:text-[9px] md:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-bold mt-0.5 whitespace-nowrap hidden sm:block">
                   Advocates & Legal Strategists
                 </p>
@@ -118,11 +121,9 @@ export function Navbar() {
                     <Moon className="h-5 w-5" />
                   )}
                 </button>
-                <a href="/contact">
-                  <Button className="bg-gold text-navy hover:bg-navy hover:text-white dark:hover:bg-white px-6 h-11 rounded-none text-xs font-bold uppercase tracking-[0.15em] transition-all duration-500 shadow-[0_5px_15px_rgba(212,175,55,0.2)] hover:shadow-[0_10px_25px_rgba(212,175,55,0.3)] whitespace-nowrap shrink-0">
-                    Contact Us
-                  </Button>
-                </a>
+                <Button asChild className="bg-gold text-navy hover:bg-navy hover:text-white dark:hover:bg-white px-6 h-11 rounded-none text-xs font-bold uppercase tracking-[0.15em] transition-all duration-500 shadow-[0_5px_15px_rgba(212,175,55,0.2)] hover:shadow-[0_10px_25px_rgba(212,175,55,0.3)] whitespace-nowrap shrink-0">
+                  <Link href="/contact">Contact Us</Link>
+                </Button>
               </div>
             </div>
 
@@ -131,6 +132,7 @@ export function Navbar() {
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="text-navy dark:text-white p-1.5 xs:p-2 rounded-full hover:bg-navy/5 dark:hover:bg-white/5 transition-colors"
+                aria-label="Toggle Dark Mode"
               >
                 {mounted && theme === "dark" ? (
                   <Sun className="h-4 w-4 xs:h-5 xs:w-5 text-gold" />
@@ -144,6 +146,7 @@ export function Navbar() {
                     variant="ghost"
                     size="icon"
                     className="text-navy dark:text-white hover:bg-navy/5 dark:hover:bg-white/10 shrink-0"
+                    aria-label="Open Navigation Menu"
                   >
                     <Menu className="h-6 w-6" />
                   </Button>

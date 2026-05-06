@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowRight, Verified, Gavel, Award } from "lucide-react";
+import React from "react";
 import Image from "next/image";
 
 type AwardItem = {
@@ -58,6 +58,14 @@ const awards: AwardItem[] = [
   },
 ];
 
+export interface AwardsMarqueeProps {
+  awards?: {
+    title: string;
+    year?: string | null;
+    organization?: string | null;
+  }[] | null;
+}
+
 const AwardCard = ({ award }: { award: AwardItem }) => {
   const Icon = award.icon;
   return (
@@ -103,7 +111,20 @@ const AwardCard = ({ award }: { award: AwardItem }) => {
   );
 };
 
-export const AwardsMarquee = () => {
+export const AwardsMarquee = ({ awards: payloadAwards }: AwardsMarqueeProps) => {
+  // If payload awards exist, map them to the AwardItem shape, otherwise use default awards
+  const activeAwards = payloadAwards && payloadAwards.length > 0 
+    ? payloadAwards.map((a, i) => ({
+        id: `payload-${i}`,
+        title: a.title,
+        subtitle: a.organization || "",
+        description: "",
+        image: awards[i % awards.length].image, // fallback to default images
+        yearBadge: a.year || "",
+        icon: awards[i % awards.length].icon, // fallback to default icons
+      }))
+    : awards;
+
   return (
     <section className="py-24 border-y border-slate-100 dark:border-white/5 bg-slate-surface dark:bg-navy overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,7 +143,7 @@ export const AwardsMarquee = () => {
           {/* Marquee Track using CSS Animation for pause-on-hover support */}
           <div className="flex py-4 items-center animate-marquee">
             {/* Render 2 sets for seamless loop */}
-            {[...awards, ...awards].map((award, index) => (
+            {[...activeAwards, ...activeAwards].map((award, index) => (
               <AwardCard key={`${award.id}-${index}`} award={award} />
             ))}
           </div>
