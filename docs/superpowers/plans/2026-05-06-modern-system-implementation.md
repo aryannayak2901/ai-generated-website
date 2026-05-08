@@ -7,6 +7,7 @@
 **Architecture:** Phase-based implementation starting with design system foundation, then rebuilding component library, then modernizing each page section systematically. Design tokens stored as CSS variables and Tailwind config extensions. Animations managed via Framer Motion and GSAP. All changes preserve Payload CMS integration.
 
 **Tech Stack:**
+
 - Next.js 16, React 19, Tailwind CSS v4
 - Framer Motion v12 (component animations)
 - GSAP v3.15 (scroll animations, timelines)
@@ -23,12 +24,14 @@
 ### New Files to Create
 
 **Design System & Tokens:**
+
 - `src/styles/design-tokens.css` — CSS variables for colors, spacing, typography
 - `src/lib/design-system.ts` — Exported constants and helper functions
 - `src/lib/animations.ts` — Framer Motion variants, GSAP configurations
 - `tailwind.config.extended.ts` — Extended color palette, spacing, animations
 
 **Component Library:**
+
 - `src/components/ui/Button.tsx` — Primary, secondary, ghost variants
 - `src/components/ui/Card.tsx` — Updated card component with new styling
 - `src/components/ui/Input.tsx` — Form inputs with teal focus states
@@ -39,12 +42,14 @@
 - `src/components/layout/Breadcrumbs.tsx` — Breadcrumb navigation
 
 **Animation Components:**
+
 - `src/components/animations/ScrollReveal.tsx` — Reusable scroll trigger wrapper
 - `src/components/animations/FadeInOnScroll.tsx` — Fade-in animation on scroll
 - `src/components/animations/StaggerContainer.tsx` — Stagger children animations
 - `src/components/animations/SlideInFromSide.tsx` — Slide animation variant
 
 **Page Components (New/Redesigned):**
+
 - `src/components/home/HeroSection.tsx` — New hero with teal accent bar
 - `src/components/home/PracticeAreasShowcase.tsx` — 3-column grid with animations
 - `src/components/home/TeamPreview.tsx` — Team carousel with hover effects
@@ -65,11 +70,13 @@
 - `src/components/about/TimelineSection.tsx` — History timeline
 
 **Global Styles:**
+
 - `src/app/globals.css` — Updated global styles, design tokens
 - `src/styles/animations.css` — Custom animation definitions
 - `tailwind.config.ts` — Extended configuration (updated)
 
 **Documentation:**
+
 - `docs/superpowers/plans/2026-05-06-modern-system-implementation.md` — This file
 
 ### Modified Files
@@ -95,6 +102,7 @@
 ### Task 1.1: Create Design Tokens CSS
 
 **Files:**
+
 - Create: `src/styles/design-tokens.css`
 
 - [ ] **Step 1: Create the design tokens file with color variables**
@@ -125,7 +133,8 @@
   --space-4xl: 96px;
 
   /* Typography */
-  --font-family-base: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-base:
+    "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-weight-regular: 400;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
@@ -159,6 +168,7 @@ git commit -m "feat: add design system tokens CSS variables"
 ### Task 1.2: Extend Tailwind Configuration
 
 **Files:**
+
 - Modify: `tailwind.config.ts`
 
 - [ ] **Step 1: Open and review current tailwind.config.ts**
@@ -168,6 +178,7 @@ Read current content to understand existing config structure.
 - [ ] **Step 2: Extend colors, spacing, and animations in tailwind.config.ts**
 
 Update the `theme.extend` section to include:
+
 - Custom color palette (charcoal, teal, grays)
 - Extended spacing scale
 - Animation definitions (fade-in, slide-up, scale, etc.)
@@ -250,6 +261,7 @@ git commit -m "feat: extend tailwind with custom colors, spacing, animations"
 ### Task 1.3: Create Design System Exports
 
 **Files:**
+
 - Create: `src/lib/design-system.ts`
 
 - [ ] **Step 1: Create design-system.ts with exported constants**
@@ -257,58 +269,58 @@ git commit -m "feat: extend tailwind with custom colors, spacing, animations"
 ```typescript
 // Colors
 export const colors = {
-  charcoal: '#1a1a1a',
+  charcoal: "#1a1a1a",
   slate: {
-    dark: '#0f172a',
-    primary: '#2d3748',
-    secondary: '#64748b',
-    light: '#f7fafc',
+    dark: "#0f172a",
+    primary: "#2d3748",
+    secondary: "#64748b",
+    light: "#f7fafc",
   },
   teal: {
-    primary: '#0891b2',
-    light: '#06b6d4',
+    primary: "#0891b2",
+    light: "#06b6d4",
   },
-  white: '#ffffff',
+  white: "#ffffff",
   semantic: {
-    success: '#10b981',
-    warning: '#f59e0b',
-    error: '#ef4444',
+    success: "#10b981",
+    warning: "#f59e0b",
+    error: "#ef4444",
   },
 };
 
 // Spacing
 export const spacing = {
-  xs: '4px',
-  sm: '8px',
-  md: '16px',
-  lg: '24px',
-  xl: '32px',
-  '2xl': '48px',
-  '3xl': '64px',
-  '4xl': '96px',
+  xs: "4px",
+  sm: "8px",
+  md: "16px",
+  lg: "24px",
+  xl: "32px",
+  "2xl": "48px",
+  "3xl": "64px",
+  "4xl": "96px",
 };
 
 // Border Radius
 export const borderRadius = {
-  sm: '4px',
-  md: '6px',
-  lg: '8px',
-  xl: '12px',
+  sm: "4px",
+  md: "6px",
+  lg: "8px",
+  xl: "12px",
 };
 
 // Shadow elevation
 export const shadows = {
-  sm: '0 1px 2px rgba(0,0,0,0.05)',
-  md: '0 4px 6px rgba(0,0,0,0.1)',
-  lg: '0 10px 15px rgba(0,0,0,0.1)',
-  hover: '0 20px 25px rgba(0,0,0,0.15)',
+  sm: "0 1px 2px rgba(0,0,0,0.05)",
+  md: "0 4px 6px rgba(0,0,0,0.1)",
+  lg: "0 10px 15px rgba(0,0,0,0.1)",
+  hover: "0 20px 25px rgba(0,0,0,0.15)",
 };
 
 // Transitions
 export const transitions = {
-  fast: '0.2s ease',
-  base: '0.3s ease-in-out',
-  slow: '0.5s ease-in-out',
+  fast: "0.2s ease",
+  base: "0.3s ease-in-out",
+  slow: "0.5s ease-in-out",
 };
 ```
 
@@ -322,19 +334,20 @@ git commit -m "feat: create design-system exports and constants"
 ### Task 1.4: Create Animations Configuration
 
 **Files:**
+
 - Create: `src/lib/animations.ts`
 
 - [ ] **Step 1: Create animations.ts with Framer Motion variants and GSAP configs**
 
 ```typescript
-import { Variants } from 'framer-motion';
+import { Variants } from "framer-motion";
 
 // Framer Motion Variants
 export const fadeInVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.6, ease: 'easeOut' },
+    transition: { duration: 0.6, ease: "easeOut" },
   },
 };
 
@@ -343,7 +356,7 @@ export const slideUpVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
+    transition: { duration: 0.6, ease: "easeOut" },
   },
 };
 
@@ -352,7 +365,7 @@ export const slideLeftVariants: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
+    transition: { duration: 0.6, ease: "easeOut" },
   },
 };
 
@@ -361,7 +374,7 @@ export const slideRightVariants: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
+    transition: { duration: 0.6, ease: "easeOut" },
   },
 };
 
@@ -370,7 +383,7 @@ export const scaleUpVariants: Variants = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.4, ease: 'easeOut' },
+    transition: { duration: 0.4, ease: "easeOut" },
   },
 };
 
@@ -387,9 +400,9 @@ export const staggerContainerVariants: Variants = {
 
 // GSAP ScrollTrigger configs
 export const scrollRevealConfig = {
-  trigger: '',
-  start: 'top 80%',
-  end: 'top 50%',
+  trigger: "",
+  start: "top 80%",
+  end: "top 50%",
   scrub: false,
   markers: false,
 };
@@ -409,13 +422,15 @@ git commit -m "feat: create animations library with Framer Motion variants and G
 ### Task 1.5: Update Global Styles
 
 **Files:**
+
 - Modify: `src/app/globals.css`
 
 - [ ] **Step 1: Open globals.css and add new global styles**
 
 Add after existing styles:
+
 ```css
-@import url('../styles/design-tokens.css');
+@import url("../styles/design-tokens.css");
 
 /* Base typography updates */
 body {
@@ -424,7 +439,12 @@ body {
   background-color: var(--color-white);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: var(--font-weight-bold);
   letter-spacing: -0.5px;
   line-height: 1.2;
@@ -478,6 +498,7 @@ git commit -m "feat: update global styles with new typography and design tokens"
 ### Task 2.1: Rebuild Button Component
 
 **Files:**
+
 - Modify: `src/components/ui/Button.tsx`
 
 - [ ] **Step 1: Review current Button.tsx structure**
@@ -546,6 +567,7 @@ git commit -m "feat: redesign Button component with new colors and hover states"
 ### Task 2.2: Rebuild Card Component
 
 **Files:**
+
 - Modify: `src/components/ui/Card.tsx`
 
 - [ ] **Step 1: Review current Card.tsx**
@@ -600,6 +622,7 @@ git commit -m "feat: redesign Card component with teal accent and hover animatio
 ### Task 2.3: Update Input Component
 
 **Files:**
+
 - Modify: `src/components/ui/Input.tsx`
 
 - [ ] **Step 1: Review current Input.tsx**
@@ -660,6 +683,7 @@ git commit -m "feat: update Input component with teal focus and error states"
 ### Task 2.4: Create Badge Component
 
 **Files:**
+
 - Create: `src/components/ui/Badge.tsx`
 
 - [ ] **Step 1: Create new Badge component**
@@ -716,6 +740,7 @@ git commit -m "feat: create Badge component with multiple variants"
 ### Task 2.5: Create Divider Component
 
 **Files:**
+
 - Create: `src/components/ui/Divider.tsx`
 
 - [ ] **Step 1: Create new Divider component**
@@ -766,6 +791,7 @@ git commit -m "feat: create Divider component with accent variant"
 ### Task 3.1: Redesign Header Component
 
 **Files:**
+
 - Modify: `src/components/layout/Header.tsx`
 
 - [ ] **Step 1: Review current Header.tsx**
@@ -870,6 +896,7 @@ git commit -m "feat: redesign Header with sticky positioning and new colors"
 ### Task 3.2: Redesign Footer Component
 
 **Files:**
+
 - Modify: `src/components/layout/Footer.tsx`
 
 - [ ] **Step 1: Review current Footer.tsx**
@@ -981,6 +1008,7 @@ git commit -m "feat: redesign Footer with 5-column grid and new styling"
 ### Task 3.3: Create Breadcrumbs Component
 
 **Files:**
+
 - Create: `src/components/layout/Breadcrumbs.tsx`
 
 - [ ] **Step 1: Create Breadcrumbs component**
@@ -1032,6 +1060,7 @@ git commit -m "feat: create Breadcrumbs navigation component"
 ### Task 4.1: Create ScrollReveal Component
 
 **Files:**
+
 - Create: `src/components/animations/ScrollReveal.tsx`
 
 - [ ] **Step 1: Create ScrollReveal wrapper for GSAP ScrollTrigger**
@@ -1112,6 +1141,7 @@ git commit -m "feat: create ScrollReveal component with GSAP ScrollTrigger"
 ### Task 4.2: Create FadeInOnScroll Component
 
 **Files:**
+
 - Create: `src/components/animations/FadeInOnScroll.tsx`
 
 - [ ] **Step 1: Create FadeInOnScroll using Framer Motion**
@@ -1165,6 +1195,7 @@ git commit -m "feat: create FadeInOnScroll component with Framer Motion"
 ### Task 4.3: Create StaggerContainer Component
 
 **Files:**
+
 - Create: `src/components/animations/StaggerContainer.tsx`
 
 - [ ] **Step 1: Create StaggerContainer for staggered children animations**
@@ -1238,6 +1269,7 @@ git commit -m "feat: create StaggerContainer for staggered animations"
 ### Task 5.1: Create Hero Section Component
 
 **Files:**
+
 - Create: `src/components/home/HeroSection.tsx`
 
 - [ ] **Step 1: Create Hero with teal accent bar and animations**
@@ -1313,6 +1345,7 @@ git commit -m "feat: create Hero section with teal accent bar and animations"
 ### Task 5.2: Create Practice Areas Showcase
 
 **Files:**
+
 - Create: `src/components/home/PracticeAreasShowcase.tsx`
 
 - [ ] **Step 1: Create Practice Areas grid with scroll animations**
@@ -1391,6 +1424,7 @@ git commit -m "feat: create Practice Areas showcase with staggered animations"
 ### Task 5.3: Create Team Preview Component
 
 **Files:**
+
 - Create: `src/components/home/TeamPreview.tsx`
 
 - [ ] **Step 1: Create Team Preview with carousel/grid**
@@ -1493,6 +1527,7 @@ git commit -m "feat: create Team Preview section with scroll animations"
 ### Task 5.4: Create Offices Section
 
 **Files:**
+
 - Create: `src/components/home/OfficesSection.tsx`
 
 - [ ] **Step 1: Create Offices Section**
@@ -1566,6 +1601,7 @@ git commit -m "feat: create Offices section with location cards"
 ### Task 5.5: Create CTA Section
 
 **Files:**
+
 - Create: `src/components/home/CTASection.tsx`
 
 - [ ] **Step 1: Create full-width CTA section**
@@ -1628,6 +1664,7 @@ git commit -m "feat: create CTA section with motion animations"
 ### Task 5.6: Update Homepage Layout
 
 **Files:**
+
 - Modify: `src/app/(frontend)/page.tsx`
 
 - [ ] **Step 1: Update homepage to use new components**
@@ -1670,6 +1707,7 @@ git commit -m "feat: update homepage with new modern components"
 ### Task 6.1: Create Practice Area Hero
 
 **Files:**
+
 - Create: `src/components/practice-areas/HeroSection.tsx`
 
 - [ ] **Step 1: Create practice area hero component**
@@ -1731,6 +1769,7 @@ git commit -m "feat: create practice area hero component"
 ### Task 6.2: Create Content Block (Alternating Text/Image)
 
 **Files:**
+
 - Create: `src/components/practice-areas/ContentBlock.tsx`
 
 - [ ] **Step 1: Create alternating content block**
@@ -1799,6 +1838,7 @@ git commit -m "feat: create alternating content block component"
 ### Task 6.3: Create Related Practice Areas
 
 **Files:**
+
 - Create: `src/components/practice-areas/RelatedAreas.tsx`
 
 - [ ] **Step 1: Create related areas component**
@@ -1857,6 +1897,7 @@ git commit -m "feat: create related practice areas component"
 ### Task 6.4: Update Practice Area Page Template
 
 **Files:**
+
 - Modify: `src/app/(frontend)/practice-areas/[slug]/page.tsx`
 
 - [ ] **Step 1: Update practice area detail page to use new components**
@@ -1924,22 +1965,25 @@ git commit -m "feat: update practice area detail page with new components"
 Due to space constraints, the remaining phases follow the same pattern:
 
 **Phase 7: Team Pages (Days 14-15)**
+
 - Create `src/components/team/TeamGrid.tsx` — Team member grid with animations
 - Create `src/components/team/TeamMemberProfile.tsx` — Individual profile layout
 - Update `/team` and `/team/[id]` pages
 
 **Phase 8: Blog Pages (Days 16-17)**
+
 - Create `src/components/blog/BlogHero.tsx` — Blog section hero
 - Create `src/components/blog/BlogGrid.tsx` — Blog card grid with scroll animations
 - Create `src/components/blog/BlogPost.tsx` — Individual blog post layout
 - Update `/blog` and `/blog/[slug]` pages
 
 **Phase 9: Offices Pages (Day 18)**
+
 - Create `src/components/offices/OfficesGrid.tsx` — Office locations grid
 - Create `src/components/offices/OfficeDetail.tsx` — Individual office detail
 - Update `/offices` and `/offices/[id]` pages
 
-*For brevity, detailed step-by-step tasks omitted; follow same pattern as homepage and practice areas.*
+_For brevity, detailed step-by-step tasks omitted; follow same pattern as homepage and practice areas._
 
 ---
 
@@ -1948,12 +1992,13 @@ Due to space constraints, the remaining phases follow the same pattern:
 ### Task 10.1: Create About Page Components
 
 **Files:**
+
 - Create: `src/components/about/AboutHero.tsx`
 - Create: `src/components/about/ValuesSection.tsx`
 - Create: `src/components/about/TimelineSection.tsx`
 - Modify: `src/app/(frontend)/about/page.tsx`
 
-*(Follow same component pattern as other pages)*
+_(Follow same component pattern as other pages)_
 
 ---
 
@@ -1996,7 +2041,7 @@ Due to space constraints, the remaining phases follow the same pattern:
 ✅ Accessibility: WCAG 2.1 AA compliance  
 ✅ Performance: Lighthouse >90, animations 60fps  
 ✅ All CMS content integrated seamlessly  
-✅ Complete visual brand system documentation  
+✅ Complete visual brand system documentation
 
 ---
 
@@ -2012,5 +2057,4 @@ Due to space constraints, the remaining phases follow the same pattern:
 
 **Total Estimated Duration:** 4 weeks (28 working days)  
 **Tech Lead:** Review design decisions, animation performance  
-**QA Lead:** Accessibility, cross-browser, mobile testing  
-
+**QA Lead:** Accessibility, cross-browser, mobile testing

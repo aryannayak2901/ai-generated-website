@@ -9,15 +9,21 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // Primary - Teal CTA Button (NEW)
+        primary:
+          "bg-teal-primary text-white hover:bg-teal-light active:scale-95 hover:shadow-lg focus-visible:ring-teal-primary/20",
+        // Secondary - Teal Outlined (NEW)
+        secondary:
+          "border border-teal-primary text-teal-primary hover:bg-slate-light active:scale-95 focus-visible:ring-teal-primary/20",
+        // Ghost - Text Only (NEW)
+        ghost:
+          "text-slate-primary hover:text-teal-primary hover:underline active:scale-95",
+        // Legacy variants (preserved)
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -32,7 +38,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
     },
   }
@@ -40,7 +46,7 @@ const buttonVariants = cva(
 
 function Button({
   className,
-  variant = "default",
+  variant = "primary",
   size = "default",
   asChild = false,
   ...props
