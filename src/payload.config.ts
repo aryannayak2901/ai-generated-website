@@ -21,6 +21,13 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Logo: '@/components/payload/Logo#Logo',
+        Icon: '@/components/payload/Icon#Icon',
+      },
+      beforeLogin: ['@/components/payload/BeforeLogin#BeforeLogin'],
+    },
   },
   collections: [Pages, Team, Users, Media, Posts],
   globals: [Header],

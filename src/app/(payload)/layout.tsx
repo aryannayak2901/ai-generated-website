@@ -1,4 +1,5 @@
 import '@payloadcms/next/css'
+import './custom-admin.css'
 import config from '@/payload.config'
 import { RootLayout } from '@payloadcms/next/layouts'
 import React from 'react'
