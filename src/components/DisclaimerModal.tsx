@@ -16,13 +16,16 @@ export function DisclaimerModal() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const hasAccepted = localStorage.getItem(
-      "chambers_bhatt_disclaimer_accepted",
-    );
-    if (!hasAccepted) {
-      setIsOpen(true);
-    }
-    setIsMounted(true);
+    const frameId = requestAnimationFrame(() => {
+      const hasAccepted = localStorage.getItem(
+        "chambers_bhatt_disclaimer_accepted",
+      );
+      if (!hasAccepted) {
+        setIsOpen(true);
+      }
+      setIsMounted(true);
+    });
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
   const handleAccept = () => {
@@ -36,12 +39,12 @@ export function DisclaimerModal() {
 
   return (
     <AlertDialog open={isOpen}>
-      <AlertDialogContent className="max-w-xl mx-auto rounded-md shadow-2xl p-8 border border-slate-200 dark:border-white/10 bg-white dark:bg-navy">
+      <AlertDialogContent className="max-w-xl mx-auto rounded-md shadow-2xl p-8 border border-slate-200 bg-white">
         <AlertDialogHeader className="mb-4 space-y-3">
-          <AlertDialogTitle className="text-2xl font-bold text-navy dark:text-white tracking-tight font-display">
+          <AlertDialogTitle className="text-2xl font-bold text-slate-primary tracking-tight font-serif">
             Important Legal Disclaimer
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-slate-gray dark:text-slate-gray/80 leading-relaxed text-base">
+          <AlertDialogDescription className="text-slate-secondary leading-relaxed text-base">
             As per the rules of the Bar Council of India, we are not permitted
             to solicit work and advertise. By clicking &quot;I Agree&quot;, the
             user acknowledges there has been no advertisement, personal
@@ -53,7 +56,7 @@ export function DisclaimerModal() {
         <AlertDialogFooter className="mt-6">
           <AlertDialogAction
             onClick={handleAccept}
-            className="w-full sm:w-auto bg-gold text-white hover:bg-gold/90 transition-all duration-300 font-bold tracking-wide rounded-sm px-8 py-2.5 shadow-sm"
+            className="w-full sm:w-auto bg-teal-primary text-white hover:bg-teal-light transition-all duration-300 font-semibold tracking-wide rounded-sm px-8 py-2.5 shadow-sm"
           >
             I Agree
           </AlertDialogAction>

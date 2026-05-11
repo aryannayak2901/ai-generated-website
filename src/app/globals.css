@@ -1,18 +1,56 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../styles/design-tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Design System Tokens (from DESIGN.md) */
-  --color-navy: #0f1729;
-  --color-gold: #d4af37;
-  --color-slate-surface: #f8fafc;
-  --color-charcoal: #1e293b;
-  --color-slate-gray: #64748b;
+  /* Modern Design System Tokens */
+  /* Colors - Charcoal & Teal */
+  --color-charcoal-primary: #1a1a1a;
+  --color-slate-dark: #0f172a;
+  --color-slate-primary: #2d3748;
+  --color-slate-secondary: #64748b;
+  --color-gray-light: #f7fafc;
+  --color-teal-primary: #0891b2;
+  --color-teal-light: #06b6d4;
+  
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
 
-  /* Semantic Mapping */
+  /* Typography */
+  --font-family-base: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Radii - Merged with existing */
+  --radius-xs: 0.125rem;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease-in-out;
+  --transition-slow: 0.5s ease-in-out;
+
+  /* Semantic Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -33,16 +71,9 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Typography */
+  /* Typography - Fonts */
   --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair-display), ui-serif, Georgia, serif;
-
-  /* Radii */
-  --radius-xs: 0.125rem;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
 
   /* Keyframes & Animations */
   @keyframes marquee {
@@ -50,6 +81,26 @@
     100% { transform: translateX(-50%); }
   }
   --animate-marquee: marquee 40s linear infinite;
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-in-left {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  --animate-fade-in-up: fade-in-up 0.8s ease-out forwards;
+  --animate-fade-in: fade-in 0.8s ease-out forwards;
+  --animate-slide-in-left: slide-in-left 0.8s ease-out forwards;
+  --animate-scale-in: scale-in 1s ease-out forwards;
 
   /* Custom Breakpoints */
   --breakpoint-xs: 420px;

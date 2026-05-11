@@ -1,0 +1,68 @@
+/* src/app/(payload)/custom-admin.css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* Set base theme variables for Payload */
+html[data-theme='dark'], html[data-theme='light'] {
+  --theme-bg: #0A1128 !important; /* Deep Navy from DESIGN.md */
+  --theme-elevation-50: #0E1736 !important;
+  --theme-elevation-100: #121D44 !important;
+  --theme-elevation-150: #162452 !important;
+  --theme-elevation-200: #1A2B60 !important;
+  
+  --theme-text: #FFFFFF !important;
+  --theme-success-400: #C5A059 !important; /* Gold accent */
+  --theme-error-400: #EF4444 !important;
+  
+  --font-body: 'Public Sans', sans-serif !important;
+  --font-heading: 'Playfair Display', serif !important;
+  
+  --style-radius-s: 4px;
+  --style-radius-m: 8px;
+  --style-radius-l: 12px;
+}
+
+body, .payload-admin {
+  font-family: var(--font-body);
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6, .payload-admin__page-title, .nav-group__title {
+  font-family: var(--font-heading) !important;
+}
+
+/* Button Styling (Gold Accent) */
+.btn--style-primary {
+  background-color: #C5A059 !important;
+  color: #0A1128 !important;
+  border: none !important;
+  border-radius: var(--style-radius-m) !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease;
+}
+
+.btn--style-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(197, 160, 89, 0.3) !important;
+}
+
+/* Input Fields */
+.field-type input, .field-type textarea, .react-select__control {
+  background-color: var(--theme-elevation-100) !important;
+  border: 1px solid var(--theme-elevation-200) !important;
+  color: var(--theme-text) !important;
+  border-radius: var(--style-radius-m) !important;
+}
+
+.field-type input:focus, .field-type textarea:focus, .react-select__control--is-focused {
+  border-color: #C5A059 !important;
+  box-shadow: 0 0 0 1px #C5A059 !important;
+  outline: none;
+}
+
+/* Sidebar overrides */
+.nav {
+  background-color: var(--theme-elevation-50) !important;
+  border-right: 1px solid var(--theme-elevation-150) !important;
+}

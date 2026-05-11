@@ -2,66 +2,92 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { PhoneCall, CalendarCheck, ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { CalendarCheck, PhoneCall } from "lucide-react";
 
-export const OfficeCTA = () => {
+export interface OfficeCTAProps {
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  ctaText1?: string | null;
+  ctaLink1?: string | null;
+  ctaText2?: string | null;
+  ctaLink2?: string | null;
+  disclaimer?: string | null;
+}
+
+export const OfficeCTA = ({ badge, title, subtitle, ctaText1, ctaLink1, ctaText2, ctaLink2, disclaimer }: OfficeCTAProps) => {
   return (
-    <section className="py-24 md:py-32 bg-navy dark:bg-navy/95 relative overflow-hidden transition-colors duration-500">
-      {/* Background with subtle legal texture/image */}
-      <div className="absolute inset-0 z-0 opacity-15">
-        <div className="absolute inset-0 bg-gradient-to-b from-navy via-transparent to-navy z-10" />
-        <img 
-          src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=2000" 
-          alt="Legal background" 
-          className="w-full h-full object-cover grayscale"
-        />
-      </div>
+    <section className="relative py-16 md:py-24 px-6 bg-charcoal-primary overflow-hidden">
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-charcoal-primary via-charcoal-primary to-slate-dark" />
+      
+      {/* Teal accent bar - left side */}
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-primary" />
+      
+      {/* Decorative glow */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-teal-primary/5 rounded-full blur-3xl pointer-events-none" 
+      />
 
-      <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 relative z-10 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto"
-        >
-          <div className="inline-flex items-center gap-3 mb-10 text-gold">
-            <ShieldCheck size={28} strokeWidth={1.5} />
-            <span className="font-bold tracking-[0.4em] uppercase text-[10px]">Trust & Excellence</span>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="max-w-[1280px] mx-auto text-center relative z-10"
+      >
+        <div className="inline-flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 rounded-full bg-teal-primary/20 flex items-center justify-center">
+            <svg className="w-4 h-4 text-teal-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0115 3z" />
+            </svg>
           </div>
-          
-          <h2 className="text-5xl md:text-7xl font-serif text-white mb-10 leading-[1.1] tracking-tight">
-            Schedule a <br />
-            <span className="text-gold italic font-medium">Private Consultation</span>
-          </h2>
-          
-          <p className="text-xl md:text-2xl text-slate-300 font-sans mb-16 leading-relaxed max-w-3xl mx-auto font-light">
-            Each consultation is held with absolute discretion. Reach out to secure your 
-            appointment at our Ahmedabad or Gandhinagar chambers.
-          </p>
+          <span className="text-teal-primary font-bold tracking-[0.4em] uppercase text-[10px]">
+            {badge || "Trust & Excellence"}
+          </span>
+        </div>
+        
+        <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+          {title ? title : (
+            <>Schedule a <span className="text-teal-primary italic font-medium">Private Consultation</span></>
+          )}
+        </h2>
+        
+        <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
+        
+        <p className="text-lg md:text-xl text-slate-secondary leading-relaxed mb-10 max-w-2xl mx-auto font-sans">
+          {subtitle || "Each consultation is held with absolute discretion. Reach out to secure your appointment at our offices."}
+        </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-10">
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button size="lg" className="w-full sm:w-auto bg-gold hover:bg-white text-navy font-bold px-12 h-18 rounded-none text-sm tracking-[0.15em] shadow-2xl shadow-gold/20 transition-all duration-500 border-none uppercase">
-                <CalendarCheck className="mr-3 h-5 w-5" />
-                Book An Appointment
-              </Button>
-            </motion.div>
-            
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 font-bold px-12 h-18 rounded-none text-sm tracking-[0.15em] transition-all duration-500 uppercase">
-                <PhoneCall className="mr-3 h-5 w-5 text-gold" />
-                Call Direct
-              </Button>
-            </motion.div>
-          </div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
+          <Button
+            size="lg"
+            className="w-full sm:w-auto bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            onClick={() => window.open(ctaLink1 || "/contact", "_self")}
+          >
+            <CalendarCheck className="mr-2 w-4 h-4 sm:w-5 sm:h-5" />
+            {ctaText1 || "Book An Appointment"}
+          </Button>
           
-          <div className="mt-20 text-slate-500 font-sans text-[10px] uppercase tracking-[0.5em] font-bold">
-            Monday — Saturday • 24/7 Priority Support
-          </div>
-        </motion.div>
-      </div>
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300"
+            onClick={() => window.open(ctaLink2 || "tel:+919408282982", "_self")}
+          >
+            <PhoneCall className="mr-2 w-4 h-4 sm:w-5 sm:h-5 text-teal-primary" />
+            {ctaText2 || "Call Direct"}
+          </Button>
+        </div>
+        
+        <div className="mt-8 text-slate-secondary font-sans text-[10px] uppercase tracking-[0.5em] font-bold">
+          {disclaimer || "Monday — Saturday • 24/7 Priority Support"}
+        </div>
+      </motion.div>
     </section>
   );
-};
+}

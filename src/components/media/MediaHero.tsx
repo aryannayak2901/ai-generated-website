@@ -15,7 +15,7 @@ export function MediaHero({ video, onWatchNow }: MediaHeroProps) {
   return (
     <section className="relative w-full py-12 md:py-20 lg:py-24 overflow-hidden border-b border-slate-200 dark:border-white/10">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-[1fr_1.3fr] gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}

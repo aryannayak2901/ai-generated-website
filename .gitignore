@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+src/payload-types.ts
+
+
+.unlighthouse
+.agents
+skills-lock.json
