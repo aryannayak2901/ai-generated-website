@@ -1,15 +1,15 @@
-// src/components/payload/BeforeLogin.tsx
 import React from 'react'
 
-export const BeforeLogin: React.FC = () => {
+const BeforeLogin: React.FC = () => {
   return (
     <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
       <h1 
         style={{ 
           fontFamily: "'Playfair Display', serif", 
-          fontSize: '2rem', 
-          color: '#ffffff',
-          marginBottom: '0.5rem'
+          fontSize: '2.5rem', 
+          color: '#FFFFFF',
+          marginBottom: '0.5rem',
+          fontWeight: 600
         }}
       >
         Welcome Back
@@ -17,12 +17,14 @@ export const BeforeLogin: React.FC = () => {
       <p 
         style={{ 
           fontFamily: "'Public Sans', sans-serif", 
-          color: '#94a3b8', /* Slate 400 */
+          color: '#A0ABC0',
           fontSize: '1rem'
         }}
       >
-        Sign in to manage chambers content and configurations.
+        Sign in to manage the Chambers of Jeet Bhatt portfolio.
       </p>
     </div>
   )
 }
+
+export default BeforeLogin
