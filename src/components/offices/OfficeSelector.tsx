@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { OfficeCard } from "./OfficeCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import type { Media } from "@/payload-types";
 
 const OFFICES = [
   {
@@ -38,74 +39,109 @@ const OFFICES = [
   },
 ];
 
-export const OfficeSelector = () => {
-  const [activeTab, setActiveTab] = useState("ahmedabad");
+export interface OfficeSelectorProps {
+  title?: string | null;
+  subtitle?: string | null;
+  offices?:
+    | {
+        id: string;
+        label: string;
+        name: string;
+        address: string;
+        phone?: { number: string }[] | null;
+        email?: string | null;
+        mapUrl?: string | null;
+        image?: string | Media | null;
+        hours?: { day: string; time: string }[] | null;
+      }[]
+    | null;
+}
+
+export const OfficeSelector = ({
+  title,
+  subtitle,
+  offices: payloadOffices,
+}: OfficeSelectorProps) => {
+  const activeOffices =
+    payloadOffices && payloadOffices.length > 0
+      ? payloadOffices.map((o) => ({
+          id: o.id,
+          label: o.label,
+          name: o.name,
+          address: o.address,
+          phone: o.phone?.map((p) => p.number) || [],
+          email: o.email || "",
+          mapUrl: o.mapUrl || "",
+          imageUrl:
+            (typeof o.image === 'object' ? o.image?.url : o.image) ||
+            "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200",
+          hours: o.hours || [],
+        }))
+      : OFFICES;
+
+  const [selectedTabId, setSelectedTabId] = useState<string | null>(null);
+
+  const activeTabId =
+    selectedTabId && activeOffices.find((o) => o.id === selectedTabId)
+      ? selectedTabId
+      : activeOffices[0]?.id;
+
+  const selectedOffice = activeOffices.find((o) => o.id === activeTabId);
 
   return (
-    <section className="py-24 md:py-32 bg-background dark:bg-navy transition-colors duration-500 relative overflow-hidden">
-      {/* Decorative radial gradient */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-gold/5 rounded-full blur-[150px] pointer-events-none" />
-
-      <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 relative z-10">
-        <div className="flex flex-col items-center mb-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
-            <span className="text-gold font-bold tracking-[0.3em] uppercase text-xs mb-6 block">
-              Global Presence
-            </span>
-            <h2 className="text-4xl md:text-6xl font-serif text-navy dark:text-white mb-8">
-              Select Your <span className="text-gold italic font-medium">Location</span>
-            </h2>
-            <div className="w-24 h-1 bg-gold mx-auto rounded-full shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
-          </motion.div>
-
-          {/* Premium Segmented Control */}
-          <div className="relative p-1.5 bg-slate-100 dark:bg-white/5 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-white/10 flex gap-2 w-full max-w-lg shadow-inner">
-            {OFFICES.map((office) => (
-              <button
-                key={office.id}
-                onClick={() => setActiveTab(office.id)}
-                className={cn(
-                  "relative z-10 flex-1 py-4 px-8 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-500 rounded-xl",
-                  activeTab === office.id 
-                    ? "text-navy dark:text-navy" 
-                    : "text-slate-500 dark:text-slate-400 hover:text-navy dark:hover:text-white"
-                )}
-              >
-                {office.label}
-                {activeTab === office.id && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gold rounded-xl -z-10 shadow-xl shadow-gold/20"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.8 }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+    <section className="py-16 md:py-24 px-6 bg-gray-light relative overflow-hidden">
+      <div className="max-w-[1280px] mx-auto relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-primary mb-4">
+            {title || "Our Offices"}
+          </h2>
+          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
+          <p className="text-lg text-slate-secondary max-w-2xl mx-auto leading-relaxed font-sans">
+            {subtitle || "Visit us at our conveniently located offices across Gujarat."}
+          </p>
         </div>
 
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            {OFFICES.map((office) => 
-              activeTab === office.id ? (
-                <motion.div
-                  key={office.id}
-                  initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -40, filter: "blur(10px)" }}
-                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <OfficeCard {...office} />
-                </motion.div>
-              ) : null
-            )}
-          </AnimatePresence>
+        {/* Office Tabs */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {activeOffices.map((office) => (
+            <Button
+              key={office.id}
+              variant={activeTabId === office.id ? "default" : "outline"}
+              onClick={() => setSelectedTabId(office.id)}
+              className={
+                activeTabId === office.id
+                  ? "bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase text-xs"
+                  : "border-slate-200 text-slate-primary hover:border-teal-primary/30 hover:text-teal-primary font-semibold tracking-wider uppercase text-xs"
+              }
+            >
+              {office.label}
+            </Button>
+          ))}
         </div>
+
+        {/* Office Card with Animation */}
+        <AnimatePresence mode="wait">
+          {selectedOffice && (
+            <motion.div
+              key={selectedOffice.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <OfficeCard
+                name={selectedOffice.name}
+                address={selectedOffice.address}
+                phone={selectedOffice.phone}
+                email={selectedOffice.email}
+                hours={selectedOffice.hours}
+                mapUrl={selectedOffice.mapUrl}
+                imageUrl={selectedOffice.imageUrl}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

@@ -1,130 +1,108 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { ShieldCheck, Award, Handshake } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { ShieldCheck, Award, Handshake, Scale, Gavel, Building2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { StaggerContainer, StaggerItem } from "@/components/animations";
 
-const values = [
+const defaultValues = [
   {
     title: "Integrity",
-    description:
-      "Upholding the highest ethical standards in every action and decision we take on behalf of our clients.",
-    icon: ShieldCheck,
-    color: "gold",
+    description: "Upholding the highest ethical standards in every action and decision we take on behalf of our clients.",
+    icon: "ShieldCheck",
   },
   {
     title: "Excellence",
-    description:
-      "Delivering exceptional legal representation through continuous learning, meticulous preparation, and strategic thinking.",
-    icon: Award,
-    color: "gold",
+    description: "Delivering exceptional legal representation through continuous learning and strategic thinking.",
+    icon: "Award",
   },
   {
     title: "Client Focus",
-    description:
-      "Prioritizing our clients' goals and providing personalized attention to ensure the best possible outcomes.",
-    icon: Handshake,
-    color: "gold",
+    description: "Prioritizing our clients' goals and providing personalized attention for the best outcomes.",
+    icon: "Handshake",
+  },
+  {
+    title: "Justice",
+    description: "Committed to upholding justice and fighting for what is right in every case we handle.",
+    icon: "Scale",
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
+const iconMap: Record<string, any> = {
+  ShieldCheck: ShieldCheck,
+  Award: Award,
+  Handshake: Handshake,
+  Scale: Scale,
+  Gavel: Gavel,
+  Building2: Building2,
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  },
-};
+export interface AboutValuesProps {
+  className?: string;
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  values?:
+    | {
+        title: string;
+        description?: string | null;
+        icon?: string | null;
+      }[]
+    | null;
+}
 
-export function AboutValues({ className }: { className?: string }) {
+export function AboutValues({ className, tag, title, subtitle, values: payloadValues }: AboutValuesProps) {
+  const activeValues = payloadValues && payloadValues.length > 0
+    ? payloadValues.map((v) => ({
+        title: v.title,
+        description: v.description || "",
+        icon: v.icon && iconMap[v.icon] ? v.icon : "ShieldCheck",
+      }))
+    : defaultValues;
+
   return (
-    <section
-      className={cn(
-        "relative py-24 px-6 bg-secondary dark:bg-navy border-y border-border/50 overflow-hidden",
-        className,
-      )}
-    >
-      {/* Background Decorative Element */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-navy/5 dark:bg-white/5 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/3 pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <Award className="w-12 h-12 text-gold mx-auto mb-6" />
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4"
-          >
-            Our Core Values
-          </motion.h2>
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: 80 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="h-1 bg-gold mx-auto"
-          />
+    <section className={`relative py-16 md:py-24 px-6 bg-gray-light ${className || ""}`}>
+      <div className="max-w-[1280px] mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-12 md:mb-16">
+          <span className="inline-block text-teal-primary font-bold tracking-[0.3em] uppercase text-xs mb-4">
+            {tag || "Our Values"}
+          </span>
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-primary mb-4">
+            {title || "Core Values"}
+          </h2>
+          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
+          <p className="text-lg text-slate-secondary max-w-2xl mx-auto leading-relaxed font-sans">
+            {subtitle || "The principles that guide everything we do at Chambers of Jeet Bhatt."}
+          </p>
         </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
+        {/* Values Grid */}
+        <StaggerContainer
+          staggerDelay={0.1}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {values.map((value, index) => {
-            const Icon = value.icon;
+          {activeValues.map((value, index) => {
+            const Icon = iconMap[value.icon] || ShieldCheck;
             return (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="group relative flex flex-col items-center text-center p-8 lg:p-10 rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-border/50 hover:border-gold/30 transition-all duration-500 hover:shadow-2xl hover:shadow-gold/5"
-              >
-                <div className="absolute inset-0 bg-linear-to-b from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-                
-                <div className="relative w-20 h-20 rounded-full bg-navy/5 dark:bg-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 border border-border/50 group-hover:border-gold/50 shadow-inner">
-                  <Icon className="w-10 h-10 text-gold" />
-                </div>
-
-                <h3 className="relative text-2xl font-bold text-foreground mb-4 font-serif">
-                  {value.title}
-                </h3>
-                <p className="relative text-muted-foreground font-sans leading-relaxed">
-                  {value.description}
-                </p>
-
-                <div className="absolute bottom-4 right-4 text-gold/10 font-serif text-6xl font-bold select-none group-hover:text-gold/20 transition-colors">
-                  0{index + 1}
-                </div>
-              </motion.div>
+              <StaggerItem key={index}>
+                <Card className="bg-white border-slate-200 h-full hover:border-teal-primary/30 hover:shadow-lg transition-all duration-300 group">
+                  <CardContent className="p-6 md:p-8 text-center">
+                    <div className="w-16 h-16 rounded-lg bg-teal-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-teal-primary/20 transition-colors">
+                      <Icon className="w-8 h-8 text-teal-primary" />
+                    </div>
+                    <h3 className="font-serif text-xl font-bold text-slate-primary mb-3 group-hover:text-teal-primary transition-colors">
+                      {value.title}
+                    </h3>
+                    <p className="text-slate-secondary text-sm leading-relaxed font-sans">
+                      {value.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
             );
           })}
-        </motion.div>
+        </StaggerContainer>
       </div>
     </section>
   );
