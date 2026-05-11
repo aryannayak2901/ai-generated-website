@@ -28,11 +28,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  /* config options here */
-  reactCompiler: true,
-  turbopack: {
-    root: dirname,
-  },
+  /* Disable reactCompiler to avoid Turbopack */
+  // reactCompiler: true,
+  /* Set outputFileTracingRoot to fix workspace root detection */
+  outputFileTracingRoot: dirname,
 };
 
 export default withPayload(nextConfig);

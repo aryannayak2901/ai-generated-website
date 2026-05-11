@@ -1,74 +1,53 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MapPin } from "lucide-react";
 
-export interface ContactMapProps {
-  mapUrl?: string | null;
-  locationTitle?: string | null;
-  locationAddress?: string | null;
-}
-
-export default function ContactMap({
-  mapUrl,
-  locationTitle,
-  locationAddress,
-}: ContactMapProps) {
+export default function ContactMap() {
   return (
-    <section className="h-[500px] md:h-[700px] w-full relative bg-background dark:bg-navy overflow-hidden transition-colors duration-500">
-      {/* Google Maps Iframe with Premium Filters */}
-      <iframe
-        src={
-          mapUrl ||
-          "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.697926017772!2d72.5222!3d23.0784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e833444444445%3A0x6b74ad4a4e63480e!2sSG+Business+Hub!5e0!3m2!1sen!2sin!4v1710450000000!5m2!1sen!2sin"
-        }
-        width="100%"
-        height="100%"
-        style={{
-          border: 0,
-          filter: "grayscale(1) contrast(1.2) opacity(0.6) invert(0)",
-          mixBlendMode: "luminosity",
-        }}
-        className="dark:invert dark:opacity-40"
-        allowFullScreen
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        title="Chambers of Jeet Bhatt Office Location"
-      ></iframe>
-
-      {/* Overlay for premium feel */}
-      <div className="absolute inset-0 pointer-events-none border-y border-navy/5 dark:border-white/5 shadow-[inner_0_0_100px_rgba(0,0,0,0.1)]" />
-
-      {/* Location Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
+    <section className="py-16 md:py-24 px-6 bg-gray-light">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.5, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-white/90 dark:bg-navy/90 backdrop-blur-xl p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex items-center gap-6 border border-navy/5 dark:border-white/10 max-w-md w-[90%] sm:w-auto"
+        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="max-w-[1280px] mx-auto"
       >
-        <div className="w-16 h-16 rounded-2xl bg-gold flex items-center justify-center shadow-xl shadow-gold/20 shrink-0">
-          <MapPin className="h-8 w-8 text-navy" strokeWidth={1.5} />
-        </div>
-        <div>
-          <h4 className="font-serif text-2xl font-bold text-navy dark:text-white leading-tight mb-2 italic">
-            {locationTitle || "Main Chamber"}
-          </h4>
-          <p className="text-slate-600 dark:text-slate-400 text-sm font-medium leading-relaxed">
-            {locationAddress ? (
-              locationAddress.split("\n").map((line, i) => (
-                <span key={i}>
-                  {line}
-                  <br />
-                </span>
-              ))
-            ) : (
-              <>
-                SG Business Hub, Sola, <br />
-                SG Highway, Ahmedabad
-              </>
-            )}
-          </p>
+        <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-slate-200">
+          {/* Map Placeholder - In production, use Google Maps or similar */}
+          <div className="relative h-[400px] bg-slate-100 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-teal-primary/10 flex items-center justify-center mx-auto mb-4">
+                <svg 
+                  className="w-8 h-8 text-teal-primary" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M9 20l-5.5-5.5a1.5 1.5 0 010-2l11-11a1.5 1.5 0 012 2L11 18.5 4.5 12" 
+                  />
+                </svg>
+              </div>
+              <p className="text-slate-primary font-semibold mb-2">Interactive Map</p>
+              <p className="text-slate-secondary text-sm">
+                Gandhinagar, Gujarat, India
+              </p>
+              <a 
+                href="https://maps.google.com/?q=Gandhinagar,Gujarat,India" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mt-4 text-teal-primary hover:text-teal-light transition-colors font-semibold text-sm"
+              >
+                Open in Google Maps
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
       </motion.div>
     </section>

@@ -11,45 +11,61 @@ interface PageProps {
   }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'pages',
-    where: {
-      slug: {
-        equals: slug,
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-  })
+    })
 
-  const page = docs[0] as unknown as Page
+    const page = docs[0] as unknown as Page
 
-  if (!page) {
-    return {
-      title: 'Page Not Found',
+    if (!page) {
+      return {
+        title: 'Page Not Found',
+      }
     }
-  }
 
-  return {
-    title: `${page.title} | Chambers of Jeet Bhatt`,
-    description: `Expert legal services for ${page.title}.`,
+    return {
+      title: `${page.title} | Chambers of Jeet Bhatt`,
+      description: `Expert legal services for ${page.title}.`,
+    }
+  } catch (error) {
+    console.error("Error generating metadata:", error)
+    return {
+      title: 'Chambers of Jeet Bhatt',
+    }
   }
 }
 
 export default async function DynamicPage({ params }: PageProps) {
   const { slug } = await params
-  const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'pages',
-    where: {
-      slug: {
-        equals: slug,
+  
+  let page: Page | null = null
+  
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-  })
+    })
 
-  const page = docs[0] as unknown as Page
+    page = (docs[0] as unknown as Page) || null
+  } catch (error) {
+    console.error("Error fetching page:", error)
+  }
 
   if (!page) {
     return notFound()
@@ -63,13 +79,5 @@ export default async function DynamicPage({ params }: PageProps) {
 }
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'pages',
-    limit: 100,
-  })
-
-  return docs.map((doc) => ({
-    slug: doc.slug,
-  }))
+  return []
 }

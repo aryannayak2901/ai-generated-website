@@ -43,6 +43,12 @@ const config = {
           800: "#075985",
           900: "#0c4a6e",
         },
+        gold: {
+          accent: "#d4af37",
+        },
+        navy: {
+          primary: "#0f1729",
+        },
         semantic: {
           success: "#10b981",
           warning: "#f59e0b",

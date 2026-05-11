@@ -18,6 +18,27 @@ export const metadata: Metadata = {
   },
 };
 
+interface OfficeHeroBlock {
+  blockType: "officeHero";
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+}
+
+interface OfficeSelectorBlock {
+  blockType: "officeSelector";
+}
+
+interface MapSectionBlock {
+  blockType: "mapSection";
+}
+
+interface OfficeCtaBlock {
+  blockType: "officeCta";
+}
+
+type LayoutBlock = OfficeHeroBlock | OfficeSelectorBlock | MapSectionBlock | OfficeCtaBlock;
+
 export default async function OfficesPage() {
   const payload = await getPayload({ config: configPromise });
   const { docs } = await payload.find({
@@ -35,38 +56,35 @@ export default async function OfficesPage() {
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
       {page?.layout?.map((block, index: number) => {
-        if ('blockType' in block && block.blockType === "officeHero") return (
-          <div key={index} className="max-w-5xl mx-auto text-center flex flex-col items-center animate-fade-in-up">
-            <div className="inline-flex items-center gap-3 px-6 py-2.5 mb-10 text-[10px] font-bold tracking-[0.3em] uppercase rounded-full bg-gold/10 text-gold border border-gold/20 backdrop-blur-md shadow-lg shadow-gold/5 animate-scale-in [animation-delay:200ms]">
-              <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-              {(block as any).tag || "Distinguished Chambers"}
+        const layoutBlock = block as LayoutBlock;
+        if (layoutBlock.blockType === "officeHero") {
+          const heroBlock = layoutBlock as OfficeHeroBlock;
+          return (
+            <div key={index} className="max-w-5xl mx-auto text-center flex flex-col items-center">
+              <div className="inline-flex items-center gap-3 px-6 py-2.5 mb-10 text-[10px] font-bold tracking-[0.3em] uppercase rounded-full bg-teal-primary/10 text-teal-primary border border-teal-primary/20 backdrop-blur-md shadow-lg shadow-teal-primary/5">
+                <span className="w-2 h-2 rounded-full bg-teal-primary animate-pulse" />
+                {heroBlock.tag || "Distinguished Chambers"}
+              </div>
+              
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-slate-primary mb-10 leading-[0.95] tracking-tight">
+                {heroBlock.title ? heroBlock.title : (
+                  <>Our <span className="relative inline-block">
+                    <span className="text-teal-primary italic font-medium">Chambers</span>
+                  </span></>
+                )}
+              </h1>
+              
+              <p className="text-lg md:text-xl text-slate-secondary font-sans leading-relaxed max-w-3xl mx-auto">
+                {heroBlock.subtitle ? heroBlock.subtitle : (
+                  <>Strategically located at the heart of Gujarat&apos;s legal landscape, providing <span className="text-slate-primary font-medium"> unmatched expertise</span> and accessibility.</>
+                )}
+              </p>
             </div>
-            
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif text-white mb-10 leading-[0.95] tracking-tight animate-fade-in-up [animation-delay:400ms]">
-              {(block as any).title ? (block as any).title : (
-                <>Our <span className="relative inline-block">
-                  <span className="text-gold italic font-medium">Chambers</span>
-                <svg 
-                  className="absolute -bottom-4 left-0 w-full h-4 text-gold/40 animate-fade-in [animation-delay:1000ms]" 
-                  viewBox="0 0 100 10" 
-                  preserveAspectRatio="none"
-                >
-                  <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </span></>
-              )}
-            </h1>
-            
-            <p className="text-xl md:text-3xl text-slate-300 font-sans leading-relaxed max-w-3xl font-light mx-auto animate-fade-in-up [animation-delay:600ms]">
-              {(block as any).subtitle ? (block as any).subtitle : (
-                <>Strategically located at the heart of Gujarat&apos;s legal landscape, providing <span className="text-white font-medium"> unmatched expertise</span> and accessibility.</>
-              )}
-            </p>
-          </div>
-        );
-        if ('blockType' in block && block.blockType === "officeSelector") return <OfficeSelector key={index} {...block as any} />;
-        if ('blockType' in block && block.blockType === "mapSection") return <MapSection key={index} {...block as any} />;
-        if ('blockType' in block && block.blockType === "officeCta") return <OfficeCTA key={index} {...block as any} />;
+          );
+        }
+        if (layoutBlock.blockType === "officeSelector") return <OfficeSelector key={index} />;
+        if (layoutBlock.blockType === "mapSection") return <MapSection key={index} />;
+        if (layoutBlock.blockType === "officeCta") return <OfficeCTA key={index} />;
         return null;
       })}
 

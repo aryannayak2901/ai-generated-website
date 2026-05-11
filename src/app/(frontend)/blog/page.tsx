@@ -13,46 +13,54 @@ const normalizePayloadPost = (post: Post): BlogPost => {
     id: post.id,
     slug: post.slug || "",
     title: post.title,
-    summary: post.excerpt || "",
+    summary: (post as any).excerpt || "",
     content: post.content as any, // BlogModal handles Lexical or string
-    category: post.category,
-    date: post.publishedAt 
-      ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    category: (post as any).category || "General Legal",
+    date: (post as any).publishedAt 
+      ? new Date((post as any).publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
       : "Recent Update",
-    image: (post.featuredImage as Media)?.url || "/placeholder-blog.jpg",
-    author: post.author || "Jeet Bhatt",
-    readTime: post.readTime || "5 min read",
-    externalLink: post.externalLink || undefined,
+    image: ((post as any).featuredImage as Media)?.url || "/placeholder-blog.jpg",
+    author: (post as any).author || "Jeet Bhatt",
+    readTime: (post as any).readTime || "5 min read",
   };
 };
 
 export default async function BlogPage() {
-  const payload = await getPayload({ config: configPromise });
-  
-  // Fetch page layout
-  const pageRes = await payload.find({
-    collection: 'pages',
-    where: { slug: { equals: 'blog' } },
-    depth: 2,
-  });
-  const pageData = pageRes.docs[0] as Page | undefined;
+  let postsToDisplay: BlogPost[] = BLOG_POSTS;
+  let categories = Array.from(new Set(["All", ...BLOG_POSTS.map(post => post.category)]));
+  let pageData: Page | undefined = undefined;
 
-  // Fetch published posts
-  const postsRes = await payload.find({
-    collection: 'posts',
-    where: { status: { equals: 'published' } },
-    sort: '-publishedAt',
-    depth: 1,
-    limit: 100,
-  });
+  try {
+    const payload = await getPayload({ config: configPromise });
   
-  const cmsPosts = postsRes.docs ? postsRes.docs.map(normalizePayloadPost) : [];
-  
-  // Use CMS posts if available, fallback to static BLOG_POSTS
-  const postsToDisplay = cmsPosts.length > 0 ? cmsPosts : BLOG_POSTS;
+    // Fetch page layout
+    const pageRes = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'blog' } },
+      depth: 2,
+    });
+    pageData = pageRes.docs[0] as unknown as Page | undefined;
 
-  // Extract unique categories
-  const categories = Array.from(new Set(["All", ...new Set(postsToDisplay.map(post => post.category))]));
+    // Fetch published posts
+    const postsRes = await payload.find({
+      collection: 'posts',
+      where: { status: { equals: 'published' } },
+      sort: '-publishedAt',
+      depth: 1,
+      limit: 100,
+    });
+  
+    const cmsPosts = postsRes.docs && Array.isArray(postsRes.docs) ? postsRes.docs.map(normalizePayloadPost) : [];
+  
+    // Use CMS posts if available, fallback to static BLOG_POSTS
+    if (cmsPosts.length > 0) {
+      postsToDisplay = cmsPosts;
+      categories = Array.from(new Set(["All", ...cmsPosts.map(post => post.category)]));
+    }
+  } catch (error) {
+    console.error("Error fetching from Payload:", error);
+    // Use static data as fallback
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background transition-colors duration-500">

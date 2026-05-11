@@ -2,6 +2,8 @@ import { getPayload } from "payload";
 import configPromise from "@/payload.config";
 import { HeroSection } from "@/components/home/HeroSection";
 import { PracticeAreasBento } from "@/components/home/PracticeAreasBento";
+import { TeamPreview } from "@/components/home/TeamPreview";
+import { CTASection } from "@/components/home/CTASection";
 import { AwardsMarquee } from "@/components/home/AwardsMarquee";
 import { RenderBlocks } from "@/components/RenderBlocks";
 import type { Page } from "@/payload-types";
@@ -27,6 +29,8 @@ export default async function Home() {
         <>
           <HeroSection />
           <PracticeAreasBento />
+          <TeamPreview />
+          <CTASection />
           <AwardsMarquee />
         </>
       )}
