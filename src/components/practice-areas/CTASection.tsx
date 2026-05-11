@@ -15,26 +15,26 @@ export interface CTASectionProps {
   phoneNumber?: string | null;
 }
 
-export function CTASection({ 
-  className, 
-  badge, 
-  title, 
-  subtitle, 
-  ctaText, 
+export function CTASection({
+  className,
+  badge,
+  title,
+  subtitle,
+  ctaText,
   ctaLink,
-  phoneNumber 
+  phoneNumber,
 }: CTASectionProps) {
   return (
     <section
-      className={`relative py-16 md:py-24 px-6 bg-charcoal-primary overflow-hidden ${className || ""}`}
+      className={`relative py-16 md:py-24 px-6 bg-charcoal-primary overflow-hidden w-full ${className || ""}`}
     >
       {/* Gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-charcoal-primary via-charcoal-primary to-slate-dark" />
-      
+
       {/* Decorative element */}
       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-teal-primary/5 rounded-full blur-3xl pointer-events-none" />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -44,18 +44,25 @@ export function CTASection({
         <span className="text-teal-primary font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
           {badge || "Take the next step"}
         </span>
-        
+
         <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight leading-tight">
-          {title ? title : (
-            <>Ready to Discuss Your <br className="hidden md:block" /> 
-            <span className="text-teal-primary italic font-medium">Legal Strategy?</span></>
+          {title ? (
+            title
+          ) : (
+            <>
+              Ready to Discuss Your <br className="hidden md:block" />
+              <span className="text-teal-primary italic font-medium">
+                Legal Strategy?
+              </span>
+            </>
           )}
         </h2>
-        
+
         <p className="text-lg md:text-xl text-slate-secondary max-w-2xl mb-10 mx-auto font-sans leading-relaxed">
-          {subtitle || "Our experienced attorneys are ready to help you navigate your legal challenges. Contact us today for a strategic consultation focused on your success."}
+          {subtitle ||
+            "Our experienced attorneys are ready to help you navigate your legal challenges. Contact us today for a strategic consultation focused on your success."}
         </p>
-        
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button
             asChild

@@ -1,4 +1,5 @@
 import React from 'react'
+import { HeroBlockRenderer } from '@/components/blocks/HeroBlockRenderer'
 import { HeroSection } from '@/components/home/HeroSection'
 import { PracticeAreasBento } from '@/components/home/PracticeAreasBento'
 import { AwardsMarquee } from '@/components/home/AwardsMarquee'
@@ -25,6 +26,7 @@ import type { Page } from '@/payload-types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const blockComponents: Record<string, React.ComponentType<any>> = {
+  dynamicHero: HeroBlockRenderer,
   homeHero: HeroSection,
   practiceAreas: PracticeAreasBento,
   awardsMarquee: AwardsMarquee,

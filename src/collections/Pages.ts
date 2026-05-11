@@ -10,6 +10,7 @@ import { PracticeAreasHero, PracticeAreasGrid, PracticeAreasCta } from '../block
 import { ContactHero, ContactInfo, ContactFormBlock, ContactMap } from '../blocks/ContactBlocks'
 import { BlogHero, BlogFiltersBlock, Newsletter } from '../blocks/BlogBlocks'
 import { OfficeHero, OfficeSelector, MapSection, OfficeCTA } from '../blocks/OfficeBlocks'
+import { HeroBlock } from '../blocks/HeroBlock'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -40,6 +41,7 @@ export const Pages: CollectionConfig = {
       name: 'layout',
       type: 'blocks',
       blocks: [
+        HeroBlock,
         HomeHero,
         PracticeAreas,
         AwardsMarquee,
