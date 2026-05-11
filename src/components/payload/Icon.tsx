@@ -1,24 +1,25 @@
-// src/components/payload/Icon.tsx
 import React from 'react'
 
 export const Icon: React.FC = () => {
   return (
     <div 
       style={{ 
-        width: '28px', 
-        height: '28px', 
-        backgroundColor: '#d4af37', 
+        width: '32px', 
+        height: '32px', 
+        backgroundColor: '#C5A059', 
         borderRadius: '4px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#0f1729',
+        color: '#0A1128',
         fontWeight: 'bold',
         fontFamily: "'Playfair Display', serif",
-        fontSize: '14px'
+        fontSize: '1rem'
       }}
     >
       JB
     </div>
   )
 }
+
+export default Icon
