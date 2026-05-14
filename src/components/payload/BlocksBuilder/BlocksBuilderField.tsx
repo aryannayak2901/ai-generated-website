@@ -1,166 +1,243 @@
-'use client'
+'use client';
 
-import React, { useRef, useCallback } from 'react'
-import {
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  closestCenter,
-} from '@dnd-kit/core'
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { useDocumentInfo } from '@payloadcms/ui'
-
-import { useBlocksBuilder } from './hooks/useBlocksBuilder'
-import { BlockLibraryPanel } from './BlockLibraryPanel'
-import { CanvasPanel } from './CanvasPanel'
-import { EditPanel } from './EditPanel'
-import { PreviewPanel, PreviewPanelHandle } from './PreviewPanel'
-import { blockMeta } from './constants/blockMeta'
-
-import './styles.css'
+import React, { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, arrayMove } from '@dnd-kit/sortable';
+import { useBlocksBuilder } from './hooks/useBlocksBuilder';
+import { usePreviewRefresh } from './hooks/usePreviewRefresh';
+import { BlockLibraryPanel } from './BlockLibraryPanel';
+import { CanvasPanel } from './CanvasPanel';
+import { EditPanel } from './EditPanel';
+import { PreviewPanel } from './PreviewPanel';
+import { blockMeta } from './constants/blockMeta';
+import './styles.css';
 
 interface BlocksBuilderFieldProps {
-  path: string
+  path: string;
+  label: string;
+  customHeader?: React.ReactNode;
+  id?: string | null;
+  collectionSlug?: string;
 }
 
-export function BlocksBuilderField({ path }: BlocksBuilderFieldProps) {
-  const { id: docId, slug } = useDocumentInfo()
-
+export function BlocksBuilderField({ path, label, customHeader, id: propId, collectionSlug: propCollectionSlug }: BlocksBuilderFieldProps) {
   const {
     blocks,
     selectedBlockId,
-    selectedBlock,
     viewport,
     search,
     addBlock,
     removeBlock,
-    reorderBlocks,
-    moveUp,
-    moveDown,
-    selectBlock,
+    moveBlock,
     updateBlock,
+    selectBlock,
     setViewport,
     setSearch,
-  } = useBlocksBuilder({ path })
+    getSelectedBlock,
+  } = useBlocksBuilder(path);
 
-  const previewRef = useRef<PreviewPanelHandle>(null)
+  const { refresh, setIframeRef } = usePreviewRefresh();
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
 
-  /** After any mutation, debounce-refresh the preview */
-  const refreshPreview = useCallback(() => {
-    previewRef.current?.refresh()
-  }, [])
-
-  // ─── DnD sensors ──────────────────────────────────────────────────────
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  )
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
 
-  const [activeLibraryBlockType, setActiveLibraryBlockType] = React.useState<string | null>(null)
+  const selectedBlock = getSelectedBlock();
 
-  function handleDragStart(event: DragStartEvent) {
-    const data = event.active.data.current
-    if (data?.source === 'library') {
-      setActiveLibraryBlockType(data.blockType as string)
+  // Refresh preview when blocks change
+  useEffect(() => {
+    if (blocks.length > 0) {
+      refresh(blocks);
     }
-  }
+  }, [blocks, refresh]);
 
-  function handleDragEnd(event: DragEndEvent) {
-    setActiveLibraryBlockType(null)
-    const { active, over } = event
-    if (!over) return
+  // Handle escape to exit fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
 
-    const activeData = active.data.current
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
 
-    // Library chip dropped onto the canvas drop zone
-    if (activeData?.source === 'library' && over.id === 'canvas-drop') {
-      addBlock(activeData.blockType as string)
-      refreshPreview()
-      return
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (!over) {
+      setActiveId(null);
+      return;
     }
 
-    // Canvas reorder
-    if (!activeData?.source || activeData?.source !== 'library') {
-      const oldIndex = blocks.findIndex((b) => b.id === active.id)
-      const newIndex = blocks.findIndex((b) => b.id === over.id)
-      if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-        reorderBlocks(oldIndex, newIndex)
-        refreshPreview()
+    // Handle adding new block from library
+    if (active.id && over.id === 'canvas-drop' && active.data.current?.type === 'library-block') {
+      const blockType = active.id as string;
+      const meta = blockMeta[blockType];
+      
+      if (meta) {
+        addBlock(blockType, meta.defaultValues);
       }
     }
-  }
+    
+    // Handle reordering existing blocks
+    if (active.id && over.id && active.id !== over.id && active.data.current?.type === 'canvas-block') {
+      const oldIndex = blocks.findIndex(b => b.id === active.id);
+      const newIndex = blocks.findIndex(b => b.id === over.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        moveBlock(oldIndex, newIndex);
+      }
+    }
 
-  // ─── Derived state ────────────────────────────────────────────────────
-  const editPanelOpen = selectedBlockId !== null
+    setActiveId(null);
+  };
 
-  // Page slug comes from the document info; fall back to a reasonable default
-  const pageSlug = (docId as string) ? (slug as string) ?? '' : ''
-  const previewSecret = process.env.NEXT_PUBLIC_PREVIEW_SECRET ?? ''
+  const handleEditBlock = (blockId: string) => {
+    selectBlock(blockId);
+  };
+
+  const handleSaveBlock = (blockId: string, updates: any) => {
+    updateBlock(blockId, updates);
+    selectBlock(null);
+    // refresh() is handled by useEffect when blocks change
+  };
+
+  const handleDeleteBlock = (blockId: string) => {
+    removeBlock(blockId);
+  };
+
+  const handleMoveBlock = (blockId: string, direction: 'up' | 'down') => {
+    const currentIndex = blocks.findIndex(b => b.id === blockId);
+    if (currentIndex === -1) return;
+
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex >= 0 && newIndex < blocks.length) {
+      moveBlock(currentIndex, newIndex);
+    }
+  };
 
   return (
-    <div className="bb-root">
-      {/* Titlebar */}
-      <div className="bb-titlebar">
-        <span className="bb-titlebar__logo">⚖</span>
-        <span className="bb-titlebar__title">Page Builder</span>
-        <span className="bb-titlebar__breadcrumb">{pageSlug || 'Unsaved page'}</span>
-      </div>
-
-      {/* Main studio area */}
+    <motion.div 
+      layout
+      className={`bb-root ${isFullscreen ? 'bb-root--fullscreen' : ''} ${customHeader ? 'bb-root--studio' : ''}`}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    >
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className={`bb-studio${editPanelOpen ? ' bb-studio--editing' : ''}`}>
-          {/* Panel 1 — Library */}
-          <BlockLibraryPanel search={search} onSearchChange={setSearch} />
-
-          {/* Panel 2 — Canvas */}
-          <CanvasPanel
-            blocks={blocks}
-            selectedBlockId={selectedBlockId}
-            viewport={viewport}
-            onEdit={(id) => selectBlock(id)}
-            onMoveUp={(id) => { moveUp(id); refreshPreview() }}
-            onMoveDown={(id) => { moveDown(id); refreshPreview() }}
-            onDelete={(id) => { removeBlock(id); refreshPreview() }}
-            onViewportChange={setViewport}
-          />
-
-          {/* Panel 3 — Edit (slide-in) */}
-          <EditPanel
-            block={selectedBlock}
-            isOpen={editPanelOpen}
-            onClose={() => selectBlock(null)}
-            onSave={(id, data) => { updateBlock(id, data); refreshPreview() }}
-          />
-
-          {/* Panel 4 — Live Preview */}
-          <PreviewPanel
-            ref={previewRef}
-            pageSlug={pageSlug}
-            viewport={viewport}
-            previewSecret={previewSecret}
-          />
+        <div className="bb-titlebar">
+          {customHeader ? customHeader : (
+            <>
+              <div className="bb-titlebar__logo">🏛️</div>
+              <div className="bb-titlebar__title">CHAMBERS STUDIO</div>
+            </>
+          )}
+          <div className="bb-titlebar__breadcrumb">
+            {blocks.length} block{blocks.length !== 1 ? 's' : ''} in layout
+          </div>
+          <button 
+            type="button"
+            className="bb-titlebar__fullscreen-btn"
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreen ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+            )}
+          </button>
         </div>
 
-        {/* Drag overlay — ghost chip shown while dragging from library */}
+        <div className={`bb-studio ${selectedBlockId ? 'bb-studio--editing' : ''}`}>
+          <div className="bb-library">
+            <BlockLibraryPanel
+              search={search}
+              onSearchChange={setSearch}
+            />
+          </div>
+
+          <div className="bb-canvas">
+            <CanvasPanel
+              blocks={blocks}
+              selectedBlockId={selectedBlockId}
+              viewport={viewport}
+              onEditBlock={handleEditBlock}
+              onDeleteBlock={handleDeleteBlock}
+              onMoveBlock={handleMoveBlock}
+              onViewportChange={setViewport}
+            />
+          </div>
+
+          <AnimatePresence mode="wait">
+            {selectedBlockId && selectedBlock ? (
+              <motion.div 
+                key="edit-panel"
+                style={{ 
+                  width: 340, 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  flexShrink: 0,
+                  background: 'var(--bb-navy-mid)',
+                  borderRight: '1px solid var(--bb-border)',
+                  overflow: 'hidden',
+                  zIndex: 10
+                }}
+                initial={{ x: 340, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 340, opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              >
+                <EditPanel
+                  block={selectedBlock}
+                  onSave={handleSaveBlock}
+                  onCancel={() => selectBlock(null)}
+                />
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+
+          <div className="bb-preview">
+            <PreviewPanel
+              viewport={viewport}
+              onViewportChange={setViewport}
+              onIframeRef={setIframeRef}
+              id={propId}
+              collectionSlug={propCollectionSlug}
+            />
+          </div>
+        </div>
+
         <DragOverlay>
-          {activeLibraryBlockType ? (
-            <div className="bb-drag-ghost" style={{ pointerEvents: 'none' }}>
-              <span>{blockMeta[activeLibraryBlockType]?.icon}</span>
-              <span>{blockMeta[activeLibraryBlockType]?.label}</span>
+          {activeId && (
+            <div className="bb-drag-ghost">
+              <span style={{ fontSize: '14px' }}>{blockMeta[activeId]?.icon || '🧱'}</span>
+              <span>{blockMeta[activeId]?.label || 'Block'}</span>
             </div>
-          ) : null}
+          )}
         </DragOverlay>
       </DndContext>
-    </div>
-  )
+    </motion.div>
+  );
 }

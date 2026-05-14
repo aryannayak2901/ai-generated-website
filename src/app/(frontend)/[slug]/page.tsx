@@ -1,7 +1,9 @@
 import { getPayload } from 'payload'
 import configPromise from '@/payload.config'
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import { RenderBlocks } from '@/components/RenderBlocks'
+import { LivePreviewProvider } from '@/components/LivePreviewProvider'
 import { Metadata } from 'next'
 import type { Page } from '@/payload-types'
 
@@ -48,13 +50,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicPage({ params }: PageProps) {
   const { slug } = await params
-  
+  const { isEnabled: isDraft } = await draftMode()
+
   let page: Page | null = null
-  
+
   try {
     const payload = await getPayload({ config: configPromise })
     const { docs } = await payload.find({
       collection: 'pages',
+      draft: isDraft,
       where: {
         slug: {
           equals: slug,
@@ -64,7 +68,7 @@ export default async function DynamicPage({ params }: PageProps) {
 
     page = (docs[0] as unknown as Page) || null
   } catch (error) {
-    console.error("Error fetching page:", error)
+    console.error('Error fetching page:', error)
   }
 
   if (!page) {
@@ -73,7 +77,11 @@ export default async function DynamicPage({ params }: PageProps) {
 
   return (
     <div className="flex min-h-screen flex-col w-full">
-      <RenderBlocks blocks={page.layout || []} />
+      {isDraft ? (
+        <LivePreviewProvider initialBlocks={page.layout || []} />
+      ) : (
+        <RenderBlocks blocks={page.layout || []} />
+      )}
     </div>
   )
 }

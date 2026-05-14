@@ -1,238 +1,116 @@
-'use client'
+'use client';
 
-import { useCallback, useMemo, useReducer } from 'react'
-import { useField } from '@payloadcms/ui'
-import { arrayMove } from '@dnd-kit/sortable'
-import { blockMeta } from '../constants/blockMeta'
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { useCallback, useState, useEffect, useRef } from 'react';
+import { useField, useDocumentInfo } from '@payloadcms/ui';
 
 export interface BlockInstance {
-  id: string
-  blockType: string
-  blockName?: string
-  [key: string]: unknown
+  id: string;
+  blockType: string;
+  [key: string]: any;
 }
 
-export type Viewport = 'desktop' | 'mobile'
+export function useBlocksBuilder(fieldPath: string) {
+  const { value, setValue } = useField<BlockInstance[]>({ path: fieldPath, validate: () => true });
+  const { doc } = useDocumentInfo();
 
-interface BuilderState {
-  blocks: BlockInstance[]
-  selectedBlockId: string | null
-  viewport: Viewport
-  search: string
-}
+  // Local state for the builder
+  const [blocks, setBlocks] = useState<BlockInstance[]>([]);
+  const hasInitialized = useRef(false);
 
-// ─── Actions ──────────────────────────────────────────────────────────────────
+  // Sync from Payload value/doc to local state (One-way)
+  // CRITICAL: We do NOT include 'blocks' in the dependency array to prevent 
+  // the "revert to previous" bug when local state updates.
+  useEffect(() => {
+    const valueBlocks = Array.isArray(value) ? value : [];
+    const docBlocks = (doc && Array.isArray(doc[fieldPath])) ? doc[fieldPath] as BlockInstance[] : [];
+    
+    // Choose the best source of truth on load
+    // We prefer 'value' if it has data, otherwise fallback to 'doc'
+    const incomingBlocks = valueBlocks.length > 0 ? valueBlocks : docBlocks;
 
-type Action =
-  | { type: 'SET_BLOCKS'; payload: BlockInstance[] }
-  | { type: 'ADD_BLOCK'; payload: { blockType: string } }
-  | { type: 'REMOVE_BLOCK'; payload: { id: string } }
-  | { type: 'REORDER_BLOCKS'; payload: { oldIndex: number; newIndex: number } }
-  | { type: 'MOVE_UP'; payload: { id: string } }
-  | { type: 'MOVE_DOWN'; payload: { id: string } }
-  | { type: 'SELECT_BLOCK'; payload: { id: string | null } }
-  | { type: 'UPDATE_BLOCK'; payload: { id: string; data: Partial<BlockInstance> } }
-  | { type: 'SET_VIEWPORT'; payload: Viewport }
-  | { type: 'SET_SEARCH'; payload: string }
+    if (incomingBlocks.length > 0) {
+      // Only sync if we haven't initialized yet OR if the incoming data is different
+      // from what we currently have (using a local check, not a dependency)
+      const currentBlocksJson = JSON.stringify(blocks);
+      const incomingBlocksJson = JSON.stringify(incomingBlocks);
 
-// ─── Reducer ──────────────────────────────────────────────────────────────────
-
-function generateId(): string {
-  return `block_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
-}
-
-function reducer(state: BuilderState, action: Action): BuilderState {
-  switch (action.type) {
-    case 'SET_BLOCKS':
-      return { ...state, blocks: action.payload }
-
-    case 'ADD_BLOCK': {
-      const meta = blockMeta[action.payload.blockType]
-      const newBlock: BlockInstance = {
-        id: generateId(),
-        ...(meta?.defaultValues ?? {}),
-        blockType: action.payload.blockType,
+      if (incomingBlocksJson !== currentBlocksJson) {
+        setBlocks(incomingBlocks);
       }
-      return { ...state, blocks: [...state.blocks, newBlock] }
-    }
-
-    case 'REMOVE_BLOCK':
-      return {
-        ...state,
-        blocks: state.blocks.filter((b) => b.id !== action.payload.id),
-        selectedBlockId:
-          state.selectedBlockId === action.payload.id ? null : state.selectedBlockId,
+      
+      if (valueBlocks.length > 0) {
+        hasInitialized.current = true;
       }
-
-    case 'REORDER_BLOCKS': {
-      const { oldIndex, newIndex } = action.payload
-      return { ...state, blocks: arrayMove(state.blocks, oldIndex, newIndex) }
     }
+  }, [value, doc, fieldPath]); // Removed 'blocks' to fix the revert bug
 
-    case 'MOVE_UP': {
-      const idx = state.blocks.findIndex((b) => b.id === action.payload.id)
-      if (idx <= 0) return state
-      return { ...state, blocks: arrayMove(state.blocks, idx, idx - 1) }
+  // Local UI state (non-persisted)
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [viewport, setViewport] = useState<'desktop' | 'mobile'>('desktop');
+  const [search, setSearch] = useState('');
+
+  const generateBlockId = useCallback(() => {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }, []);
+
+  const addBlock = useCallback((blockType: string, defaultValues: any) => {
+    const newBlock: BlockInstance = {
+      id: generateBlockId(),
+      blockType,
+      ...defaultValues,
+    };
+
+    const newBlocks = [...blocks, newBlock];
+    setBlocks(newBlocks);
+    setValue(newBlocks);
+    return newBlock.id;
+  }, [blocks, generateBlockId, setValue]);
+
+  const removeBlock = useCallback((blockId: string) => {
+    const newBlocks = blocks.filter(b => b.id !== blockId);
+    setBlocks(newBlocks);
+    setValue(newBlocks);
+    if (selectedBlockId === blockId) {
+      setSelectedBlockId(null);
     }
+  }, [blocks, selectedBlockId, setValue]);
 
-    case 'MOVE_DOWN': {
-      const idx = state.blocks.findIndex((b) => b.id === action.payload.id)
-      if (idx < 0 || idx >= state.blocks.length - 1) return state
-      return { ...state, blocks: arrayMove(state.blocks, idx, idx + 1) }
-    }
+  const moveBlock = useCallback((fromIndex: number, toIndex: number) => {
+    const newBlocks = [...blocks];
+    const [movedBlock] = newBlocks.splice(fromIndex, 1);
+    newBlocks.splice(toIndex, 0, movedBlock);
+    setBlocks(newBlocks);
+    setValue(newBlocks);
+  }, [blocks, setValue]);
 
-    case 'SELECT_BLOCK':
-      return { ...state, selectedBlockId: action.payload.id }
+  const updateBlock = useCallback((blockId: string, updates: Partial<BlockInstance>) => {
+    const newBlocks = blocks.map(b =>
+      b.id === blockId ? { ...b, ...updates } : b
+    );
+    setBlocks(newBlocks);
+    setValue(newBlocks);
+  }, [blocks, setValue]);
 
-    case 'UPDATE_BLOCK':
-      return {
-        ...state,
-        blocks: state.blocks.map((b) =>
-          b.id === action.payload.id ? { ...b, ...action.payload.data } : b,
-        ),
-      }
+  const selectBlock = useCallback((blockId: string | null) => {
+    setSelectedBlockId(blockId);
+  }, []);
 
-    case 'SET_VIEWPORT':
-      return { ...state, viewport: action.payload }
-
-    case 'SET_SEARCH':
-      return { ...state, search: action.payload }
-
-    default:
-      return state
-  }
-}
-
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-
-interface UseBlocksBuilderOptions {
-  /** The dot-notation path to the `layout` field in Payload's form context */
-  path: string
-}
-
-export function useBlocksBuilder({ path }: UseBlocksBuilderOptions) {
-  const { value: rawValue, setValue } = useField<BlockInstance[]>({ path })
-
-  const initial = useMemo<BuilderState>(
-    () => ({
-      blocks: Array.isArray(rawValue) ? (rawValue as BlockInstance[]) : [],
-      selectedBlockId: null,
-      viewport: 'desktop',
-      search: '',
-    }),
-    // rawValue intentionally omitted — we only seed from Payload once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )
-
-  const [state, dispatch] = useReducer(reducer, initial)
-
-  /** Sync updated blocks back to Payload's form state */
-  const syncToPayload = useCallback(
-    (blocks: BlockInstance[]) => {
-      setValue(blocks)
-    },
-    [setValue],
-  )
-
-  // ─── Actions ──────────────────────────────────────────────────────────
-
-  const addBlock = useCallback(
-    (blockType: string) => {
-      dispatch({ type: 'ADD_BLOCK', payload: { blockType } })
-      // Derive new state inline to sync immediately
-      const meta = blockMeta[blockType]
-      const newBlock: BlockInstance = {
-        id: generateId(),
-        ...(meta?.defaultValues ?? {}),
-        blockType,
-      }
-      const updated = [...state.blocks, newBlock]
-      syncToPayload(updated)
-    },
-    [state.blocks, syncToPayload],
-  )
-
-  const removeBlock = useCallback(
-    (id: string) => {
-      dispatch({ type: 'REMOVE_BLOCK', payload: { id } })
-      syncToPayload(state.blocks.filter((b) => b.id !== id))
-    },
-    [state.blocks, syncToPayload],
-  )
-
-  const reorderBlocks = useCallback(
-    (oldIndex: number, newIndex: number) => {
-      dispatch({ type: 'REORDER_BLOCKS', payload: { oldIndex, newIndex } })
-      syncToPayload(arrayMove(state.blocks, oldIndex, newIndex))
-    },
-    [state.blocks, syncToPayload],
-  )
-
-  const moveUp = useCallback(
-    (id: string) => {
-      const idx = state.blocks.findIndex((b) => b.id === id)
-      if (idx <= 0) return
-      dispatch({ type: 'MOVE_UP', payload: { id } })
-      syncToPayload(arrayMove(state.blocks, idx, idx - 1))
-    },
-    [state.blocks, syncToPayload],
-  )
-
-  const moveDown = useCallback(
-    (id: string) => {
-      const idx = state.blocks.findIndex((b) => b.id === id)
-      if (idx < 0 || idx >= state.blocks.length - 1) return
-      dispatch({ type: 'MOVE_DOWN', payload: { id } })
-      syncToPayload(arrayMove(state.blocks, idx, idx + 1))
-    },
-    [state.blocks, syncToPayload],
-  )
-
-  const selectBlock = useCallback((id: string | null) => {
-    dispatch({ type: 'SELECT_BLOCK', payload: { id } })
-  }, [])
-
-  const updateBlock = useCallback(
-    (id: string, data: Partial<BlockInstance>) => {
-      dispatch({ type: 'UPDATE_BLOCK', payload: { id, data } })
-      const updated = state.blocks.map((b) => (b.id === id ? { ...b, ...data } : b))
-      syncToPayload(updated)
-    },
-    [state.blocks, syncToPayload],
-  )
-
-  const setViewport = useCallback((viewport: Viewport) => {
-    dispatch({ type: 'SET_VIEWPORT', payload: viewport })
-  }, [])
-
-  const setSearch = useCallback((search: string) => {
-    dispatch({ type: 'SET_SEARCH', payload: search })
-  }, [])
-
-  const selectedBlock = useMemo(
-    () => state.blocks.find((b) => b.id === state.selectedBlockId) ?? null,
-    [state.blocks, state.selectedBlockId],
-  )
+  const getSelectedBlock = useCallback(() => {
+    return blocks.find(b => b.id === selectedBlockId) || null;
+  }, [blocks, selectedBlockId]);
 
   return {
-    // State
-    blocks: state.blocks,
-    selectedBlockId: state.selectedBlockId,
-    selectedBlock,
-    viewport: state.viewport,
-    search: state.search,
-    // Actions
+    blocks,
+    selectedBlockId,
+    viewport,
+    search,
     addBlock,
     removeBlock,
-    reorderBlocks,
-    moveUp,
-    moveDown,
-    selectBlock,
+    moveBlock,
     updateBlock,
+    selectBlock,
     setViewport,
     setSearch,
-  }
+    getSelectedBlock,
+  };
 }

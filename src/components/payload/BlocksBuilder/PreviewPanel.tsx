@@ -1,102 +1,109 @@
-'use client'
+'use client';
 
-import React, { useRef, useState, useEffect, useImperativeHandle, forwardRef } from 'react'
-import type { Viewport } from './hooks/useBlocksBuilder'
-import { usePreviewRefresh } from './hooks/usePreviewRefresh'
-
-export interface PreviewPanelHandle {
-  refresh: () => void
-}
+import React from 'react';
+import { useField, useDocumentInfo } from '@payloadcms/ui';
+import { useHasMounted } from './hooks/useHasMounted';
 
 interface PreviewPanelProps {
-  pageSlug: string
-  viewport: Viewport
-  previewSecret: string
+  viewport: 'desktop' | 'mobile';
+  onViewportChange: (viewport: 'desktop' | 'mobile') => void;
+  onIframeRef: (iframe: HTMLIFrameElement | null) => void;
+  id?: string | null;
+  collectionSlug?: string;
 }
 
-export const PreviewPanel = forwardRef<PreviewPanelHandle, PreviewPanelProps>(
-  function PreviewPanel({ pageSlug, viewport, previewSecret }, ref) {
-    const iframeRef = useRef<HTMLIFrameElement>(null)
-    const { triggerRefresh } = usePreviewRefresh(iframeRef)
-    const [loadError, setLoadError] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
+export function PreviewPanel({
+  viewport,
+  onViewportChange,
+  onIframeRef,
+  id: propId,
+  collectionSlug: propCollectionSlug,
+}: PreviewPanelProps) {
+  const { value: slugValue } = useField<string>({ path: 'slug' });
+  const { id: docId, collectionSlug: docCollectionSlug } = useDocumentInfo();
+  
+  // Use prop if available, otherwise fallback to document info
+  const id = propId || docId;
+  const collectionSlug = propCollectionSlug || docCollectionSlug;
+  const [loading, setLoading] = React.useState(true);
+  const hasMounted = useHasMounted();
+  
+  // Get the page slug for preview
+  const slug = slugValue === 'home' ? '' : (slugValue || '');
+  const previewSecret = process.env.NEXT_PUBLIC_PREVIEW_SECRET || '';
+  
+  // Build the preview URL (client-only)
+  // We route through /api/draft to enable draft mode in the iframe session
+  const previewUrl = hasMounted && typeof window !== 'undefined' 
+    ? `${window.location.origin}/api/draft?slug=${slug}&secret=${previewSecret}`
+    : '';
 
-    // Expose refresh() to parent via ref
-    useImperativeHandle(ref, () => ({ refresh: triggerRefresh }), [triggerRefresh])
+  // Build the API URL for the current document
+  const apiUrl = hasMounted && typeof window !== 'undefined' && id
+    ? `${window.location.origin}/api/${collectionSlug}/${id}?depth=1&draft=true`
+    : '';
 
-    // Build the draft URL — iframe hits the Next.js front-end in draft mode
-    const slug = pageSlug || ''
-    const src = slug
-      ? `/${slug}?draft=true&secret=${encodeURIComponent(previewSecret)}`
-      : null
-
-    // Reset error/loading state whenever src changes
-    useEffect(() => {
-      setLoadError(false)
-      setIsLoading(true)
-    }, [src])
-
-    const iframeStyle: React.CSSProperties =
-      viewport === 'mobile'
-        ? { width: '390px', margin: '0 auto', display: 'block', height: '100%' }
-        : { width: '100%', height: '100%' }
-
-    return (
-      <aside className="bb-preview" aria-label="Live preview">
-        {/* Header */}
-        <div className="bb-preview__header">
-          <span className="bb-preview__title">
-            Preview
-            {!loadError && (
-              <span className="bb-preview__live-dot" title="Live preview" aria-label="Live" />
-            )}
-          </span>
+  return (
+    <div className="bb-preview">
+      <div className="bb-preview__header">
+        <div className="bb-preview__title">
+          <span className="bb-preview__live-dot"></span>
+          Live Preview
+        </div>
+        
+        <div className="bb-canvas__viewport-toggle">
+          {apiUrl && (
+            <button
+              className="bb-canvas__vp-btn"
+              onClick={() => window.open(apiUrl, '_blank')}
+              title="View API Response"
+              style={{ marginRight: '8px', borderColor: 'var(--bb-gold)', color: 'var(--bb-gold)' }}
+            >
+              API
+            </button>
+          )}
           <button
-            className="bb-preview__refresh"
-            onClick={triggerRefresh}
-            title="Force refresh preview"
-            aria-label="Refresh preview"
+            className={`bb-canvas__vp-btn ${viewport === 'desktop' ? 'bb-canvas__vp-btn--active' : ''}`}
+            onClick={() => onViewportChange('desktop')}
           >
-            ↺
+            Desktop
+          </button>
+          <button
+            className={`bb-canvas__vp-btn ${viewport === 'mobile' ? 'bb-canvas__vp-btn--active' : ''}`}
+            onClick={() => onViewportChange('mobile')}
+          >
+            Mobile
           </button>
         </div>
+      </div>
 
-        {/* Iframe container */}
-        <div className="bb-preview__body">
-          {!src ? (
-            <div className="bb-preview__unavailable">
-              <span>🔒</span>
-              <p>Save the page first to enable preview.</p>
-            </div>
-          ) : loadError ? (
-            <div className="bb-preview__unavailable">
-              <span>⚠️</span>
-              <p>Preview unavailable.</p>
-              <button className="bb-preview__retry" onClick={() => { setLoadError(false); setIsLoading(true) }}>
-                Retry
-              </button>
-            </div>
-          ) : (
-            <>
-              {isLoading && (
-                <div className="bb-preview__loading" aria-live="polite">
-                  <span className="bb-preview__spinner" />
-                  Loading preview…
-                </div>
-              )}
-              <iframe
-                ref={iframeRef}
-                src={src}
-                style={iframeStyle}
-                className="bb-preview__iframe"
-                title="Page preview"
-                onLoad={() => setIsLoading(false)}
-                onError={() => { setLoadError(true); setIsLoading(false) }}
-              />
-            </>
-          )}
-        </div>
-      </aside>
-    )
-  },
-)
+      <div className="bb-preview__body">
+        {previewUrl ? (
+          <>
+            {loading && (
+              <div className="bb-preview__loading">
+                <div className="bb-preview__spinner"></div>
+                <span>Loading preview...</span>
+              </div>
+            )}
+            <iframe
+              ref={onIframeRef}
+              src={previewUrl}
+              className="bb-preview__iframe"
+              style={{ width: viewport === 'mobile' ? '390px' : '100%', opacity: loading ? 0 : 1 }}
+              onLoad={() => setLoading(false)}
+            />
+          </>
+        ) : (
+          <div className="bb-preview__unavailable">
+            <div style={{ fontSize: '32px', marginBottom: '12px' }}>👁️</div>
+            <div style={{ fontWeight: 600 }}>Preview Unavailable</div>
+            <p style={{ opacity: 0.7 }}>Save changes to see preview</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default PreviewPanel;

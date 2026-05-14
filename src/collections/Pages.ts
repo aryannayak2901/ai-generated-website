@@ -12,11 +12,36 @@ import { BlogHero, BlogFiltersBlock, Newsletter } from '../blocks/BlogBlocks'
 import { OfficeHero, OfficeSelector, MapSection, OfficeCTA } from '../blocks/OfficeBlocks'
 import { HeroBlock } from '../blocks/HeroBlock'
 
+const formatSlug = (val: string): string =>
+  val
+    .replace(/ /g, '-')
+    .replace(/[^\w-]+/g, '')
+    .toLowerCase()
+
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
+    components: {
+      views: {
+        list: {
+          Component: '@/components/payload#PagesStudioView',
+        },
+      },
+    },
+  },
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        if (data.title && !data.slug) {
+          data.slug = formatSlug(data.title)
+        } else if (data.slug) {
+          data.slug = formatSlug(data.slug)
+        }
+        return data
+      },
+    ],
   },
   access: {
     read: () => true,
@@ -34,7 +59,7 @@ export const Pages: CollectionConfig = {
       unique: true,
       index: true,
       admin: {
-        position: 'sidebar',
+        description: 'The URL-friendly identifier for this page.',
       },
     },
     {
@@ -63,8 +88,13 @@ export const Pages: CollectionConfig = {
         OfficeSelector,
         MapSection,
         OfficeCTA,
-      ]
-    }
+      ],
+      admin: {
+        components: {
+          Field: '@/components/payload#BlocksBuilderField',
+        },
+      },
+    },
   ],
   timestamps: true,
 }

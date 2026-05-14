@@ -16,6 +16,7 @@ const dirname = path.dirname(filename)
 import { Team } from './collections/Team'
 
 export default buildConfig({
+  // Force refresh for Pages Studio view
   admin: {
     user: Users.slug,
     importMap: {

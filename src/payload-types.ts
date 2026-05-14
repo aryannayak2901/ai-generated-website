@@ -129,6 +129,9 @@ export interface UserAuthOperations {
 export interface Page {
   id: string;
   title: string;
+  /**
+   * The URL-friendly identifier for this page.
+   */
   slug: string;
   layout?:
     | (

@@ -1,130 +1,134 @@
-export type BlockCategory = 'Hero' | 'Content' | 'CTA / Forms'
-
 export interface BlockMeta {
-  label: string
-  category: BlockCategory
-  icon: string
-  badgeLabel: string
-  defaultValues: Record<string, unknown>
+  label: string;
+  category: 'Hero' | 'Content' | 'CTA / Forms';
+  icon: string;
+  badgeLabel: string;
+  defaultValues: any;
 }
 
-/**
- * Metadata for every block type registered in the Pages collection.
- * blockType keys must exactly match the `slug` of the Payload Block config.
- */
 export const blockMeta: Record<string, BlockMeta> = {
-  // ─── Hero ────────────────────────────────────────────────────────────
   dynamicHero: {
     label: 'Dynamic Hero',
     category: 'Hero',
-    icon: '✨',
-    badgeLabel: 'DH',
+    icon: '⚡',
+    badgeLabel: 'Hero',
     defaultValues: {
       blockType: 'dynamicHero',
-      heading: 'Trusted Legal Excellence',
-      subheading: 'Decades of expertise across corporate, litigation, and compliance law.',
-      ctaText: 'Schedule a Consultation',
-      ctaLink: '/contact',
-    },
+      layoutType: 'centered',
+      heading: 'New Hero Heading',
+      subheading: 'New Hero Subheading',
+      ctas: []
+    }
   },
   homeHero: {
     label: 'Home Hero',
     category: 'Hero',
     icon: '🏠',
-    badgeLabel: 'Hero',
+    badgeLabel: 'Home',
     defaultValues: {
       blockType: 'homeHero',
-      heading: 'Chambers of Jeet Bhatt',
-      subheading: 'Premier Legal Services',
-      ctaText: 'Get in Touch',
+      title: 'Where Precision Meets Justice.',
+      subtitle: 'Premier counsel specialized in Corporate, Criminal, and Real Estate Law.',
+      ctaText: 'Request Consultation',
       ctaLink: '/contact',
-    },
+      images: []
+    }
   },
   aboutHero: {
     label: 'About Hero',
     category: 'Hero',
     icon: '👤',
-    badgeLabel: 'AHro',
+    badgeLabel: 'About',
     defaultValues: {
       blockType: 'aboutHero',
-      heading: 'About Our Chambers',
-      subheading: 'A legacy of legal excellence spanning decades.',
-    },
+      tag: 'Our Legacy',
+      title: 'A Tradition of Legal Excellence.',
+      subtitle: 'Chambers of Jeet Bhatt combines decades of profound legal expertise with a modern, strategic approach. We are committed to upholding the highest standards of justice and integrity.'
+    }
   },
   practiceAreasHero: {
     label: 'Practice Areas Hero',
     category: 'Hero',
     icon: '⚖️',
-    badgeLabel: 'PAHr',
+    badgeLabel: 'Areas',
     defaultValues: {
       blockType: 'practiceAreasHero',
-      heading: 'Our Practice Areas',
-      subheading: 'Comprehensive legal expertise across multiple domains.',
-    },
+      tag: 'Practice Areas',
+      title: 'Expertise Driven by Integrity',
+      subtitle: 'Chambers of Jeet Bhatt offers specialized legal services across a diverse spectrum of practice areas, ensuring tailored solutions for complex legal challenges.'
+    }
   },
   contactHero: {
     label: 'Contact Hero',
     category: 'Hero',
     icon: '📞',
-    badgeLabel: 'CHro',
+    badgeLabel: 'Contact',
     defaultValues: {
       blockType: 'contactHero',
-      heading: 'Contact Us',
-      subheading: 'We are here to help. Reach out to us today.',
-    },
+      tag: 'Get in Touch',
+      title: 'Ready to Discuss Your Legal Strategy?',
+      subtitle: 'Reach out to Chambers of Jeet Bhatt for expert legal guidance and consultations.',
+      phone: '+91 94082 82982',
+      email: 'info@jeetbhatt.com'
+    }
   },
   blogHero: {
     label: 'Blog Hero',
     category: 'Hero',
     icon: '📝',
-    badgeLabel: 'BHro',
+    badgeLabel: 'Blog',
     defaultValues: {
       blockType: 'blogHero',
-      heading: 'Legal Insights',
-      subheading: 'Expert commentary on the latest developments in law.',
-    },
+      tag: 'Insights',
+      title: 'Legal Insights & Updates',
+      subtitle: 'Stay informed with the latest legal developments and expert analysis from our team.'
+    }
   },
   officeHero: {
     label: 'Office Hero',
     category: 'Hero',
     icon: '🏢',
-    badgeLabel: 'OHro',
+    badgeLabel: 'Office',
     defaultValues: {
       blockType: 'officeHero',
-      heading: 'Our Offices',
-      subheading: 'Find us across multiple locations.',
-    },
+      tag: 'Our Presence',
+      title: 'Strategic Locations Across Gujarat',
+      subtitle: 'With offices in Ahmedabad and Vadodara, Chambers of Jeet Bhatt is positioned to provide expert legal counsel across the state.'
+    }
   },
-
-  // ─── Content ─────────────────────────────────────────────────────────
   practiceAreas: {
-    label: 'Practice Areas Bento',
+    label: 'Practice Areas',
     category: 'Content',
-    icon: '🗂️',
-    badgeLabel: 'PA',
+    icon: '📋',
+    badgeLabel: 'Areas',
     defaultValues: {
       blockType: 'practiceAreas',
-      heading: 'Areas of Practice',
-    },
+      title: 'Our Practice Areas',
+      subtitle: 'Comprehensive legal expertise across multiple domains',
+      areas: []
+    }
   },
   practiceAreasGrid: {
     label: 'Practice Areas Grid',
     category: 'Content',
-    icon: '📋',
+    icon: '⚡',
     badgeLabel: 'Grid',
     defaultValues: {
       blockType: 'practiceAreasGrid',
-      heading: 'Explore Our Practice Areas',
-    },
+      title: 'Specialized Legal Solutions',
+      subtitle: 'Explore our comprehensive range of legal services',
+      areas: []
+    }
   },
   awardsMarquee: {
     label: 'Awards Marquee',
     category: 'Content',
     icon: '🏆',
-    badgeLabel: 'Mq',
+    badgeLabel: 'Awards',
     defaultValues: {
       blockType: 'awardsMarquee',
-    },
+      awards: []
+    }
   },
   aboutTeam: {
     label: 'About Team',
@@ -133,28 +137,34 @@ export const blockMeta: Record<string, BlockMeta> = {
     badgeLabel: 'Team',
     defaultValues: {
       blockType: 'aboutTeam',
-      heading: 'Meet Our Team',
-    },
+      title: 'Our Legal Team',
+      subtitle: 'Meet our experienced attorneys and legal professionals',
+      members: []
+    }
   },
   aboutValues: {
     label: 'About Values',
     category: 'Content',
     icon: '💎',
-    badgeLabel: 'Val',
+    badgeLabel: 'Values',
     defaultValues: {
       blockType: 'aboutValues',
-      heading: 'Our Core Values',
-    },
+      title: 'Our Core Values',
+      subtitle: 'The principles that guide our practice',
+      values: []
+    }
   },
   officeSelector: {
     label: 'Office Selector',
     category: 'Content',
     icon: '📍',
-    badgeLabel: 'OffS',
+    badgeLabel: 'Selector',
     defaultValues: {
       blockType: 'officeSelector',
-      heading: 'Select an Office',
-    },
+      title: 'Choose an Office',
+      subtitle: 'Select the most convenient location for your needs',
+      offices: []
+    }
   },
   mapSection: {
     label: 'Map Section',
@@ -163,83 +173,106 @@ export const blockMeta: Record<string, BlockMeta> = {
     badgeLabel: 'Map',
     defaultValues: {
       blockType: 'mapSection',
-    },
+      title: 'Find Us',
+      subtitle: 'Locate our offices across Gujarat',
+      offices: []
+    }
   },
   blogFilters: {
     label: 'Blog Filters',
     category: 'Content',
     icon: '🔍',
-    badgeLabel: 'BFlt',
+    badgeLabel: 'Filters',
     defaultValues: {
       blockType: 'blogFilters',
-      heading: 'Browse Articles',
-    },
+      title: 'Filter Articles',
+      subtitle: 'Find the content that matters to you',
+      categories: []
+    }
   },
-
-  // ─── CTA / Forms ─────────────────────────────────────────────────────
   aboutCta: {
     label: 'About CTA',
     category: 'CTA / Forms',
-    icon: '📢',
-    badgeLabel: 'ACTA',
+    icon: '🎯',
+    badgeLabel: 'CTA',
     defaultValues: {
       blockType: 'aboutCta',
-      heading: 'Work With Us',
-      ctaText: 'Contact Our Team',
-      ctaLink: '/contact',
-    },
+      badge: 'Ready to help',
+      title: 'Need Expert Legal Counsel?',
+      subtitle: 'Contact us today to discuss your legal needs',
+      primaryText: 'Get in Touch',
+      primaryLink: '/contact',
+      secondaryText: 'Learn More',
+      secondaryLink: '/services'
+    }
   },
   practiceAreasCta: {
     label: 'Practice Areas CTA',
     category: 'CTA / Forms',
-    icon: '📣',
-    badgeLabel: 'PCTA',
+    icon: '🚀',
+    badgeLabel: 'CTA',
     defaultValues: {
       blockType: 'practiceAreasCta',
-      heading: 'Ready to Get Started?',
-      ctaText: 'Schedule a Consultation',
-      ctaLink: '/contact',
-    },
+      badge: 'Take the next step',
+      title: 'Ready to Discuss Your Legal Strategy?',
+      subtitle: 'Contact our team to explore how we can assist with your legal matters',
+      primaryText: 'Schedule Consultation',
+      primaryLink: '/contact',
+      secondaryText: 'View All Services',
+      secondaryLink: '/practice-areas'
+    }
   },
   officeCta: {
     label: 'Office CTA',
     category: 'CTA / Forms',
     icon: '🏢',
-    badgeLabel: 'OCTA',
+    badgeLabel: 'CTA',
     defaultValues: {
       blockType: 'officeCta',
-      heading: 'Visit Our Office',
-      ctaText: 'Get Directions',
-    },
+      badge: 'Visit us',
+      title: 'Ready to Meet in Person?',
+      subtitle: 'Schedule a consultation at one of our convenient office locations',
+      primaryText: 'Book Appointment',
+      primaryLink: '/contact',
+      secondaryText: 'View Locations',
+      secondaryLink: '/offices'
+    }
   },
   contactForm: {
     label: 'Contact Form',
     category: 'CTA / Forms',
-    icon: '📋',
+    icon: '📝',
     badgeLabel: 'Form',
     defaultValues: {
       blockType: 'contactForm',
-      heading: 'Send Us a Message',
-    },
+      badge: 'Direct Inquiry',
+      title: 'Send a Message',
+      subtitle: 'Have a complex legal question? Fill out the form and our specialist team will reach out with a strategic roadmap.',
+      features: []
+    }
   },
   contactInfo: {
     label: 'Contact Info',
     category: 'CTA / Forms',
-    icon: '📇',
+    icon: '📋',
     badgeLabel: 'Info',
     defaultValues: {
       blockType: 'contactInfo',
-      heading: 'Get in Touch',
-    },
+      infoItems: []
+    }
   },
   contactMap: {
     label: 'Contact Map',
     category: 'CTA / Forms',
     icon: '🗺️',
-    badgeLabel: 'CMap',
+    badgeLabel: 'Map',
     defaultValues: {
       blockType: 'contactMap',
-    },
+      title: 'Find Our Office',
+      subtitle: 'Visit us at our convenient location',
+      address: 'Ahmedabad, Gujarat',
+      mapEmbedUrl: ''
+    }
   },
   newsletter: {
     label: 'Newsletter',
@@ -248,12 +281,20 @@ export const blockMeta: Record<string, BlockMeta> = {
     badgeLabel: 'News',
     defaultValues: {
       blockType: 'newsletter',
-      heading: 'Stay Informed',
-      subheading: 'Subscribe to our legal insights newsletter.',
-      ctaText: 'Subscribe',
-    },
-  },
-}
+      title: 'Stay Updated',
+      subtitle: 'Subscribe to our newsletter for legal insights and updates',
+      placeholder: 'Enter your email address',
+      buttonText: 'Subscribe'
+    }
+  }
+};
 
-/** Ordered list of categories for the Block Library panel */
-export const BLOCK_CATEGORIES: BlockCategory[] = ['Hero', 'Content', 'CTA / Forms']
+export type BlockCategory = 'Hero' | 'Content' | 'CTA / Forms';
+
+export const blockCategories: Record<BlockCategory, BlockCategory> = {
+  Hero: 'Hero',
+  Content: 'Content',
+  'CTA / Forms': 'CTA / Forms'
+};
+
+export const blockCategoryOrder: BlockCategory[] = ['Hero', 'Content', 'CTA / Forms'];

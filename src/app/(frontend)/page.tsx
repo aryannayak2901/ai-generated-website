@@ -1,5 +1,7 @@
 import { getPayload } from "payload";
 import configPromise from "@/payload.config";
+import { draftMode } from "next/headers";
+import { LivePreviewProvider } from "@/components/LivePreviewProvider";
 import { HeroSection } from "@/components/home/HeroSection";
 import { PracticeAreasBento } from "@/components/home/PracticeAreasBento";
 import { TeamPreview } from "@/components/home/TeamPreview";
@@ -9,6 +11,7 @@ import { RenderBlocks } from "@/components/RenderBlocks";
 import type { Page } from "@/payload-types";
 
 export default async function Home() {
+  const { isEnabled: isDraft } = await draftMode();
   const payload = await getPayload({ config: configPromise });
   const { docs } = await payload.find({
     collection: "pages",
@@ -24,7 +27,11 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen flex-col w-full">
       {page?.layout && page.layout.length > 0 ? (
-        <RenderBlocks blocks={page.layout} />
+        isDraft ? (
+          <LivePreviewProvider initialBlocks={page.layout} />
+        ) : (
+          <RenderBlocks blocks={page.layout} />
+        )
       ) : (
         <>
           <HeroSection />

@@ -1,105 +1,101 @@
-'use client'
+'use client';
 
-import React from 'react'
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { useDroppable } from '@dnd-kit/core'
-import { CanvasBlock } from './CanvasBlock'
-import type { BlockInstance, Viewport } from './hooks/useBlocksBuilder'
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useDroppable } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
+import { CanvasBlock } from './CanvasBlock';
+import { BlockInstance } from './hooks/useBlocksBuilder';
+import { blockMeta } from './constants/blockMeta';
 
 interface CanvasPanelProps {
-  blocks: BlockInstance[]
-  selectedBlockId: string | null
-  viewport: Viewport
-  onEdit: (id: string) => void
-  onMoveUp: (id: string) => void
-  onMoveDown: (id: string) => void
-  onDelete: (id: string) => void
-  onViewportChange: (viewport: Viewport) => void
-}
-
-/** Drop zone at the bottom of the canvas — accepts chips from the library */
-function CanvasDropZone() {
-  const { setNodeRef, isOver } = useDroppable({ id: 'canvas-drop' })
-  return (
-    <div
-      ref={setNodeRef}
-      className={`bb-canvas__dropzone${isOver ? ' bb-canvas__dropzone--over' : ''}`}
-      aria-label="Drop block here"
-    >
-      {isOver ? '✅ Release to add block' : '⊕  Drag a block here'}
-    </div>
-  )
+  blocks: BlockInstance[];
+  selectedBlockId: string | null;
+  viewport: 'desktop' | 'mobile';
+  onEditBlock: (blockId: string) => void;
+  onDeleteBlock: (blockId: string) => void;
+  onMoveBlock: (blockId: string, direction: 'up' | 'down') => void;
+  onViewportChange: (viewport: 'desktop' | 'mobile') => void;
 }
 
 export function CanvasPanel({
   blocks,
   selectedBlockId,
   viewport,
-  onEdit,
-  onMoveUp,
-  onMoveDown,
-  onDelete,
+  onEditBlock,
+  onDeleteBlock,
+  onMoveBlock,
   onViewportChange,
 }: CanvasPanelProps) {
-  const blockIds = blocks.map((b) => b.id)
+  const { setNodeRef, isOver } = useDroppable({
+    id: 'canvas-drop',
+  });
 
   return (
-    <section className="bb-canvas" aria-label="Page canvas">
-      {/* Toolbar */}
+    <div className="bb-canvas">
       <div className="bb-canvas__toolbar">
-        <span className="bb-canvas__count">
-          {blocks.length} {blocks.length === 1 ? 'block' : 'blocks'}
-        </span>
-        <div className="bb-canvas__viewport-toggle" role="group" aria-label="Viewport">
+        <div className="bb-canvas__count">
+          {blocks.length} block{blocks.length !== 1 ? 's' : ''}
+        </div>
+        
+        <div className="bb-canvas__viewport-toggle">
           <button
-            className={`bb-canvas__vp-btn${viewport === 'desktop' ? ' bb-canvas__vp-btn--active' : ''}`}
+            className={`bb-canvas__vp-btn ${viewport === 'desktop' ? 'bb-canvas__vp-btn--active' : ''}`}
             onClick={() => onViewportChange('desktop')}
-            aria-pressed={viewport === 'desktop'}
-            title="Desktop view"
           >
-            🖥 Desktop
+            Desktop
           </button>
           <button
-            className={`bb-canvas__vp-btn${viewport === 'mobile' ? ' bb-canvas__vp-btn--active' : ''}`}
+            className={`bb-canvas__vp-btn ${viewport === 'mobile' ? 'bb-canvas__vp-btn--active' : ''}`}
             onClick={() => onViewportChange('mobile')}
-            aria-pressed={viewport === 'mobile'}
-            title="Mobile view"
           >
-            📱 Mobile
+            Mobile
           </button>
         </div>
       </div>
 
-      {/* Sortable list */}
-      <div className="bb-canvas__list">
-        <SortableContext items={blockIds} strategy={verticalListSortingStrategy}>
-          {blocks.length === 0 ? (
-            <p className="bb-canvas__empty">
-              No blocks yet — drag one from the library
+      <div className="bb-canvas__list" ref={setNodeRef}>
+        {blocks.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bb-canvas__empty"
+          >
+            <div className="bb-canvas__empty-icon">✨</div>
+            <div className="bb-canvas__empty-title">Studio Canvas Empty</div>
+            <p className="bb-canvas__empty-text">
+              Transform your vision into reality by dragging blocks from the library.
             </p>
-          ) : (
-            blocks.map((block, index) => (
+            <div className="bb-canvas__empty-hint">
+              <span className="bb-canvas__empty-badge">Pro Tip</span>
+              Use the full-screen mode for the best editing experience.
+            </div>
+          </motion.div>
+        ) : (
+          <SortableContext items={blocks.map(b => b.id)}>
+            {blocks.map((block, index) => (
               <CanvasBlock
                 key={block.id}
                 block={block}
-                isSelected={block.id === selectedBlockId}
+                meta={blockMeta[block.blockType]}
+                isSelected={selectedBlockId === block.id}
                 isFirst={index === 0}
                 isLast={index === blocks.length - 1}
-                onEdit={onEdit}
-                onMoveUp={onMoveUp}
-                onMoveDown={onMoveDown}
-                onDelete={onDelete}
+                onEdit={() => onEditBlock(block.id)}
+                onDelete={() => onDeleteBlock(block.id)}
+                onMoveUp={() => onMoveBlock(block.id, 'up')}
+                onMoveDown={() => onMoveBlock(block.id, 'down')}
               />
-            ))
-          )}
-        </SortableContext>
-
-        {/* Drop zone always visible at bottom */}
-        <CanvasDropZone />
+            ))}
+          </SortableContext>
+        )}
+        
+        <div className={`bb-canvas__dropzone ${isOver ? 'bb-canvas__dropzone--over' : ''}`}>
+          {isOver ? 'Release to add block' : 'Drop blocks here'}
+        </div>
       </div>
-    </section>
-  )
+    </div>
+  );
 }
+
+export default CanvasPanel;

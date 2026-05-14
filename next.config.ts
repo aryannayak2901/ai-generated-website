@@ -28,10 +28,29 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  /* Allow the Payload admin to embed the site in an iframe for live preview */
+  async headers() {
+    return [
+      {
+        // All non-admin routes
+        source: '/((?!admin).*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+        ],
+      },
+    ]
+  },
   /* Disable reactCompiler to avoid Turbopack */
   // reactCompiler: true,
   /* Set outputFileTracingRoot to fix workspace root detection */
   outputFileTracingRoot: dirname,
+  env: {
+    // Expose for client-side BlocksBuilderField to build the preview URL
+    NEXT_PUBLIC_PREVIEW_SECRET: process.env.PREVIEW_SECRET ?? '',
+  },
 };
 
 export default withPayload(nextConfig);

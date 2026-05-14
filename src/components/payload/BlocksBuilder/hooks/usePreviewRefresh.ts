@@ -1,34 +1,42 @@
-'use client'
+'use client';
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef } from 'react';
 
-const DEBOUNCE_MS = 600
+export function usePreviewRefresh(debounceMs: number = 600) {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-/**
- * Returns a `triggerRefresh` function that, when called, debounces an
- * iframe reload by DEBOUNCE_MS milliseconds. Pass the ref of the preview
- * iframe element so it can call `contentWindow.location.reload()`.
- */
-export function usePreviewRefresh(iframeRef: React.RefObject<HTMLIFrameElement | null>) {
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const triggerRefresh = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
+  const refresh = useCallback((data?: any) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-    timerRef.current = setTimeout(() => {
-      try {
-        iframeRef.current?.contentWindow?.location.reload()
-      } catch {
-        // Cross-origin reload fallback: reset src to force reload
-        const iframe = iframeRef.current
-        if (iframe && iframe.src) {
-          // eslint-disable-next-line no-self-assign
-          iframe.src = iframe.src
+
+    timeoutRef.current = setTimeout(() => {
+      if (iframeRef.current?.contentWindow) {
+        // If data is provided, try to send it via postMessage for instant update
+        if (data) {
+          iframeRef.current.contentWindow.postMessage(
+            { 
+              type: 'PAYLOAD_LIVE_PREVIEW', 
+              blocks: data 
+            }, 
+            window.location.origin
+          );
+        } else {
+          // Fallback to full reload if no data or initial refresh
+          iframeRef.current.contentWindow.location.reload();
         }
       }
-    }, DEBOUNCE_MS)
-  }, [iframeRef])
+    }, data ? 100 : debounceMs); // Faster debounce for postMessage
+  }, [debounceMs]);
 
-  return { triggerRefresh }
+  const setIframeRef = useCallback((iframe: HTMLIFrameElement | null) => {
+    iframeRef.current = iframe;
+  }, []);
+
+  return {
+    refresh,
+    setIframeRef,
+    iframeRef,
+  };
 }

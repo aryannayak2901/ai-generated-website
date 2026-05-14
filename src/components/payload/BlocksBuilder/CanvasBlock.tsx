@@ -1,113 +1,114 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { blockMeta } from './constants/blockMeta'
-import type { BlockInstance } from './hooks/useBlocksBuilder'
+import React from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { BlockInstance } from './hooks/useBlocksBuilder';
+import { BlockMeta } from './constants/blockMeta';
+import { useHasMounted } from './hooks/useHasMounted';
 
 interface CanvasBlockProps {
-  block: BlockInstance
-  isSelected: boolean
-  isFirst: boolean
-  isLast: boolean
-  onEdit: (id: string) => void
-  onMoveUp: (id: string) => void
-  onMoveDown: (id: string) => void
-  onDelete: (id: string) => void
+  block: BlockInstance;
+  meta: BlockMeta;
+  isSelected: boolean;
+  isFirst: boolean;
+  isLast: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
 }
 
 export function CanvasBlock({
   block,
+  meta,
   isSelected,
   isFirst,
   isLast,
   onEdit,
+  onDelete,
   onMoveUp,
   onMoveDown,
-  onDelete,
 }: CanvasBlockProps) {
-  const meta = blockMeta[block.blockType]
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: block.id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: block.id,
+    data: {
+      type: 'canvas-block',
+      block,
+    },
+  });
+  const hasMounted = useHasMounted();
 
-  const style: React.CSSProperties = {
+  const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.4 : 1,
-    zIndex: isDragging ? 10 : undefined,
-  }
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : 1,
+  };
 
-  const label = (block.blockName as string) || meta?.label || block.blockType
-  const badge = meta?.badgeLabel || block.blockType.slice(0, 4).toUpperCase()
-  const categoryClass = meta
-    ? `bb-canvas-block__badge--${meta.category.replace(/\s*\/\s*/g, '-').replace(/\s+/g, '-').toLowerCase()}`
-    : ''
+  const badgeClass = `bb-canvas-block__badge bb-canvas-block__badge--${meta.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`bb-canvas-block${isSelected ? ' bb-canvas-block--selected' : ''}`}
-      aria-label={`Block: ${label}`}
+      className={`bb-canvas-block ${isSelected ? 'bb-canvas-block--selected' : ''}`}
+      onClick={onEdit}
     >
-      {/* Drag handle */}
       <button
         className="bb-canvas-block__handle"
-        {...listeners}
-        {...attributes}
-        aria-label="Drag to reorder"
-        title="Drag to reorder"
+        {...(hasMounted ? attributes : {})}
+        {...(hasMounted ? listeners : {})}
+        onClick={(e) => e.stopPropagation()}
       >
-        ⠿
+        ⋮⋮
       </button>
 
-      {/* Badge */}
-      <span className={`bb-canvas-block__badge ${categoryClass}`}>{badge}</span>
+      <div className="bb-canvas-block__badge">
+        {meta.icon}
+      </div>
 
-      {/* Label */}
-      <span className="bb-canvas-block__label">{label}</span>
+      <div className="bb-canvas-block__label">
+        {meta.label}
+        <span className="bb-canvas-block__type" style={{ marginLeft: '8px', opacity: 0.5 }}>
+          {meta.badgeLabel}
+        </span>
+      </div>
 
-      {/* Block type hint */}
-      <span className="bb-canvas-block__type">{block.blockType}</span>
-
-      {/* Actions */}
       <div className="bb-canvas-block__actions">
         <button
           className="bb-canvas-block__action"
-          onClick={() => onEdit(block.id)}
-          title="Edit block"
-          aria-label={`Edit ${label}`}
-        >
-          ✏
-        </button>
-        <button
-          className="bb-canvas-block__action"
-          onClick={() => onMoveUp(block.id)}
+          onClick={(e) => { e.stopPropagation(); onMoveUp(); }}
           disabled={isFirst}
           title="Move up"
-          aria-label={`Move ${label} up`}
         >
           ↑
         </button>
         <button
           className="bb-canvas-block__action"
-          onClick={() => onMoveDown(block.id)}
+          onClick={(e) => { e.stopPropagation(); onMoveDown(); }}
           disabled={isLast}
           title="Move down"
-          aria-label={`Move ${label} down`}
         >
           ↓
         </button>
         <button
           className="bb-canvas-block__action bb-canvas-block__action--danger"
-          onClick={() => onDelete(block.id)}
+          onClick={(e) => { e.stopPropagation(); onDelete(); }}
           title="Delete block"
-          aria-label={`Delete ${label}`}
         >
-          🗑
+          ✕
         </button>
       </div>
     </div>
-  )
+  );
 }
+
+export default CanvasBlock;
