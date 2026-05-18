@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Menu } from "lucide-react";
 import { BlocksBuilderField } from "./BlocksBuilder";
 import { Form, useForm } from "@payloadcms/ui";
 import "./BlocksBuilder/styles.css";
@@ -20,6 +20,8 @@ const StudioHeader = ({
   isDeleting,
   isFullscreen,
   onToggleFullscreen,
+  isSidebarOpen,
+  onToggleSidebar,
 }: {
   pages: { id: string; title: string }[];
   selectedPageId: string | null;
@@ -30,6 +32,8 @@ const StudioHeader = ({
   isDeleting: boolean;
   isFullscreen: boolean;
   onToggleFullscreen: () => void;
+  isSidebarOpen: boolean;
+  onToggleSidebar: () => void;
 }) => {
   const form = useForm();
   const submit = form?.submit || (() => {});
@@ -40,7 +44,7 @@ const StudioHeader = ({
     <div
       style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}
     >
-      {isFullscreen && (
+      {isFullscreen ? (
         <button
           type="button"
           className="bb-studio-fullscreen-toggle-btn"
@@ -53,6 +57,21 @@ const StudioHeader = ({
         >
           <ChevronLeft size={16} />
         </button>
+      ) : (
+        !isSidebarOpen && (
+          <button
+            type="button"
+            className="bb-studio-header-toggle-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggleSidebar();
+            }}
+            title="Open Menu"
+          >
+            <Menu size={16} />
+          </button>
+        )
       )}
       <select
         className="bb-page-selector"
@@ -191,6 +210,35 @@ export const PagesStudioView = () => {
   const [loading, setLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Monitor native sidebar open/collapsed class list changes
+  useEffect(() => {
+    const toggler = document.querySelector(".nav-toggler");
+    if (!toggler) return;
+
+    const checkState = () => {
+      setIsSidebarOpen(toggler.classList.contains("nav-toggler--is-open"));
+    };
+
+    // Initial check
+    checkState();
+
+    // Configure MutationObserver
+    const observer = new MutationObserver(checkState);
+    observer.observe(toggler, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    // Fallback click listener
+    toggler.addEventListener("click", checkState);
+
+    return () => {
+      observer.disconnect();
+      toggler.removeEventListener("click", checkState);
+    };
+  }, []);
 
   const handleAddNewPage = () => {
     setSelectedPageId(null);
@@ -383,6 +431,11 @@ export const PagesStudioView = () => {
                 isDeleting={isDeleting}
                 isFullscreen={isFullscreen}
                 onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+                isSidebarOpen={isSidebarOpen}
+                onToggleSidebar={() => {
+                  const toggler = document.querySelector(".nav-toggler") as HTMLButtonElement | null;
+                  if (toggler) toggler.click();
+                }}
               />
             }
           />
