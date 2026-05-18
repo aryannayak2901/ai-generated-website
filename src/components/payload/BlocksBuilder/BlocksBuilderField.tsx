@@ -145,7 +145,6 @@ export function BlocksBuilderField({ path, label, customHeader, id: propId, coll
         <div className="bb-titlebar">
           {customHeader ? customHeader : (
             <>
-              <div className="bb-titlebar__logo">🏛️</div>
               <div className="bb-titlebar__title">CHAMBERS STUDIO</div>
             </>
           )}

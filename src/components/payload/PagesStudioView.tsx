@@ -35,7 +35,6 @@ const StudioHeader = ({
     <div
       style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}
     >
-      <div className="bb-titlebar__logo">🏛️</div>
       <select
         className="bb-page-selector"
         value={selectedPageId || "new"}
@@ -48,7 +47,9 @@ const StudioHeader = ({
               if (!page || typeof page !== "object" || !page.id) return null;
               return (
                 <option key={page.id} value={page.id}>
-                  {(page && typeof page === 'object' && 'title' in page) ? (page.title || "Untitled") : "Untitled"}
+                  {page && typeof page === "object" && "title" in page
+                    ? page.title || "Untitled"
+                    : "Untitled"}
                 </option>
               );
             })}
@@ -86,16 +87,18 @@ const StudioHeader = ({
       )}
 
       {!selectedPageId && (
-        <div style={{ 
-          fontSize: '11px', 
-          fontWeight: 700, 
-          color: 'var(--bb-gold)', 
-          letterSpacing: '0.05em',
-          background: 'rgba(212, 175, 55, 0.1)',
-          padding: '4px 10px',
-          borderRadius: '4px',
-          border: '1px solid rgba(212, 175, 55, 0.2)'
-        }}>
+        <div
+          style={{
+            fontSize: "11px",
+            fontWeight: 700,
+            color: "var(--bb-gold)",
+            letterSpacing: "0.05em",
+            background: "rgba(212, 175, 55, 0.1)",
+            padding: "4px 10px",
+            borderRadius: "4px",
+            border: "1px solid rgba(212, 175, 55, 0.2)",
+          }}
+        >
           CREATING NEW PAGE
         </div>
       )}
@@ -115,7 +118,13 @@ const StudioHeader = ({
           disabled={processing}
           style={{ opacity: processing ? 0.6 : 1 }}
         >
-          {processing ? (selectedPageId ? "Saving..." : "Creating...") : (selectedPageId ? "Save Changes" : "Create Page")}
+          {processing
+            ? selectedPageId
+              ? "Saving..."
+              : "Creating..."
+            : selectedPageId
+              ? "Save Changes"
+              : "Create Page"}
         </button>
 
         {modified && (
@@ -142,9 +151,10 @@ const StudioHeader = ({
 const transformDataToFormState = (data: any) => {
   const base = data || { title: "", slug: "", layout: [] };
   const allowedFields = ["title", "slug", "layout"];
-  
+
   return allowedFields.reduce((acc, key) => {
-    const val = base[key] !== undefined ? base[key] : (key === "layout" ? [] : "");
+    const val =
+      base[key] !== undefined ? base[key] : key === "layout" ? [] : "";
     acc[key] = {
       value: val,
       initialValue: val,
@@ -228,13 +238,13 @@ export const PagesStudioView = () => {
     if (!selectedPageId) return;
 
     const pageToDelete = pages.find((p) => p.id === selectedPageId);
-    
-    // Using a micro-delay ensures that the browser has finished processing 
+
+    // Using a micro-delay ensures that the browser has finished processing
     // the click event before opening the blocking confirm dialog.
     // This prevents some browsers from automatically closing the dialog.
     setTimeout(async () => {
       const confirmDelete = window.confirm(
-        `Are you sure you want to delete the page "${pageToDelete?.title || "Untitled"}"? This action cannot be undone.`
+        `Are you sure you want to delete the page "${pageToDelete?.title || "Untitled"}"? This action cannot be undone.`,
       );
 
       if (!confirmDelete) return;
@@ -249,7 +259,7 @@ export const PagesStudioView = () => {
           // Remove from local list first
           const remainingPages = pages.filter((p) => p.id !== selectedPageId);
           setPages(remainingPages);
-          
+
           // Select another page or go to new page
           if (remainingPages.length > 0) {
             setSelectedPageId(remainingPages[0].id);
@@ -300,7 +310,9 @@ export const PagesStudioView = () => {
           key={selectedPageId || "new"}
           initialState={transformDataToFormState(currentPageData)}
           disableValidationOnSubmit={true}
-          action={selectedPageId ? `/api/pages/${selectedPageId}` : "/api/pages"}
+          action={
+            selectedPageId ? `/api/pages/${selectedPageId}` : "/api/pages"
+          }
           method={selectedPageId ? "PATCH" : "POST"}
           onSuccess={(json: any) => {
             const doc = json?.doc;
@@ -310,19 +322,25 @@ export const PagesStudioView = () => {
               setPages((prev) => {
                 const safePrev = Array.isArray(prev) ? prev : [];
                 if (!doc) return safePrev;
-                
+
                 const exists = safePrev.find((p) => p && p.id === doc.id);
-                const updatedPage = { 
-                  id: doc.id, 
-                  title: (doc && typeof doc === 'object' && 'title' in doc) ? (doc.title || "Untitled") : "Untitled" 
+                const updatedPage = {
+                  id: doc.id,
+                  title:
+                    doc && typeof doc === "object" && "title" in doc
+                      ? doc.title || "Untitled"
+                      : "Untitled",
                 };
 
                 if (exists) {
-                  return safePrev.map((p) =>
-                    p && p.id === doc.id ? updatedPage : p
-                  ).filter(Boolean) as { id: string; title: string }[];
+                  return safePrev
+                    .map((p) => (p && p.id === doc.id ? updatedPage : p))
+                    .filter(Boolean) as { id: string; title: string }[];
                 }
-                return [...safePrev, updatedPage].filter(Boolean) as { id: string; title: string }[];
+                return [...safePrev, updatedPage].filter(Boolean) as {
+                  id: string;
+                  title: string;
+                }[];
               });
             }
           }}

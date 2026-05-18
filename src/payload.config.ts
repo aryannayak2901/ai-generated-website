@@ -27,6 +27,7 @@ export default buildConfig({
         Logo: '@/components/payload/Logo#Logo',
         Icon: '@/components/payload/Icon#Icon',
       },
+      Nav: '@/components/payload/Nav#Nav',
       beforeLogin: ['@/components/payload/BeforeLogin#BeforeLogin'],
     },
   },
