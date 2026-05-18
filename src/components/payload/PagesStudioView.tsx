@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { ChevronLeft } from "lucide-react";
 import { BlocksBuilderField } from "./BlocksBuilder";
 import { Form, useForm } from "@payloadcms/ui";
 import "./BlocksBuilder/styles.css";
@@ -17,6 +18,8 @@ const StudioHeader = ({
   onDeletePage,
   isCreating,
   isDeleting,
+  isFullscreen,
+  onToggleFullscreen,
 }: {
   pages: { id: string; title: string }[];
   selectedPageId: string | null;
@@ -25,6 +28,8 @@ const StudioHeader = ({
   onDeletePage: () => void;
   isCreating: boolean;
   isDeleting: boolean;
+  isFullscreen: boolean;
+  onToggleFullscreen: () => void;
 }) => {
   const form = useForm();
   const submit = form?.submit || (() => {});
@@ -35,6 +40,20 @@ const StudioHeader = ({
     <div
       style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}
     >
+      {isFullscreen && (
+        <button
+          type="button"
+          className="bb-studio-fullscreen-toggle-btn"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onToggleFullscreen();
+          }}
+          title="Exit Fullscreen"
+        >
+          <ChevronLeft size={16} />
+        </button>
+      )}
       <select
         className="bb-page-selector"
         value={selectedPageId || "new"}
@@ -171,6 +190,7 @@ export const PagesStudioView = () => {
   const [currentPageData, setCurrentPageData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleAddNewPage = () => {
     setSelectedPageId(null);
@@ -350,6 +370,8 @@ export const PagesStudioView = () => {
             label="Layout"
             id={selectedPageId}
             collectionSlug="pages"
+            isFullscreen={isFullscreen}
+            onFullscreenChange={setIsFullscreen}
             customHeader={
               <StudioHeader
                 pages={pages || []}
@@ -359,6 +381,8 @@ export const PagesStudioView = () => {
                 onDeletePage={handleDeletePage}
                 isCreating={false}
                 isDeleting={isDeleting}
+                isFullscreen={isFullscreen}
+                onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
               />
             }
           />
