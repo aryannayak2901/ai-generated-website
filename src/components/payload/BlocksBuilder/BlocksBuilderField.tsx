@@ -19,9 +19,19 @@ interface BlocksBuilderFieldProps {
   customHeader?: React.ReactNode;
   id?: string | null;
   collectionSlug?: string;
+  isFullscreen?: boolean;
+  onFullscreenChange?: (isFullscreen: boolean) => void;
 }
 
-export function BlocksBuilderField({ path, label, customHeader, id: propId, collectionSlug: propCollectionSlug }: BlocksBuilderFieldProps) {
+export function BlocksBuilderField({ 
+  path, 
+  label, 
+  customHeader, 
+  id: propId, 
+  collectionSlug: propCollectionSlug,
+  isFullscreen: propIsFullscreen,
+  onFullscreenChange: propOnFullscreenChange
+}: BlocksBuilderFieldProps) {
   const {
     blocks,
     selectedBlockId,
@@ -39,7 +49,17 @@ export function BlocksBuilderField({ path, label, customHeader, id: propId, coll
 
   const { refresh, setIframeRef } = usePreviewRefresh();
   const [activeId, setActiveId] = React.useState<string | null>(null);
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [internalIsFullscreen, setInternalIsFullscreen] = React.useState(false);
+
+  const isFullscreen = propIsFullscreen !== undefined ? propIsFullscreen : internalIsFullscreen;
+  const setIsFullscreen = (val: boolean | ((prev: boolean) => boolean)) => {
+    const nextVal = typeof val === 'function' ? val(isFullscreen) : val;
+    if (propOnFullscreenChange) {
+      propOnFullscreenChange(nextVal);
+    } else {
+      setInternalIsFullscreen(nextVal);
+    }
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
