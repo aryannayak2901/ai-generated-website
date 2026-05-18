@@ -403,3 +403,37 @@ h1, h2, h3, h4, h5, h6, .payload-admin__page-title, .nav-group__title {
 body:has(.bb-root--fullscreen) .nav-toggler.template-default__nav-toggler {
   display: none !important;
 }
+
+/* Premium Styling for Header Action/Toggle Buttons */
+.bb-studio-header-toggle-btn {
+  background: transparent !important;
+  border: 1px solid var(--theme-elevation-200) !important;
+  color: #A0ABC0 !important;
+  cursor: pointer !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+  flex-shrink: 0 !important;
+}
+
+.bb-studio-header-toggle-btn:hover {
+  background: var(--theme-elevation-150) !important;
+  color: #FFFFFF !important;
+  border-color: #C5A059 !important; /* Gold accent */
+}
+
+.bb-studio-header-toggle-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke: currentColor !important;
+}
+
+/* Hide the closed native sidebar collapse button completely inside pages studio view */
+body:has(.pages-studio-view) .nav-toggler:not(.nav-toggler--is-open) {
+  display: none !important;
+}
