@@ -56,13 +56,6 @@ export const Nav: React.FC = () => {
   return (
     <div className="bb-nav-container">
       <div className="bb-nav-header">
-        <button
-          type="button"
-          className="bb-nav-collapse-btn"
-          title="Toggle Sidebar"
-        >
-          <ChevronRight size={18} className="bb-nav-collapse-icon" />
-        </button>
         <div className="bb-nav-header-logo">🏛️</div>
       </div>
 

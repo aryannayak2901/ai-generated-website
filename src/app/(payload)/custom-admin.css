@@ -102,29 +102,7 @@ h1, h2, h3, h4, h5, h6, .payload-admin__page-title, .nav-group__title {
   line-height: 1;
 }
 
-.bb-nav-collapse-btn {
-  background: transparent;
-  border: 1px solid var(--theme-elevation-200);
-  color: #A0ABC0;
-  cursor: pointer;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
 
-.bb-nav-collapse-btn:hover {
-  background: var(--theme-elevation-150);
-  color: #FFFFFF;
-  border-color: #C5A059;
-}
-
-.bb-nav-collapse-icon {
-  transform: rotate(180deg); /* Points left when expanded */
-}
 
 .bb-nav-main {
   flex: 1;
@@ -354,3 +332,58 @@ h1, h2, h3, h4, h5, h6, .payload-admin__page-title, .nav-group__title {
     height: 30px;
   }
 }
+
+/* ─── Navigation Toggler Responsive Styling ───────────────────────────── */
+
+/* 1. Desktop Viewport (min-width: 1024px) */
+@media (min-width: 1024px) {
+  /* Hide the redundant toggle buttons entirely on desktop */
+  .template-default__nav-toggler-wrapper,
+  .app-header__mobile-nav-toggler {
+    display: none !important;
+  }
+  
+  /* Center the logo in the clean sidebar header */
+  .bb-nav-header {
+    justify-content: center !important;
+    padding: 1.5rem 1.25rem !important;
+  }
+}
+
+/* 2. Mobile/Tablet Viewport (max-width: 1023px) */
+@media (max-width: 1023px) {
+  /* Style the functional default toggler with our gold/navy theme */
+  .template-default__nav-toggler-wrapper {
+    left: 20px !important;
+    top: 24px !important;
+  }
+  
+  .template-default__nav-toggler {
+    background: transparent !important;
+    border: 1px solid var(--theme-elevation-200) !important;
+    border-radius: 6px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+
+  .template-default__nav-toggler:hover {
+    border-color: #C5A059 !important;
+    background: var(--theme-elevation-150) !important;
+  }
+
+  .template-default__nav-toggler .hamburger__open-icon svg {
+    stroke: #A0ABC0 !important;
+    transition: stroke 0.2s ease !important;
+  }
+
+  .template-default__nav-toggler:hover .hamburger__open-icon svg {
+    stroke: #FFFFFF !important;
+  }
+}
+
