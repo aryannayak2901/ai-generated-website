@@ -11,6 +11,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import { trackEvent } from "@/components/GoogleAnalyticsTracker";
+
 export function DisclaimerModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -30,6 +32,9 @@ export function DisclaimerModal() {
 
   const handleAccept = () => {
     localStorage.setItem("chambers_bhatt_disclaimer_accepted", "true");
+    trackEvent("disclaimer_accepted", {
+      accepted_at: new Date().toISOString(),
+    });
     setIsOpen(false);
   };
 

@@ -17,6 +17,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 
+import { trackEvent } from "@/components/GoogleAnalyticsTracker";
+
 const formSchema = zod.object({
   name: zod.string().min(2, "Name must be at least 2 characters"),
   email: zod.string().email("Invalid email address"),
@@ -38,10 +40,26 @@ export default function ContactForm() {
   });
 
   const onSubmit = async (data: zod.infer<typeof formSchema>) => {
-    // Simulate form submission
-    console.log(data);
-    alert("Message sent successfully! We'll get back to you within 24 hours.");
-    form.reset();
+    trackEvent("contact_form_submit_attempt", {
+      subject: data.subject,
+      has_phone: !!data.phone,
+    });
+
+    try {
+      // Simulate form submission
+      console.log(data);
+      alert("Message sent successfully! We'll get back to you within 24 hours.");
+      
+      trackEvent("contact_form_submit_success", {
+        subject: data.subject,
+      });
+      form.reset();
+    } catch (err: any) {
+      trackEvent("contact_form_submit_error", {
+        error_message: err?.message || "Submission failure",
+      });
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
