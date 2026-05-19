@@ -470,22 +470,22 @@ body:has(.ga4-dashboard-container) {
   overflow: hidden !important;
 }
 
-body:has(.ga4-dashboard-container) .template-default__wrap {
-  max-height: 100vh !important;
+body:has(.ga4-dashboard-container) .template-default__content {
+  max-height: calc(100vh - 100px) !important; /* Safe height accounting for header and save bar */
   overflow-y: auto !important;
   padding-bottom: 6rem !important;
   scrollbar-width: thin;
 }
 
-body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar {
+body:has(.ga4-dashboard-container) .template-default__content::-webkit-scrollbar {
   width: 6px;
 }
 
-body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-thumb {
+body:has(.ga4-dashboard-container) .template-default__content::-webkit-scrollbar-thumb {
   background: rgba(197, 160, 89, 0.2);
   border-radius: 10px;
 }
 
-body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-thumb:hover {
+body:has(.ga4-dashboard-container) .template-default__content::-webkit-scrollbar-thumb:hover {
   background: rgba(197, 160, 89, 0.4);
 }
