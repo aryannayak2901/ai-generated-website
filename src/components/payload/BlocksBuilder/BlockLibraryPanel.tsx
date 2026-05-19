@@ -211,7 +211,7 @@ export function BlockLibraryPanel({ search, onSearchChange }: BlockLibraryPanelP
 
         {filteredBlocks.length === 0 && (
           <div className="bb-library__empty">
-            No blocks found matching "{search}"
+            No blocks found matching &quot;{search}&quot;
           </div>
         )}
       </div>

@@ -11,7 +11,7 @@ export interface BlockInstance {
 
 export function useBlocksBuilder(fieldPath: string) {
   const { value, setValue } = useField<BlockInstance[]>({ path: fieldPath, validate: () => true });
-  const { doc } = useDocumentInfo();
+  const { doc } = useDocumentInfo() as any;
 
   // Local state for the builder
   const [blocks, setBlocks] = useState<BlockInstance[]>([]);
@@ -35,6 +35,7 @@ export function useBlocksBuilder(fieldPath: string) {
       const incomingBlocksJson = JSON.stringify(incomingBlocks);
 
       if (incomingBlocksJson !== currentBlocksJson) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setBlocks(incomingBlocks);
       }
       
