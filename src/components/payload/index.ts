@@ -4,3 +4,4 @@ export { Logo } from './Logo';
 export { Icon } from './Icon';
 export { default as BeforeLogin } from './BeforeLogin';
 export { Nav } from './Nav';
+export { GA4Dashboard } from './GA4Dashboard';
