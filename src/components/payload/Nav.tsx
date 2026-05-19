@@ -26,7 +26,7 @@ export const Nav: React.FC = () => {
 
   // In Payload 3.0, the admin route might be in different places depending on version
   const adminPath =
-    config.routes?.admin || config.admin?.routes?.admin || "/admin";
+    (config as any).routes?.admin || (config as any).admin?.routes?.admin || "/admin";
 
   const collections = (config.collections || []).filter((c) => !c.admin.hidden);
   const globals = (config.globals || []).filter((g) => !g.admin.hidden);
