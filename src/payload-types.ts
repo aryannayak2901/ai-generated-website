@@ -91,9 +91,11 @@ export interface Config {
   };
   globals: {
     header: Header;
+    ga4: Ga4;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
+    ga4: Ga4Select<false> | Ga4Select<true>;
   };
   locale: null;
   user: User & {
@@ -1180,6 +1182,19 @@ export interface Header {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ga4".
+ */
+export interface Ga4 {
+  id: string;
+  measurementId?: string | null;
+  propertyId?: string | null;
+  clientEmail?: string | null;
+  privateKey?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1191,6 +1206,19 @@ export interface HeaderSelect<T extends boolean = true> {
         link?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ga4_select".
+ */
+export interface Ga4Select<T extends boolean = true> {
+  measurementId?: T;
+  propertyId?: T;
+  clientEmail?: T;
+  privateKey?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
