@@ -28,8 +28,8 @@ export const Nav: React.FC = () => {
   const adminPath =
     (config as any).routes?.admin || (config as any).admin?.routes?.admin || "/admin";
 
-  const collections = (config.collections || []).filter((c) => !c.admin.hidden);
-  const globals = (config.globals || []).filter((g) => !g.admin.hidden);
+  const collections = (config.collections || []).filter((c) => !(c.admin as any)?.hidden);
+  const globals = (config.globals || []).filter((g) => !(g.admin as any)?.hidden);
 
   const getIcon = (slug: string) => {
     switch (slug) {
