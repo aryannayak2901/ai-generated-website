@@ -106,7 +106,8 @@ const StudioHeader = ({
         }}
         disabled={isCreating || isDeleting}
       >
-        + New Page
+        <span>+ New</span>
+        <span className="bb-btn-label-text-long"> Page</span>
       </button>
 
       {selectedPageId && (
@@ -120,7 +121,10 @@ const StudioHeader = ({
           }}
           disabled={isDeleting}
         >
-          {isDeleting ? "Deleting..." : "Delete Page"}
+          <span className="bb-btn-label-text-short">
+            {isDeleting ? "Deleting..." : "Delete"}
+          </span>
+          <span className="bb-btn-label-text-long"> Page</span>
         </button>
       )}
 
@@ -156,13 +160,29 @@ const StudioHeader = ({
           disabled={processing}
           style={{ opacity: processing ? 0.6 : 1 }}
         >
-          {processing
-            ? selectedPageId
-              ? "Saving..."
-              : "Creating..."
-            : selectedPageId
-              ? "Save Changes"
-              : "Create Page"}
+          {processing ? (
+            selectedPageId ? (
+              <>
+                <span className="bb-btn-label-text-short">Saving</span>
+                <span className="bb-btn-label-text-long">...</span>
+              </>
+            ) : (
+              <>
+                <span className="bb-btn-label-text-short">Creating</span>
+                <span className="bb-btn-label-text-long">...</span>
+              </>
+            )
+          ) : selectedPageId ? (
+            <>
+              <span>Save</span>
+              <span className="bb-btn-label-text-short"> Changes</span>
+            </>
+          ) : (
+            <>
+              <span>Create</span>
+              <span className="bb-btn-label-text-short"> Page</span>
+            </>
+          )}
         </button>
 
         {modified && (
