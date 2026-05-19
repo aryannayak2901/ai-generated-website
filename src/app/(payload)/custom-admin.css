@@ -460,8 +460,21 @@ body:has(.pages-studio-view) .nav-toggler:not(.nav-toggler--is-open) {
 
 /* Align right side bar (main content area) horizontally with the left side bar header logo on desktop */
 @media (min-width: 769px) {
+  /* General page content wrapper spacing */
   body:not(:has(.pages-studio-view)) .template-default__wrap {
     padding-top: 1.5rem !important;
+  }
+
+  /* Pixel-perfect horizontal header alignment for all list views (media, pages, teams, posts, locked-documents, etc.) */
+  body:not(:has(.pages-studio-view)) .list-header {
+    margin-top: -8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Pixel-perfect horizontal header alignment for all doc/edit/global/settings views (posts detail, team detail, user detail, header global, ga4 settings, etc.) */
+  body:not(:has(.pages-studio-view)) .doc-header {
+    margin-top: -12px !important;
+    padding-bottom: 16px !important;
   }
 }
 
@@ -470,22 +483,22 @@ body:has(.ga4-dashboard-container) {
   overflow: hidden !important;
 }
 
-body:has(.ga4-dashboard-container) .template-default__content {
-  max-height: calc(100vh - 100px) !important; /* Safe height accounting for header and save bar */
+body:has(.ga4-dashboard-container) .template-default__wrap {
+  max-height: 100vh !important;
   overflow-y: auto !important;
   padding-bottom: 6rem !important;
   scrollbar-width: thin;
 }
 
-body:has(.ga4-dashboard-container) .template-default__content::-webkit-scrollbar {
+body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar {
   width: 6px;
 }
 
-body:has(.ga4-dashboard-container) .template-default__content::-webkit-scrollbar-thumb {
+body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-thumb {
   background: rgba(197, 160, 89, 0.2);
   border-radius: 10px;
 }
 
-body:has(.ga4-dashboard-container) .template-default__content::-webkit-scrollbar-thumb:hover {
+body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-thumb:hover {
   background: rgba(197, 160, 89, 0.4);
 }
