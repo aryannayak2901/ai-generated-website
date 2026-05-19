@@ -9,6 +9,7 @@ import { Media } from "./collections/Media";
 import { Posts } from "./collections/Posts";
 import { Pages } from "./collections/Pages";
 import { Header } from "./globals/Header";
+import { GA4Settings } from "./globals/GA4Settings";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -32,7 +33,7 @@ export default buildConfig({
     },
   },
   collections: [Pages, Team, Users, Media, Posts],
-  globals: [Header],
+  globals: [Header, GA4Settings],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || "REPLACE_WITH_A_REAL_SECRET",
   db: mongooseAdapter({
