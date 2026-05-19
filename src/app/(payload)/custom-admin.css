@@ -117,12 +117,21 @@ h1, h2, h3, h4, h5, h6, .payload-admin__page-title, .nav-group__title {
   justify-content: center !important;
   transition: all 0.2s ease !important;
   box-shadow: none !important;
-  /* Perfect alignment inside custom header padding */
   position: absolute !important;
   top: 1.5rem !important;
+  z-index: 100 !important;
+}
+
+/* When the sidebar is open: position the close button on the right side of the sidebar */
+.nav-toggler.template-default__nav-toggler.nav-toggler--is-open {
   right: 1.25rem !important;
   left: auto !important;
-  z-index: 100 !important;
+}
+
+/* When the sidebar is closed: position the expand button on the left corner of the screen */
+.nav-toggler.template-default__nav-toggler:not(.nav-toggler--is-open) {
+  left: 1.25rem !important;
+  right: auto !important;
 }
 
 .nav-toggler.template-default__nav-toggler:hover {
@@ -138,9 +147,16 @@ h1, h2, h3, h4, h5, h6, .payload-admin__page-title, .nav-group__title {
   stroke: currentColor !important;
 }
 
-/* Ensure clean transitions when rotating/animating the toggle button and span full sidebar width */
-.template-default__nav-toggler-wrapper {
+/* When sidebar is open: expand the wrapper to full sidebar width so button aligns on the right */
+body:has(.nav-toggler--is-open) .template-default__nav-toggler-wrapper {
   width: var(--nav-width, 275px) !important;
+  pointer-events: none !important;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* When sidebar is closed: shrink the wrapper so button aligns at the top-left of the screen */
+body:not(:has(.nav-toggler--is-open)) .template-default__nav-toggler-wrapper {
+  width: auto !important;
   pointer-events: none !important;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
