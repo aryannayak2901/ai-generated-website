@@ -457,3 +457,10 @@ body:has(.bb-root--fullscreen) .nav-toggler.template-default__nav-toggler {
 body:has(.pages-studio-view) .nav-toggler:not(.nav-toggler--is-open) {
   display: none !important;
 }
+
+/* Align right side bar (main content area) horizontally with the left side bar header logo on desktop */
+@media (min-width: 769px) {
+  body:not(:has(.pages-studio-view)) .template-default__wrap {
+    padding-top: 1.5rem !important;
+  }
+}
