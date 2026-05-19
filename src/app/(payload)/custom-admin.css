@@ -464,3 +464,28 @@ body:has(.pages-studio-view) .nav-toggler:not(.nav-toggler--is-open) {
     padding-top: 1.5rem !important;
   }
 }
+
+/* Premium targeted vertical scroll override for the GA4 Settings & Telemetry Dashboard view */
+body:has(.ga4-dashboard-container) {
+  overflow: hidden !important;
+}
+
+body:has(.ga4-dashboard-container) .template-default__wrap {
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  padding-bottom: 6rem !important;
+  scrollbar-width: thin;
+}
+
+body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar {
+  width: 6px;
+}
+
+body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.2);
+  border-radius: 10px;
+}
+
+body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 160, 89, 0.4);
+}
