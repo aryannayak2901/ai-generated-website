@@ -5,6 +5,9 @@ import { DisclaimerModal } from "@/components/DisclaimerModal";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { getPayload } from "payload";
+import config from "@/payload.config";
+import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
 
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
@@ -25,11 +28,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FrontendLayout({
+export default async function FrontendLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  let measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
+  try {
+    const payload = await getPayload({ config });
+    const ga4 = await payload.findGlobal({
+      slug: "ga4",
+      depth: 0,
+    });
+    if (ga4?.measurementId) {
+      measurementId = ga4.measurementId;
+    }
+  } catch (error) {
+    console.error("Failed to load GA4 measurementId from DB:", error);
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -41,6 +58,7 @@ export default function FrontendLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <GoogleAnalyticsTracker measurementId={measurementId} />
           <DisclaimerModal />
           <Navbar />
           <main className="flex-1">{children}</main>
