@@ -48,7 +48,31 @@ export const GA4Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchReport();
+    let active = true;
+    const loadData = async () => {
+      try {
+        const res = await fetch("/api/analytics/report");
+        if (!res.ok) {
+          throw new Error(`Report API responded with ${res.status}`);
+        }
+        const data = await res.json();
+        if (active) {
+          setReport(data);
+        }
+      } catch (err: any) {
+        if (active) {
+          setError(err.message || "Failed to load report");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+    loadData();
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (loading) {
