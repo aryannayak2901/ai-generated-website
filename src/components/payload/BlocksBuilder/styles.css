@@ -80,7 +80,7 @@
   width: 100%;
 }
 .bb-root--studio .bb-studio {
-  height: calc(100% - 40px);
+  height: calc(100% - 60px);
 }
 
 /* ─── Admin Layout Overrides ─────────────────────────────────────────────── */
@@ -130,7 +130,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 0 16px;
+  height: 60px;
+  box-sizing: border-box;
   background: var(--bb-navy-mid);
   border-bottom: 1px solid var(--bb-border);
   font-size: 13px;
@@ -172,7 +174,7 @@
   height: 700px;
 }
 .bb-root--fullscreen .bb-studio {
-  height: calc(100vh - 40px);
+  height: calc(100vh - 60px);
 }
 
 /* ─── Panel 1 — Library ───────────────────────────────────────────────────── */
@@ -789,4 +791,37 @@
 .bb-delete-page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* ─── Responsive Styles for Page Builder Header ──────────────────────────── */
+@media (max-width: 768px) {
+  .bb-titlebar {
+    gap: 8px;
+    padding: 0 12px;
+  }
+  .bb-page-selector {
+    min-width: 110px;
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+  .bb-add-page-btn, 
+  .bb-delete-page-btn, 
+  .bb-studio-save-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  /* Responsive text-hiding utility classes */
+  .bb-btn-label-text-long {
+    display: none; /* Hides "Page" in "+ New Page" and "Delete Page" */
+  }
+}
+
+@media (max-width: 580px) {
+  .bb-page-selector {
+    min-width: 90px;
+    max-width: 120px;
+  }
+  .bb-btn-label-text-short {
+    display: none; /* Hides text entirely for compact layout */
+  }
 }
