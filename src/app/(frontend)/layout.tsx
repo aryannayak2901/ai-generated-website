@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
+import { Suspense } from "react";
 
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
@@ -58,7 +59,9 @@ export default async function FrontendLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <GoogleAnalyticsTracker measurementId={measurementId} />
+          <Suspense fallback={null}>
+            <GoogleAnalyticsTracker measurementId={measurementId} />
+          </Suspense>
           <DisclaimerModal />
           <Navbar />
           <main className="flex-1">{children}</main>
