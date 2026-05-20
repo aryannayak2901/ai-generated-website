@@ -145,27 +145,8 @@ export const GA4Dashboard: React.FC = () => {
       fontFamily: "system-ui, -apple-system, sans-serif",
       border: "1px solid rgba(212, 175, 55, 0.3)",
       boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-      marginBottom: "32px",
-      maxHeight: "380px",
-      overflowY: "auto",
-      position: "relative"
+      marginBottom: "32px"
     }}>
-      <style>{`
-        .ga4-dashboard-container::-webkit-scrollbar {
-          width: 8px;
-        }
-        .ga4-dashboard-container::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
-          border-radius: 4px;
-        }
-        .ga4-dashboard-container::-webkit-scrollbar-thumb {
-          background: rgba(212, 175, 55, 0.3);
-          border-radius: 4px;
-        }
-        .ga4-dashboard-container::-webkit-scrollbar-thumb:hover {
-          background: rgba(212, 175, 55, 0.5);
-        }
-      `}</style>
       {/* Header Section */}
       <div style={{
         display: "flex",

@@ -1,6 +1,18 @@
 {
   "version": 1,
   "skills": {
+    "analytics": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/analytics/SKILL.md",
+      "computedHash": "11fcba681577e36b5ad88e391d932a9c94fb1e593e94010c750739eefa9c4057"
+    },
+    "analytics-tracking": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "skillPath": "skills/analytics/tracking/SKILL.md",
+      "computedHash": "2655022cf72a71f3cf7ce886d9763a34c5e515837709794fef6e0feeef1fe066"
+    },
     "audit-website": {
       "source": "squirrelscan/skills",
       "sourceType": "github",
@@ -46,6 +58,18 @@
       "sourceType": "github",
       "skillPath": "frontend/framer-motion-animator/SKILL.md",
       "computedHash": "d0137ba04049bf8926bc80f6a5e2b82d94b5633b6445a85dbfb26ab4f1b104c6"
+    },
+    "google-analytics": {
+      "source": "davila7/claude-code-templates",
+      "sourceType": "github",
+      "skillPath": "cli-tool/components/skills/analytics/google-analytics/SKILL.md",
+      "computedHash": "c7a60543ca235c272d002f0dd6e1370c9cc37f4df604d9f9d75daefaa31ef89a"
+    },
+    "google-search-console": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "skillPath": "skills/analytics/seo/google-search-console/SKILL.md",
+      "computedHash": "211104a946051497f2726df67d8ada3317542e47b720521c14dbc287aea29fc1"
     },
     "gsap-framer-scroll-animation": {
       "source": "github/awesome-copilot",

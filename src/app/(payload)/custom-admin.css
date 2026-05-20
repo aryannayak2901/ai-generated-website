@@ -62,7 +62,7 @@ h1, h2, h3, h4, h5, h6, .payload-admin__page-title, .nav-group__title {
 }
 
 /* Sidebar overrides */
-.nav {
+.nav, .bb-nav-container {
   background-color: var(--theme-elevation-50) !important;
   border-right: 1px solid var(--theme-elevation-150) !important;
   display: flex;
@@ -331,7 +331,7 @@ body:not(:has(.nav-toggler--is-open)) .template-default__nav-toggler-wrapper {
 }
 
 /* Glassmorphism for the entire nav sidebar */
-.nav {
+.nav, .bb-nav-container {
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   background-color: rgba(10, 17, 40, 0.98) !important;
@@ -462,19 +462,32 @@ body:has(.pages-studio-view) .nav-toggler:not(.nav-toggler--is-open) {
 @media (min-width: 769px) {
   /* General page content wrapper spacing */
   body:not(:has(.pages-studio-view)) .template-default__wrap {
-    padding-top: 1.5rem !important;
+    padding-top: 0px !important;
   }
 
   /* Pixel-perfect horizontal header alignment for all list views (media, pages, teams, posts, locked-documents, etc.) */
   body:not(:has(.pages-studio-view)) .list-header {
-    margin-top: -8px !important;
+    margin-top: 0px !important;
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
     margin-bottom: 12px !important;
   }
 
   /* Pixel-perfect horizontal header alignment for all doc/edit/global/settings views (posts detail, team detail, user detail, header global, ga4 settings, etc.) */
   body:not(:has(.pages-studio-view)) .doc-header {
-    margin-top: -12px !important;
-    padding-bottom: 16px !important;
+    margin-top: 0px !important;
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  /* Pixel-perfect horizontal header/content alignment for the dashboard view */
+  body:not(:has(.pages-studio-view)) .dashboard {
+    padding-top: 59.5px !important;
+    margin-top: 0px !important;
+  }
+
+  body:not(:has(.pages-studio-view)) .dashboard__wrap {
+    margin-top: 0px !important;
   }
 }
 
