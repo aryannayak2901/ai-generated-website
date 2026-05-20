@@ -92,10 +92,12 @@ export interface Config {
   globals: {
     header: Header;
     ga4: Ga4;
+    'theme-settings': ThemeSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     ga4: Ga4Select<false> | Ga4Select<true>;
+    'theme-settings': ThemeSettingsSelect<false> | ThemeSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1195,6 +1197,124 @@ export interface Ga4 {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "theme-settings".
+ */
+export interface ThemeSetting {
+  id: string;
+  /**
+   * Selecting a preset automatically populates colors. Modifying colors will switch it to Custom.
+   */
+  preset:
+    | 'chambersClassic'
+    | 'slateMinimalist'
+    | 'emeraldEditorial'
+    | 'amberExecutive'
+    | 'crimsonCourt'
+    | 'royalBar'
+    | 'midnightExecutive'
+    | 'bronzeBrief'
+    | 'forestFiducia'
+    | 'sapphireSolace'
+    | 'platinumPrestige'
+    | 'terracottaTribunal'
+    | 'oxfordObiter'
+    | 'teakTrustee'
+    | 'custom';
+  /**
+   * Controls the active mode of both storefront and admin panel.
+   */
+  mode: 'system' | 'light' | 'dark';
+  /**
+   * Controls button, card, and input border radius on website.
+   */
+  radius: number;
+  /**
+   * Controls button, modal, and card border radius in admin.
+   */
+  adminRadius: number;
+  /**
+   * Google Font name for all headings (h1, h2, h3, etc.).
+   */
+  headingFont: string;
+  /**
+   * Google Font name for base reading text and elements.
+   */
+  bodyFont: string;
+  background?: string | null;
+  backgroundDark?: string | null;
+  foreground?: string | null;
+  foregroundDark?: string | null;
+  primary?: string | null;
+  primaryDark?: string | null;
+  primaryForeground?: string | null;
+  primaryForegroundDark?: string | null;
+  secondary?: string | null;
+  secondaryDark?: string | null;
+  secondaryForeground?: string | null;
+  secondaryForegroundDark?: string | null;
+  card?: string | null;
+  cardDark?: string | null;
+  cardForeground?: string | null;
+  cardForegroundDark?: string | null;
+  popover?: string | null;
+  popoverDark?: string | null;
+  popoverForeground?: string | null;
+  popoverForegroundDark?: string | null;
+  muted?: string | null;
+  mutedDark?: string | null;
+  mutedForeground?: string | null;
+  mutedForegroundDark?: string | null;
+  accent?: string | null;
+  accentDark?: string | null;
+  accentForeground?: string | null;
+  accentForegroundDark?: string | null;
+  destructive?: string | null;
+  destructiveDark?: string | null;
+  destructiveForeground?: string | null;
+  destructiveForegroundDark?: string | null;
+  border?: string | null;
+  borderDark?: string | null;
+  input?: string | null;
+  inputDark?: string | null;
+  ring?: string | null;
+  ringDark?: string | null;
+  adminBg?: string | null;
+  adminBgDark?: string | null;
+  adminFg?: string | null;
+  adminFgDark?: string | null;
+  adminPrimary?: string | null;
+  adminPrimaryDark?: string | null;
+  adminPrimaryFg?: string | null;
+  adminPrimaryFgDark?: string | null;
+  adminSecondary?: string | null;
+  adminSecondaryDark?: string | null;
+  adminSecondaryFg?: string | null;
+  adminSecondaryFgDark?: string | null;
+  adminSurface?: string | null;
+  adminSurfaceDark?: string | null;
+  adminSurfaceFg?: string | null;
+  adminSurfaceFgDark?: string | null;
+  adminAccent?: string | null;
+  adminAccentDark?: string | null;
+  adminAccentFg?: string | null;
+  adminAccentFgDark?: string | null;
+  adminBorder?: string | null;
+  adminBorderDark?: string | null;
+  adminMuted?: string | null;
+  adminMutedDark?: string | null;
+  /**
+   * Advanced styling variables and layout modifications for website pages.
+   */
+  cssOverrides?: string | null;
+  /**
+   * Custom style overrides to modify the Payload CMS admin interface appearance.
+   */
+  adminCSSOverrides?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1219,6 +1339,85 @@ export interface Ga4Select<T extends boolean = true> {
   propertyId?: T;
   clientEmail?: T;
   privateKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "theme-settings_select".
+ */
+export interface ThemeSettingsSelect<T extends boolean = true> {
+  preset?: T;
+  mode?: T;
+  radius?: T;
+  adminRadius?: T;
+  headingFont?: T;
+  bodyFont?: T;
+  background?: T;
+  backgroundDark?: T;
+  foreground?: T;
+  foregroundDark?: T;
+  primary?: T;
+  primaryDark?: T;
+  primaryForeground?: T;
+  primaryForegroundDark?: T;
+  secondary?: T;
+  secondaryDark?: T;
+  secondaryForeground?: T;
+  secondaryForegroundDark?: T;
+  card?: T;
+  cardDark?: T;
+  cardForeground?: T;
+  cardForegroundDark?: T;
+  popover?: T;
+  popoverDark?: T;
+  popoverForeground?: T;
+  popoverForegroundDark?: T;
+  muted?: T;
+  mutedDark?: T;
+  mutedForeground?: T;
+  mutedForegroundDark?: T;
+  accent?: T;
+  accentDark?: T;
+  accentForeground?: T;
+  accentForegroundDark?: T;
+  destructive?: T;
+  destructiveDark?: T;
+  destructiveForeground?: T;
+  destructiveForegroundDark?: T;
+  border?: T;
+  borderDark?: T;
+  input?: T;
+  inputDark?: T;
+  ring?: T;
+  ringDark?: T;
+  adminBg?: T;
+  adminBgDark?: T;
+  adminFg?: T;
+  adminFgDark?: T;
+  adminPrimary?: T;
+  adminPrimaryDark?: T;
+  adminPrimaryFg?: T;
+  adminPrimaryFgDark?: T;
+  adminSecondary?: T;
+  adminSecondaryDark?: T;
+  adminSecondaryFg?: T;
+  adminSecondaryFgDark?: T;
+  adminSurface?: T;
+  adminSurfaceDark?: T;
+  adminSurfaceFg?: T;
+  adminSurfaceFgDark?: T;
+  adminAccent?: T;
+  adminAccentDark?: T;
+  adminAccentFg?: T;
+  adminAccentFgDark?: T;
+  adminBorder?: T;
+  adminBorderDark?: T;
+  adminMuted?: T;
+  adminMutedDark?: T;
+  cssOverrides?: T;
+  adminCSSOverrides?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -9,6 +9,10 @@ import { getPayload } from "payload";
 import config from "@/payload.config";
 import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
 import { Suspense } from "react";
+import fs from "fs/promises";
+import path from "path";
+import { generateThemeCSS } from "@/globals/ThemeSettings/hooks/generateThemeCSS";
+import { generateAdminCSS } from "@/globals/ThemeSettings/hooks/generateAdminCSS";
 
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
@@ -35,23 +39,83 @@ export default async function FrontendLayout({
   children: React.ReactNode;
 }) {
   let measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
+  let headingFont = "Playfair Display";
+  let bodyFont = "Public Sans";
+
   try {
     const payload = await getPayload({ config });
-    const ga4 = await payload.findGlobal({
-      slug: "ga4",
-      depth: 0,
-    });
+    const [ga4, theme] = await Promise.all([
+      payload.findGlobal({
+        slug: "ga4",
+        depth: 0,
+      }),
+      payload.findGlobal({
+        slug: "theme-settings",
+        depth: 0,
+      }),
+    ]);
+
     if (ga4?.measurementId) {
       measurementId = ga4.measurementId;
     }
+    if (theme?.headingFont) {
+      headingFont = theme.headingFont;
+    }
+    if (theme?.bodyFont) {
+      bodyFont = theme.bodyFont;
+    }
   } catch (error) {
-    console.error("Failed to load GA4 measurementId from DB:", error);
+    console.error("Failed to load settings from DB:", error);
   }
+
+  // Ensure static CSS assets exist under public dir to prevent FOUC or 404s
+  try {
+    const publicDir = path.join(process.cwd(), "public");
+    const themeOverridesPath = path.join(publicDir, "theme-overrides.css");
+    const adminThemePath = path.join(publicDir, "admin-theme.css");
+
+    let themeExists = false;
+    try {
+      await fs.access(themeOverridesPath);
+      themeExists = true;
+    } catch {
+      themeExists = false;
+    }
+
+    if (!themeExists) {
+      const payload = await getPayload({ config });
+      const theme = await payload.findGlobal({
+        slug: "theme-settings",
+        depth: 0,
+      });
+      const themeCss = generateThemeCSS(theme || {});
+      const adminCss = generateAdminCSS(theme || {});
+      await fs.mkdir(publicDir, { recursive: true });
+      await Promise.all([
+        fs.writeFile(themeOverridesPath, themeCss, "utf-8"),
+        fs.writeFile(adminThemePath, adminCss, "utf-8"),
+      ]);
+    }
+  } catch (err) {
+    console.error("Failed to pre-generate dynamic CSS theme overrides:", err);
+  }
+
+  const headingFontSafe = headingFont.replace(/ /g, "+");
+  const bodyFontSafe = bodyFont.replace(/ /g, "+");
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href={`https://fonts.googleapis.com/css2?family=${bodyFontSafe}:wght@300;400;500;600;700&family=${headingFontSafe}:wght@300;400;500;600;700;800&display=swap`}
+        />
+        <link rel="stylesheet" href="/theme-overrides.css" />
+      </head>
       <body
-        className={`${publicSans.variable} ${playfairDisplay.variable} antialiased min-h-screen flex flex-col`}
+        className={`${publicSans.variable} ${playfairDisplay.variable} antialiased min-h-screen flex flex-col font-sans`}
       >
         <ThemeProvider
           attribute="class"

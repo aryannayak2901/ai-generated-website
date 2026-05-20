@@ -10,6 +10,7 @@ import { Posts } from "./collections/Posts";
 import { Pages } from "./collections/Pages";
 import { Header } from "./globals/Header";
 import { GA4Settings } from "./globals/GA4Settings";
+import { ThemeSettings } from "./globals/ThemeSettings/config";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -33,7 +34,7 @@ export default buildConfig({
     },
   },
   collections: [Pages, Team, Users, Media, Posts],
-  globals: [Header, GA4Settings],
+  globals: [Header, GA4Settings, ThemeSettings],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || "REPLACE_WITH_A_REAL_SECRET",
   db: mongooseAdapter({

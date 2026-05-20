@@ -1,0 +1,5 @@
+/**
+ * Chambers Dynamic Admin Theme Linker
+ * This imports the dynamically compiled stylesheet served from the public folder.
+ */
+@import "/admin-theme.css";
