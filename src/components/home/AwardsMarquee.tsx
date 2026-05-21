@@ -65,11 +65,11 @@ export interface AwardsMarqueeProps {
 const AwardCard = ({ award }: { award: AwardItem }) => {
   return (
     <ScrollReveal
-      className="w-[320px] bg-white border border-slate-200 shadow-sm overflow-hidden group hover:shadow-lg hover:border-teal-primary transition-all duration-300 shrink-0 mx-3"
+      className="w-[320px] bg-white border border-slate-200 shadow-sm overflow-hidden group hover:shadow-lg hover:border-accent transition-all duration-300 shrink-0 mx-3"
     direction="up"
     >
       {/* Top Half (Image) */}
-      <div className="relative h-48 w-full overflow-hidden bg-gray-light">
+      <div className="relative h-48 w-full overflow-hidden bg-secondary">
         <Image
           src={award.image}
           alt={award.title}
@@ -78,7 +78,7 @@ const AwardCard = ({ award }: { award: AwardItem }) => {
           sizes="320px"
         />
         {/* Teal Floating Badge */}
-        <div className="absolute bottom-3 right-3 bg-teal-primary px-3 py-1 rounded shadow-md z-10">
+        <div className="absolute bottom-3 right-3 bg-accent px-3 py-1 rounded shadow-md z-10">
           <span className="text-white text-[10px] uppercase tracking-widest font-bold">
             {award.yearBadge}
           </span>
@@ -87,18 +87,18 @@ const AwardCard = ({ award }: { award: AwardItem }) => {
 
       {/* Bottom Half (Content) */}
       <div className="p-6">
-        <h3 className="font-serif text-xl text-slate-primary mb-2 leading-tight">
+        <h3 className="font-serif text-xl text-foreground mb-2 leading-tight">
           {award.title}
         </h3>
-        <p className="font-sans font-medium text-slate-secondary text-sm mb-1">
+        <p className="font-sans font-medium text-muted-foreground text-sm mb-1">
           {award.subtitle}
         </p>
-        <p className="font-sans text-slate-secondary text-xs leading-relaxed min-h-[40px]">
+        <p className="font-sans text-muted-foreground text-xs leading-relaxed min-h-[40px]">
           {award.description}
         </p>
 
-        <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center group-hover:border-teal-primary/30 transition-colors">
-          <span className="text-teal-primary text-xs font-bold flex items-center gap-1 cursor-pointer group-hover:translate-x-1 transition-transform">
+        <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center group-hover:border-accent/30 transition-colors">
+          <span className="text-accent text-xs font-bold flex items-center gap-1 cursor-pointer group-hover:translate-x-1 transition-transform">
             VIEW DETAILS <ArrowRight className="w-3 h-3" />
           </span>
         </div>
@@ -121,20 +121,20 @@ export const AwardsMarquee = ({ awards: payloadAwards }: AwardsMarqueeProps) => 
     : awards;
 
   return (
-    <section className="py-16 md:py-24 border-t border-slate-200 bg-gray-light overflow-hidden">
+    <section className="py-16 md:py-24 border-t border-slate-200 bg-secondary overflow-hidden">
       <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12 mb-12">
         <div className="text-center">
-          <h3 className="text-slate-secondary text-xs font-bold tracking-[0.3em] uppercase mb-2">
+          <h3 className="text-muted-foreground text-xs font-bold tracking-[0.3em] uppercase mb-2">
             Recognitions & Accolades
           </h3>
-          <div className="w-12 h-0.5 bg-teal-primary/30 mx-auto"></div>
+          <div className="w-12 h-0.5 bg-accent/30 mx-auto"></div>
         </div>
       </div>
 
       <div className="relative flex overflow-hidden -mx-3 pause-on-hover">
         {/* Fading gradients at edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-linear-to-r from-gray-light to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-linear-to-l from-gray-light to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-linear-to-r from-secondary to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-linear-to-l from-secondary to-transparent z-10 pointer-events-none"></div>
 
         {/* Marquee Track using CSS Animation for pause-on-hover support */}
         <div className="flex py-4 items-center animate-marquee">
