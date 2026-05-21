@@ -72,11 +72,11 @@ export default function ContactForm() {
         className="max-w-[1280px] mx-auto"
       >
         <div className="max-w-2xl mx-auto">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-slate-primary mb-4 text-center">
             Send Us a Message
           </h2>
-          <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-8" />
-          <p className="text-muted-foreground text-center mb-12 leading-relaxed">
+          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-8" />
+          <p className="text-slate-secondary text-center mb-12 leading-relaxed">
             Fill out the form below and our team will get back to you within 24 hours.
           </p>
 
@@ -88,14 +88,14 @@ export default function ContactForm() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground font-semibold text-sm uppercase tracking-wider">
+                      <FormLabel className="text-slate-primary font-semibold text-sm uppercase tracking-wider">
                         Full Name *
                       </FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="John Doe" 
                           {...field} 
-                          className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                          className="border-slate-200 focus:border-teal-primary focus:ring-teal-primary/20"
                         />
                       </FormControl>
                       <FormMessage />
@@ -108,7 +108,7 @@ export default function ContactForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground font-semibold text-sm uppercase tracking-wider">
+                      <FormLabel className="text-slate-primary font-semibold text-sm uppercase tracking-wider">
                         Email Address *
                       </FormLabel>
                       <FormControl>
@@ -116,7 +116,7 @@ export default function ContactForm() {
                           type="email" 
                           placeholder="john@example.com" 
                           {...field} 
-                          className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                          className="border-slate-200 focus:border-teal-primary focus:ring-teal-primary/20"
                         />
                       </FormControl>
                       <FormMessage />
@@ -130,7 +130,7 @@ export default function ContactForm() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground font-semibold text-sm uppercase tracking-wider">
+                    <FormLabel className="text-slate-primary font-semibold text-sm uppercase tracking-wider">
                       Phone Number (Optional)
                     </FormLabel>
                     <FormControl>
@@ -138,7 +138,7 @@ export default function ContactForm() {
                         type="tel" 
                         placeholder="+91 1234567890" 
                         {...field} 
-                        className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                        className="border-slate-200 focus:border-teal-primary focus:ring-teal-primary/20"
                       />
                     </FormControl>
                     <FormMessage />
@@ -151,14 +151,14 @@ export default function ContactForm() {
                 name="subject"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground font-semibold text-sm uppercase tracking-wider">
+                    <FormLabel className="text-slate-primary font-semibold text-sm uppercase tracking-wider">
                       Subject *
                     </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Legal Consultation Request" 
                         {...field} 
-                        className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                        className="border-slate-200 focus:border-teal-primary focus:ring-teal-primary/20"
                       />
                     </FormControl>
                     <FormMessage />
@@ -171,7 +171,7 @@ export default function ContactForm() {
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground font-semibold text-sm uppercase tracking-wider">
+                    <FormLabel className="text-slate-primary font-semibold text-sm uppercase tracking-wider">
                       Message *
                     </FormLabel>
                     <FormControl>
@@ -179,7 +179,7 @@ export default function ContactForm() {
                         placeholder="Tell us about your legal matter..." 
                         rows={6}
                         {...field} 
-                        className="border-slate-200 focus:border-accent focus:ring-accent/20 resize-none"
+                        className="border-slate-200 focus:border-teal-primary focus:ring-teal-primary/20 resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -190,7 +190,7 @@ export default function ContactForm() {
               <Button 
                 type="submit" 
                 size="lg"
-                className="w-full bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase rounded-sm h-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase rounded-sm h-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
               >
                 Send Message
                 <Send className="ml-2 w-4 h-4" />

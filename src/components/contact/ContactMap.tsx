@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function ContactMap() {
   return (
-    <section className="py-16 md:py-24 px-6 bg-secondary">
+    <section className="py-16 md:py-24 px-6 bg-gray-light">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -16,9 +16,9 @@ export default function ContactMap() {
           {/* Map Placeholder - In production, use Google Maps or similar */}
           <div className="relative h-[400px] bg-slate-100 flex items-center justify-center">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-full bg-teal-primary/10 flex items-center justify-center mx-auto mb-4">
                 <svg 
-                  className="w-8 h-8 text-accent" 
+                  className="w-8 h-8 text-teal-primary" 
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
@@ -31,15 +31,15 @@ export default function ContactMap() {
                   />
                 </svg>
               </div>
-              <p className="text-foreground font-semibold mb-2">Interactive Map</p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-slate-primary font-semibold mb-2">Interactive Map</p>
+              <p className="text-slate-secondary text-sm">
                 Gandhinagar, Gujarat, India
               </p>
               <a 
                 href="https://maps.google.com/?q=Gandhinagar,Gujarat,India" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-4 text-accent hover:text-accent/85 transition-colors font-semibold text-sm"
+                className="inline-flex items-center gap-2 mt-4 text-teal-primary hover:text-teal-light transition-colors font-semibold text-sm"
               >
                 Open in Google Maps
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
