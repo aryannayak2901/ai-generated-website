@@ -7,15 +7,8 @@
 
 @theme {
   /* Modern Design System Tokens */
-  /* Colors - Charcoal & Teal */
-  --color-charcoal-primary: #1a1a1a;
-  --color-slate-dark: #0f172a;
-  --color-slate-primary: #2d3748;
-  --color-slate-secondary: #64748b;
-  --color-gray-light: #f7fafc;
-  --color-teal-primary: #0891b2;
-  --color-teal-light: #06b6d4;
-  
+  /* Legacy color tokens removed — use semantic tokens (bg-primary, bg-accent, etc.) */
+
   /* Spacing Scale */
   --space-xs: 4px;
   --space-sm: 8px;
