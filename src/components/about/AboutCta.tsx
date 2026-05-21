@@ -25,9 +25,9 @@ export function AboutCta({
   secondaryCtaLink,
 }: AboutCtaProps) {
   return (
-    <section className={`relative py-16 md:py-24 px-6 bg-charcoal-primary overflow-hidden ${className || ""}`}>
+    <section className={`relative py-16 md:py-24 px-6 bg-primary overflow-hidden ${className || ""}`}>
       {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-charcoal-primary via-charcoal-primary to-slate-dark" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
       
       {/* Decorative element */}
       <motion.div 
@@ -35,7 +35,7 @@ export function AboutCta({
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-teal-primary/5 rounded-full blur-3xl pointer-events-none" 
+        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" 
       />
 
       <motion.div 
@@ -47,13 +47,13 @@ export function AboutCta({
       >
         <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
           {title ? title : (
-            <>Ready to Secure Your <span className="text-teal-primary italic font-medium">Legal Future</span>?</>
+            <>Ready to Secure Your <span className="text-accent italic font-medium">Legal Future</span>?</>
           )}
         </h2>
         
-        <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
+        <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-6" />
         
-        <p className="text-lg md:text-xl text-slate-secondary leading-relaxed mb-10 max-w-2xl mx-auto font-sans">
+        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl mx-auto font-sans">
           {subtitle || "Our team of dedicated advocates is prepared to provide the strategic representation and expert counsel you deserve."}
         </p>
 
@@ -61,7 +61,7 @@ export function AboutCta({
           <Button
             asChild
             size="lg"
-            className="bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            className="bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
           >
             <Link href={ctaLink || "/contact"}>
               {ctaText || "Schedule Consultation"}
@@ -71,7 +71,7 @@ export function AboutCta({
 
           <Link
             href={secondaryCtaLink || "/practice-areas"}
-            className="text-teal-primary hover:text-teal-light font-semibold tracking-wider uppercase text-sm border-b-2 border-teal-primary/30 hover:border-teal-primary transition-colors py-2"
+            className="text-accent hover:text-accent/85 font-semibold tracking-wider uppercase text-sm border-b-2 border-accent/30 hover:border-accent transition-colors py-2"
           >
             {secondaryCtaText || "Explore Practice Areas"}
           </Link>
