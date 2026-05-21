@@ -62,7 +62,7 @@ export function TeamPreview() {
             >
               <div className="group bg-secondary rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer">
                 {/* Profile Image Placeholder */}
-                <div className="relative h-64 bg-gradient-to-br from-primary to-primary flex items-center justify-center">
+                <div className="relative h-64 bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
                   <div className="w-24 h-24 rounded-full bg-accent/20 flex items-center justify-center group-hover:bg-accent/30 transition-colors duration-300">
                     <span className="text-3xl font-bold text-accent">
                       {member.initials}

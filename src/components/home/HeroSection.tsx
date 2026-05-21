@@ -21,7 +21,7 @@ export function HeroSection({
   return (
     <section className="relative w-full min-h-[60vh] lg:min-h-[70vh] flex items-center bg-primary overflow-hidden">
       {/* Gradient background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
 
       {/* Accent bar - left side */}
       <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
