@@ -48,6 +48,8 @@ export function GoogleAnalyticsTracker({ measurementId }: GAProps) {
             gtag('js', new Date());
             gtag('config', '${measurementId}', {
               page_path: window.location.pathname,
+              practice_area: 'none',
+              user_tier: 'passive'
             });
           `,
         }}

@@ -44,21 +44,21 @@ export function PracticeAreasGrid({ className, title, subtitle, areas: payloadAr
     : defaultAreas;
 
   return (
-    <section className={`py-16 md:py-24 px-6 bg-gray-light w-full ${className || ""}`}>
+    <section className={`py-16 md:py-24 px-6 bg-secondary w-full ${className || ""}`}>
       <div className="max-w-[1280px] mx-auto">
         {(title || subtitle) && (
           <div className="text-center mb-12 md:mb-16">
             {title && (
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-primary mb-4">
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
                 {title}
               </h2>
             )}
             {subtitle && (
-              <p className="text-lg text-slate-secondary max-w-2xl mx-auto font-sans leading-relaxed">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-sans leading-relaxed">
                 {subtitle}
               </p>
             )}
-            <div className="w-20 h-0.5 bg-teal-primary/50 mx-auto mt-8" />
+            <div className="w-20 h-0.5 bg-accent/50 mx-auto mt-8" />
           </div>
         )}
 

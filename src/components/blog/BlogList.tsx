@@ -41,7 +41,7 @@ export function BlogList({ posts, categories, className, ...props }: BlogListPro
 
   return (
     <>
-      <section id="latest-posts" className={`py-16 md:py-24 bg-gray-light relative overflow-hidden ${className || ""}`} aria-labelledby="blog-list-title" {...props}>
+      <section id="latest-posts" className={`py-16 md:py-24 bg-secondary relative overflow-hidden ${className || ""}`} aria-labelledby="blog-list-title" {...props}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12 relative z-10">
           <BlogFilters 
             categories={categories}
@@ -63,8 +63,8 @@ export function BlogList({ posts, categories, className, ...props }: BlogListPro
             ) : (
               <div className="col-span-full py-20 text-center space-y-4">
                 <div className="text-6xl opacity-50">📂</div>
-                <h3 className="text-2xl font-serif font-bold text-slate-primary">No articles found</h3>
-                <p className="text-slate-secondary max-w-md mx-auto font-sans">
+                <h3 className="text-2xl font-serif font-bold text-foreground">No articles found</h3>
+                <p className="text-muted-foreground max-w-md mx-auto font-sans">
                   We couldn&apos;t find any articles matching your criteria. Try adjusting your search or switching categories.
                 </p>
               </div>

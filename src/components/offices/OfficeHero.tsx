@@ -11,19 +11,19 @@ export interface OfficeHeroProps {
 
 export function OfficeHero({ tag, title, subtitle }: OfficeHeroProps) {
   return (
-    <section className="relative min-h-[50vh] flex items-center bg-charcoal-primary overflow-hidden">
+    <section className="relative min-h-[50vh] flex items-center bg-primary overflow-hidden">
       {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-charcoal-primary via-charcoal-primary to-slate-dark" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
       
       {/* Teal accent bar - left side */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-primary" />
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
       
       {/* Decorative glow */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-teal-primary/5 rounded-full blur-3xl pointer-events-none" 
+        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" 
       />
 
       <motion.div 
@@ -33,7 +33,7 @@ export function OfficeHero({ tag, title, subtitle }: OfficeHeroProps) {
         className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12 py-20 lg:py-32 text-center"
       >
         <div className="max-w-3xl mx-auto">
-          <Badge className="mb-6 bg-teal-primary/10 text-teal-primary border-teal-primary/20 hover:bg-teal-primary/20 transition-colors uppercase tracking-wider text-xs font-semibold">
+          <Badge className="mb-6 bg-accent/10 text-accent border-accent/20 hover:bg-accent/20 transition-colors uppercase tracking-wider text-xs font-semibold">
             {tag || "Our Locations"}
           </Badge>
           
@@ -41,9 +41,9 @@ export function OfficeHero({ tag, title, subtitle }: OfficeHeroProps) {
             {title || "Our Offices"}
           </h1>
           
-          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-8" />
+          <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-8" />
           
-          <p className="text-lg md:text-xl text-slate-secondary leading-relaxed font-sans">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-sans">
             {subtitle || "Strategically located to serve clients across Gujarat with excellence and accessibility."}
           </p>
         </div>

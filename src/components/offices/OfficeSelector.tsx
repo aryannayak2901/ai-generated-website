@@ -89,15 +89,15 @@ export const OfficeSelector = ({
   const selectedOffice = activeOffices.find((o) => o.id === activeTabId);
 
   return (
-    <section className="py-16 md:py-24 px-6 bg-gray-light relative overflow-hidden">
+    <section className="py-16 md:py-24 px-6 bg-secondary relative overflow-hidden">
       <div className="max-w-[1280px] mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-primary mb-4">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {title || "Our Offices"}
           </h2>
-          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
-          <p className="text-lg text-slate-secondary max-w-2xl mx-auto leading-relaxed font-sans">
+          <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-6" />
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans">
             {subtitle || "Visit us at our conveniently located offices across Gujarat."}
           </p>
         </div>
@@ -111,8 +111,8 @@ export const OfficeSelector = ({
               onClick={() => setSelectedTabId(office.id)}
               className={
                 activeTabId === office.id
-                  ? "bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase text-xs"
-                  : "border-slate-200 text-slate-primary hover:border-teal-primary/30 hover:text-teal-primary font-semibold tracking-wider uppercase text-xs"
+                  ? "bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase text-xs"
+                  : "border-slate-200 text-foreground hover:border-accent/30 hover:text-accent font-semibold tracking-wider uppercase text-xs"
               }
             >
               {office.label}

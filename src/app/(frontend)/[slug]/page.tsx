@@ -6,6 +6,7 @@ import { RenderBlocks } from '@/components/RenderBlocks'
 import { LivePreviewProvider } from '@/components/LivePreviewProvider'
 import { Metadata } from 'next'
 import type { Page } from '@/payload-types'
+import { generateSeoMetadata } from '@/lib/seo/metadata-generator'
 
 interface PageProps {
   params: Promise<{
@@ -36,15 +37,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     }
 
-    return {
-      title: `${page.title} | Chambers of Jeet Bhatt`,
-      description: `Expert legal services for ${page.title}.`,
-    }
+    return generateSeoMetadata({
+      titleConfig: { type: 'custom', title: page.title },
+      descriptionConfig: { type: 'custom', description: `Expert legal services for ${page.title}.` },
+      slug: slug,
+    })
   } catch (error) {
     console.error("Error generating metadata:", error)
-    return {
-      title: 'Chambers of Jeet Bhatt',
-    }
+    return generateSeoMetadata({
+      titleConfig: { type: 'custom', title: 'Chambers of Jeet Bhatt' },
+      slug: slug,
+    })
   }
 }
 

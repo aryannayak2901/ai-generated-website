@@ -61,18 +61,18 @@ export function AboutValues({ className, tag, title, subtitle, values: payloadVa
     : defaultValues;
 
   return (
-    <section className={`relative py-16 md:py-24 px-6 bg-gray-light ${className || ""}`}>
+    <section className={`relative py-16 md:py-24 px-6 bg-secondary ${className || ""}`}>
       <div className="max-w-[1280px] mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
-          <span className="inline-block text-teal-primary font-bold tracking-[0.3em] uppercase text-xs mb-4">
+          <span className="inline-block text-accent font-bold tracking-[0.3em] uppercase text-xs mb-4">
             {tag || "Our Values"}
           </span>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-primary mb-4">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {title || "Core Values"}
           </h2>
-          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
-          <p className="text-lg text-slate-secondary max-w-2xl mx-auto leading-relaxed font-sans">
+          <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-6" />
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans">
             {subtitle || "The principles that guide everything we do at Chambers of Jeet Bhatt."}
           </p>
         </div>
@@ -86,15 +86,15 @@ export function AboutValues({ className, tag, title, subtitle, values: payloadVa
             const Icon = iconMap[value.icon] || ShieldCheck;
             return (
               <StaggerItem key={index}>
-                <Card className="bg-white border-slate-200 h-full hover:border-teal-primary/30 hover:shadow-lg transition-all duration-300 group">
+                <Card className="bg-white border-slate-200 h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group">
                   <CardContent className="p-6 md:p-8 text-center">
-                    <div className="w-16 h-16 rounded-lg bg-teal-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-teal-primary/20 transition-colors">
-                      <Icon className="w-8 h-8 text-teal-primary" />
+                    <div className="w-16 h-16 rounded-lg bg-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-accent/20 transition-colors">
+                      <Icon className="w-8 h-8 text-accent" />
                     </div>
-                    <h3 className="font-serif text-xl font-bold text-slate-primary mb-3 group-hover:text-teal-primary transition-colors">
+                    <h3 className="font-serif text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors">
                       {value.title}
                     </h3>
-                    <p className="text-slate-secondary text-sm leading-relaxed font-sans">
+                    <p className="text-muted-foreground text-sm leading-relaxed font-sans">
                       {value.description}
                     </p>
                   </CardContent>

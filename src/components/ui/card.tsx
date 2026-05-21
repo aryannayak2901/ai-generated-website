@@ -10,12 +10,12 @@ interface CardProps extends React.ComponentProps<"div"> {
 function Card({ className, variant = 'default', hover = true, ...props }: CardProps) {
   const baseStyles = "flex flex-col gap-6 rounded-lg border py-6 shadow-sm";
   const hoverStyles = hover
-    ? "transition-all duration-300 hover:shadow-lg hover:border-teal-primary/30 hover:scale-[1.02]"
+    ? "transition-all duration-300 hover:shadow-lg hover:border-accent/30 hover:scale-[1.02]"
     : "";
   
   const variantStyles = {
-    default: "bg-white border-slate-200 text-slate-primary",
-    accent: "bg-gray-light border-teal-primary/20 text-slate-primary",
+    default: "bg-card border-border text-card-foreground",
+    accent: "bg-secondary border-accent/20 text-foreground",
   };
 
   return (
@@ -49,7 +49,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("leading-none font-semibold text-slate-primary", className)}
+      className={cn("leading-none font-semibold text-foreground", className)}
       {...props}
     />
   )
@@ -59,7 +59,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm text-slate-secondary", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   )

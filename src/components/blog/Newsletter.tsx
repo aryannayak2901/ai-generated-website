@@ -14,10 +14,9 @@ export interface NewsletterProps {
 
 export function Newsletter({ badge, title, subtitle, disclaimer }: NewsletterProps) {
   return (
-    <section className="py-16 md:py-24 bg-charcoal-primary text-white relative overflow-hidden">
+    <section className="py-16 md:py-24 px-6 bg-primary overflow-hidden relative">
       {/* Decorative Accents */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
       
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -27,36 +26,32 @@ export function Newsletter({ badge, title, subtitle, disclaimer }: NewsletterPro
         className="max-w-[1280px] mx-auto px-6 relative z-10 text-center"
       >
         <div className="max-w-3xl mx-auto space-y-6">
-          <span className="text-teal-primary font-bold tracking-[0.3em] uppercase text-xs block">
+          <span className="text-accent font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
             {badge || "Newsletter"}
           </span>
           
-          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto" />
+          <div className="w-24 h-0.5 bg-accent/50 mx-auto" />
           
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold leading-tight">
             {title ? title : (
-              <>Stay Updated with <span className="text-teal-primary italic font-medium">Legal Insights</span></>
+              <>Stay Updated with <span className="text-accent italic font-medium">Legal Insights</span></>
             )}
           </h2>
           
-          <p className="text-lg text-slate-secondary font-sans leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed font-sans mb-10">
             {subtitle || "Subscribe to our newsletter for the latest legal updates, case studies, and expert analysis delivered to your inbox."}
           </p>
           
           <form className="flex flex-col sm:flex-row gap-3 mt-10 max-w-xl mx-auto p-2 bg-white/5 border border-white/10 rounded-lg backdrop-blur-md">
-            <Input 
-              type="email" 
-              placeholder="Your email address" 
-              aria-label="Email address for newsletter subscription"
-              className="h-12 bg-transparent border-none text-white placeholder:text-slate-400 focus-visible:ring-teal-primary/20 text-base px-6"
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="flex-1 px-6 py-3 rounded-sm bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-accent/50 font-sans"
               required
             />
-            <Button 
-              type="submit"
-              className="h-12 px-8 bg-teal-primary hover:bg-teal-light text-white font-semibold transition-all duration-300 rounded-md uppercase tracking-wider text-xs"
-            >
+            <button className="px-8 py-3 bg-accent hover:bg-accent/85 text-white font-semibold uppercase tracking-wider text-sm rounded-sm transition-all duration-300 shadow-lg hover:shadow-accent/20 flex items-center gap-2">
               Subscribe
-            </Button>
+            </button>
           </form>
           
           <p className="text-[10px] text-slate-500 pt-6 font-bold uppercase tracking-[0.2em]">

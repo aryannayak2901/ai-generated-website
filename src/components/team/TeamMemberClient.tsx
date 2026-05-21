@@ -23,12 +23,12 @@ export default function TeamMemberClient({ member }: Props) {
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
       {/* Hero Section - Charcoal background with teal accents */}
-      <section className="bg-charcoal-primary text-white relative py-16 md:py-24 px-6 md:px-8 lg:px-12">
+      <section className="bg-primary text-white relative py-16 md:py-24 px-6 md:px-8 lg:px-12">
         {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-charcoal-primary via-charcoal-primary to-slate-dark" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
         
         {/* Teal accent bar */}
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-primary" />
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
         
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -39,7 +39,7 @@ export default function TeamMemberClient({ member }: Props) {
           {/* Back Navigation */}
           <Link
             href="/team"
-            className="inline-flex items-center text-slate-secondary hover:text-teal-primary transition-colors text-sm font-medium mb-8"
+            className="inline-flex items-center text-muted-foreground hover:text-accent transition-colors text-sm font-medium mb-8"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
             Back to Team
@@ -51,7 +51,7 @@ export default function TeamMemberClient({ member }: Props) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="relative shrink-0 w-64 h-80 rounded-2xl overflow-hidden border-4 border-white/10 shadow-2xl bg-slate-dark flex items-center justify-center"
+              className="relative shrink-0 w-64 h-80 rounded-2xl overflow-hidden border-4 border-white/10 shadow-2xl bg-primary/80 flex items-center justify-center"
             >
               {member.image ? (
                 <Image
@@ -62,8 +62,8 @@ export default function TeamMemberClient({ member }: Props) {
                   sizes="256px"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-teal-primary/20 flex items-center justify-center">
-                  <span className="text-4xl font-bold text-teal-primary">
+                <div className="w-24 h-24 rounded-full bg-accent/20 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-accent">
                     {member.name.split(' ').map(n => n[0]).join('')}
                   </span>
                 </div>
@@ -79,7 +79,7 @@ export default function TeamMemberClient({ member }: Props) {
             >
               <Badge
                 variant="outline"
-                className="w-fit mx-auto md:mx-0 border-teal-primary/50 text-teal-primary mb-4 px-4 py-1 text-xs uppercase tracking-wider bg-teal-primary/10"
+                className="w-fit mx-auto md:mx-0 border-accent/50 text-accent mb-4 px-4 py-1 text-xs uppercase tracking-wider bg-accent/10"
               >
                 {member.designation}
               </Badge>
@@ -88,41 +88,41 @@ export default function TeamMemberClient({ member }: Props) {
                 {member.name}
               </h1>
 
-              <h2 className="text-lg md:text-xl text-slate-secondary font-serif mb-6">
+              <h2 className="text-lg md:text-xl text-muted-foreground font-serif mb-6">
                 {member.subtitle}
               </h2>
 
               {/* Stat Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-3xl">
-                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-teal-primary/30 transition-colors">
-                  <div className="text-2xl font-bold text-teal-primary mb-1">
+                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-accent/30 transition-colors">
+                  <div className="text-2xl font-bold text-accent mb-1">
                     {member.stats.experience}
                   </div>
-                  <div className="text-xs text-slate-secondary uppercase tracking-wider">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">
                     Years Exp.
                   </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-teal-primary/30 transition-colors">
-                  <div className="text-2xl font-bold text-teal-primary mb-1">
+                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-accent/30 transition-colors">
+                  <div className="text-2xl font-bold text-accent mb-1">
                     {member.stats.cases}
                   </div>
-                  <div className="text-xs text-slate-secondary uppercase tracking-wider">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">
                     Cases
                   </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-teal-primary/30 transition-colors">
-                  <div className="text-2xl font-bold text-teal-primary mb-1">
+                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-accent/30 transition-colors">
+                  <div className="text-2xl font-bold text-accent mb-1">
                     {member.stats.publications}
                   </div>
-                  <div className="text-xs text-slate-secondary uppercase tracking-wider">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">
                     Publications
                   </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-teal-primary/30 transition-colors">
-                  <div className="text-2xl font-bold text-teal-primary mb-1">
+                <div className="bg-white/5 border border-white/10 p-4 rounded-lg backdrop-blur-sm hover:border-accent/30 transition-colors">
+                  <div className="text-2xl font-bold text-accent mb-1">
                     {member.stats.clients}
                   </div>
-                  <div className="text-xs text-slate-secondary uppercase tracking-wider">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">
                     Clients
                   </div>
                 </div>
@@ -141,31 +141,31 @@ export default function TeamMemberClient({ member }: Props) {
               <TabsList className="bg-transparent border-b border-slate-200 w-full justify-start rounded-none h-auto p-0 mb-8 overflow-x-auto flex-nowrap hide-scrollbar">
                 <TabsTrigger
                   value="overview"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-primary data-[state=active]:text-teal-primary data-[state=active]:bg-teal-primary/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:text-accent data-[state=active]:bg-accent/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
                 >
                   Overview
                 </TabsTrigger>
                 <TabsTrigger
                   value="experience"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-primary data-[state=active]:text-teal-primary data-[state=active]:bg-teal-primary/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:text-accent data-[state=active]:bg-accent/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
                 >
                   Experience
                 </TabsTrigger>
                 <TabsTrigger
                   value="education"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-primary data-[state=active]:text-teal-primary data-[state=active]:bg-teal-primary/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:text-accent data-[state=active]:bg-accent/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
                 >
                   Education
                 </TabsTrigger>
                 <TabsTrigger
                   value="awards"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-primary data-[state=active]:text-teal-primary data-[state=active]:bg-teal-primary/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:text-accent data-[state=active]:bg-accent/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
                 >
                   Awards
                 </TabsTrigger>
                 <TabsTrigger
                   value="publications"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-primary data-[state=active]:text-teal-primary data-[state=active]:bg-teal-primary/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:text-accent data-[state=active]:bg-accent/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
                 >
                   Publications
                 </TabsTrigger>
@@ -211,10 +211,10 @@ export default function TeamMemberClient({ member }: Props) {
           {/* Sidebar */}
           <div className="lg:w-1/3 lg:sticky lg:top-32 lg:self-start space-y-6">
             <Card className="bg-white border-slate-200 shadow-lg rounded-xl overflow-hidden py-0">
-              <CardHeader className="bg-charcoal-primary p-6 pt-8 pb-6 text-center border-b border-white/10">
-                <div className="w-12 h-12 bg-teal-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CardHeader className="bg-primary p-6 pt-8 pb-6 text-center border-b border-white/10">
+                <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
-                    className="w-6 h-6 text-teal-primary"
+                    className="w-6 h-6 text-accent"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -230,14 +230,14 @@ export default function TeamMemberClient({ member }: Props) {
                 <CardTitle className="text-2xl font-serif text-white mb-2">
                   Engage Chambers
                 </CardTitle>
-                <p className="text-slate-secondary text-sm">
+                <p className="text-muted-foreground text-sm">
                   For consultation & legal representation
                 </p>
               </CardHeader>
               <CardContent className="p-6">
                 <Button
                   asChild
-                  className="w-full bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase rounded-sm h-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase rounded-sm h-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Link href="/contact">
                     Get In Touch
@@ -245,10 +245,10 @@ export default function TeamMemberClient({ member }: Props) {
                 </Button>
 
                 <div className="mt-6 space-y-4">
-                  <div className="flex items-start gap-4 p-4 rounded-lg bg-gray-light">
-                    <div className="w-10 h-10 rounded-full bg-teal-primary/10 flex items-center justify-center shrink-0">
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
+                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
                       <svg
-                        className="w-5 h-5 text-teal-primary"
+                        className="w-5 h-5 text-accent"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -262,19 +262,19 @@ export default function TeamMemberClient({ member }: Props) {
                       </svg>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-secondary uppercase tracking-wider font-semibold mb-1">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
                         Direct Line
                       </div>
-                      <div className="text-sm font-medium text-slate-primary">
+                      <div className="text-sm font-medium text-foreground">
                         +91 94082 82982
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4 p-4 rounded-lg bg-gray-light">
-                    <div className="w-10 h-10 rounded-full bg-teal-primary/10 flex items-center justify-center shrink-0">
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
+                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
                       <svg
-                        className="w-5 h-5 text-teal-primary"
+                        className="w-5 h-5 text-accent"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -288,10 +288,10 @@ export default function TeamMemberClient({ member }: Props) {
                       </svg>
                     </div>
                     <div>
-                      <div className="text-xs text-slate-secondary uppercase tracking-wider font-semibold mb-1">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
                         Email
                       </div>
-                      <div className="text-sm font-medium text-slate-primary">
+                      <div className="text-sm font-medium text-foreground">
                         info@jeetbhatt.com
                       </div>
                     </div>

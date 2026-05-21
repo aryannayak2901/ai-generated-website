@@ -8,11 +8,16 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { getPayload } from "payload";
 import config from "@/payload.config";
 import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
+import { EnhancedTracker } from "@/components/Analytics/EnhancedTracker";
 import { Suspense } from "react";
 import fs from "fs/promises";
 import path from "path";
 import { generateThemeCSS } from "@/globals/ThemeSettings/hooks/generateThemeCSS";
 import { generateAdminCSS } from "@/globals/ThemeSettings/hooks/generateAdminCSS";
+
+import { generateSeoMetadata } from "@/lib/seo/metadata-generator";
+import StructuredData from "@/components/SEO/StructuredData";
+import { generateGeneralPageSchema } from "@/lib/seo/schema-generator";
 
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
@@ -24,14 +29,11 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://jeetbhatt.com"),
-  title: "Chambers of Jeet Bhatt",
-  description: "Premium Law Firm in Gandhinagar, Gujarat",
-  alternates: {
-    canonical: "/",
-  },
-};
+export const metadata: Metadata = generateSeoMetadata({
+  titleConfig: { type: "home" },
+  descriptionConfig: { type: "home" },
+  slug: "/",
+});
 
 export default async function FrontendLayout({
   children,
@@ -125,7 +127,9 @@ export default async function FrontendLayout({
         >
           <Suspense fallback={null}>
             <GoogleAnalyticsTracker measurementId={measurementId} />
+            <EnhancedTracker />
           </Suspense>
+          <StructuredData schema={generateGeneralPageSchema()} />
           <DisclaimerModal />
           <Navbar />
           <main className="flex-1">{children}</main>
