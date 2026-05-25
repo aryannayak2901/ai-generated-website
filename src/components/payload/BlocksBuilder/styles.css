@@ -455,6 +455,7 @@
 /* ─── Panel 3 — Edit (slide-in) ───────────────────────────────────────────── */
 .bb-edit {
   width: 0;
+  height: 100%;
   overflow: hidden;
   flex-shrink: 0;
   display: flex;

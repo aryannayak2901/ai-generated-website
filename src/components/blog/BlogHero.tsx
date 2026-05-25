@@ -152,7 +152,7 @@ export function BlogHero({ tag, title, subtitle, featuredPost }: BlogHeroProps) 
                     <div className="absolute inset-0 bg-gradient-to-t from-primary via-transparent to-transparent opacity-80" />
                     
                     <div className="absolute top-4 left-4 flex items-center gap-3">
-                      <div className="px-2.5 py-1 bg-accent text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded shadow-lg">
+                      <div className="px-2.5 py-1 bg-accent text-accent-foreground text-[10px] font-bold uppercase tracking-[0.2em] rounded shadow-lg">
                         Featured
                       </div>
                     </div>
@@ -171,7 +171,7 @@ export function BlogHero({ tag, title, subtitle, featuredPost }: BlogHeroProps) 
                       {postData.excerpt}
                     </p>
                     
-                    <div className="inline-flex items-center gap-3 py-2.5 px-5 bg-accent/10 border border-accent/20 rounded-full text-accent text-[10px] font-bold tracking-widest uppercase group-hover:bg-accent group-hover:text-white transition-all duration-500">
+                    <div className="inline-flex items-center gap-3 py-2.5 px-5 bg-accent/10 border border-accent/20 rounded-full text-accent text-[10px] font-bold tracking-widest uppercase group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500">
                       Read Article
                       <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                     </div>

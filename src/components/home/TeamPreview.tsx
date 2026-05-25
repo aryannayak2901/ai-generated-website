@@ -107,7 +107,7 @@ export function TeamPreview() {
             asChild
             variant="outline"
             size="lg"
-            className="border-accent text-accent hover:bg-accent hover:text-white font-semibold tracking-wider uppercase rounded-sm h-12 px-8 transition-all duration-300"
+            className="border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold tracking-wider uppercase rounded-sm h-12 px-8 transition-all duration-300"
           >
             <Link href="/team">
               View Full Team <Users className="ml-2 w-4 h-4" />

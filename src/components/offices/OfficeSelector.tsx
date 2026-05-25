@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { OfficeCard } from "./OfficeCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import type { Media } from "@/payload-types";
 
 const OFFICES = [
@@ -89,60 +88,75 @@ export const OfficeSelector = ({
   const selectedOffice = activeOffices.find((o) => o.id === activeTabId);
 
   return (
-    <section className="py-16 md:py-24 px-6 bg-secondary relative overflow-hidden">
-      <div className="max-w-[1280px] mx-auto relative z-10">
+    <section className="py-20 md:py-28 px-6 bg-secondary relative overflow-hidden">
+      {/* Decorative subtle ambient circle */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="max-w-[1300px] mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {title || "Our Offices"}
+        <div className="text-center mb-16 md:mb-20">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight tracking-tight">
+            {title || "Select Your Jurisdiction"}
           </h2>
-          <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-6" />
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans">
-            {subtitle || "Visit us at our conveniently located offices across Gujarat."}
+          <div className="w-16 h-[2px] bg-accent mx-auto mb-6" />
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans font-light">
+            {subtitle || "Initiate contact with our respective chambers for specialized professional counsel tailored to your location."}
           </p>
         </div>
 
-        {/* Office Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {activeOffices.map((office) => (
-            <Button
-              key={office.id}
-              variant={activeTabId === office.id ? "default" : "outline"}
-              onClick={() => setSelectedTabId(office.id)}
-              className={
-                activeTabId === office.id
-                  ? "bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase text-xs"
-                  : "border-slate-200 text-foreground hover:border-accent/30 hover:text-accent font-semibold tracking-wider uppercase text-xs"
-              }
-            >
-              {office.label}
-            </Button>
-          ))}
+        {/* Office Navigation Tabs */}
+        <div className="flex flex-wrap justify-center items-center gap-4 mb-16 max-w-lg mx-auto p-1.5 bg-background/50 backdrop-blur-md rounded-xl border border-border/40 shadow-sm">
+          {activeOffices.map((office) => {
+            const isActive = activeTabId === office.id;
+            return (
+              <button
+                key={office.id}
+                onClick={() => setSelectedTabId(office.id)}
+                className={`relative flex-1 py-3 px-6 rounded-lg text-xs font-semibold uppercase tracking-widest transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? "text-white"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeOfficeTab"
+                    className="absolute inset-0 bg-accent rounded-lg shadow-md -z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {office.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Office Card with Animation */}
-        <AnimatePresence mode="wait">
-          {selectedOffice && (
-            <motion.div
-              key={selectedOffice.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <OfficeCard
-                name={selectedOffice.name}
-                address={selectedOffice.address}
-                phone={selectedOffice.phone}
-                email={selectedOffice.email}
-                hours={selectedOffice.hours}
-                mapUrl={selectedOffice.mapUrl}
-                imageUrl={selectedOffice.imageUrl}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Office Card with Staggered Visual Entrance */}
+        <div className="min-h-[500px]">
+          <AnimatePresence mode="wait">
+            {selectedOffice && (
+              <motion.div
+                key={selectedOffice.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <OfficeCard
+                  name={selectedOffice.name}
+                  address={selectedOffice.address}
+                  phone={selectedOffice.phone}
+                  email={selectedOffice.email}
+                  hours={selectedOffice.hours}
+                  mapUrl={selectedOffice.mapUrl}
+                  imageUrl={selectedOffice.imageUrl}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
 };
+

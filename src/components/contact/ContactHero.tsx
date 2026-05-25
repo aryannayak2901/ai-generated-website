@@ -55,7 +55,7 @@ export default function ContactHero({ tag, title, subtitle, phone, email }: Cont
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 w-full max-w-2xl mx-auto">
             <Button
-              className="w-full sm:w-auto bg-accent hover:bg-accent/85 text-white h-12 sm:h-14 px-8 sm:px-10 rounded-sm font-semibold uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto bg-accent hover:bg-accent/85 text-accent-foreground h-12 sm:h-14 px-8 sm:px-10 rounded-sm font-semibold uppercase tracking-wider transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
               onClick={() => window.open(`tel:${phone || "+919408282982"}`, "_self")}
             >
               <Phone className="mr-3 h-5 w-5" />

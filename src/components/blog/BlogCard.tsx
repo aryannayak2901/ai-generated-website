@@ -53,7 +53,7 @@ export function BlogCard({ post, onClick, onHover, priority = false }: BlogCardP
         />
         
         <div className="absolute top-5 left-5 z-20 flex gap-2">
-          <Badge className="bg-accent text-white font-bold text-[10px] px-4 py-1.5 rounded-full shadow-lg border-none uppercase tracking-wider">
+          <Badge className="bg-accent text-accent-foreground font-bold text-[10px] px-4 py-1.5 rounded-full shadow-lg border-none uppercase tracking-wider">
             {post.category}
           </Badge>
           {isExternal && (

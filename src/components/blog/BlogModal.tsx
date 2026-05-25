@@ -68,7 +68,7 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute top-6 right-6 z-[110] p-2 rounded-full bg-slate-100 hover:bg-accent hover:text-white transition-all duration-300 text-foreground"
+                className="absolute top-6 right-6 z-[110] p-2 rounded-full bg-slate-100 hover:bg-accent hover:text-accent-foreground transition-all duration-300 text-foreground"
               >
                 <X className="h-6 w-6" />
               </button>

@@ -60,11 +60,26 @@ export function AboutTeam({
   const activeMembers = payloadMembers && payloadMembers.length > 0
     ? payloadMembers.reduce<TeamMember[]>((acc, m) => {
         if (typeof m === 'string') return acc;
+        
+        let imageUrl = "";
+        if (m.image) {
+          if (typeof m.image === 'string') {
+            imageUrl = m.image;
+          } else if (typeof m.image === 'object') {
+            if ('url' in m.image && typeof m.image.url === 'string') {
+              imageUrl = m.image.url;
+            }
+          }
+        }
+        
+        // Ensure imageUrl is a valid URL string starting with http, https, or /
+        const isUrlValid = imageUrl && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://") || imageUrl.startsWith("/"));
+        
         acc.push({
           name: m.name,
           designation: m.designation || "",
           experience: `${m.stats?.experience || "10+"} years experience`,
-          image: (m.image as any)?.url || "",
+          image: isUrlValid ? imageUrl : "",
           profileUrl: `/team/${m.slug}`,
         });
         return acc;
@@ -99,20 +114,39 @@ export function AboutTeam({
                 <CardContent className="p-0">
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
+                    {member.image ? (
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-primary to-primary/85 flex flex-col items-center justify-center border-b border-accent/20 group-hover:scale-105 transition-transform duration-500">
+                        <div className="w-20 h-20 rounded-full border border-accent/30 bg-accent/5 flex items-center justify-center mb-2 shadow-inner">
+                          <span className="font-serif text-3xl font-bold text-accent tracking-wider">
+                            {member.name
+                              .split(" ")
+                              .filter(Boolean)
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()
+                              .slice(0, 3)}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-muted-foreground/60 group-hover:text-accent transition-colors duration-300">
+                          Chambers of Jeet Bhatt
+                        </span>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <Link
                         href={member.profileUrl}
-                        className="bg-accent text-white px-6 py-2 rounded-sm font-semibold uppercase tracking-wider text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+                        className="bg-accent text-accent-foreground px-6 py-2 rounded-sm font-semibold uppercase tracking-wider text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
                       >
                         View Profile
                       </Link>

@@ -193,6 +193,8 @@ export interface Page {
                   title: string;
                   year?: string | null;
                   organization?: string | null;
+                  description?: string | null;
+                  image?: (string | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -226,7 +228,7 @@ export interface Page {
               | {
                   title: string;
                   description: string;
-                  icon?: ('Scale' | 'Shield' | 'Target' | 'Users' | 'Award' | 'Handshake') | null;
+                  icon?: ('Scale' | 'ShieldCheck' | 'Award' | 'Handshake' | 'Gavel' | 'Building2') | null;
                   id?: string | null;
                 }[]
               | null;
@@ -365,9 +367,11 @@ export interface Page {
             blockType: 'blogFilters';
           }
         | {
+            badge?: string | null;
             title: string;
             subtitle?: string | null;
             buttonText?: string | null;
+            disclaimer?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'newsletter';
@@ -422,6 +426,7 @@ export interface Page {
               | null;
             mapOverlayTitle?: string | null;
             mapOverlayDescription?: string | null;
+            mapUrl?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'mapSection';
@@ -742,6 +747,8 @@ export interface PagesSelect<T extends boolean = true> {
                     title?: T;
                     year?: T;
                     organization?: T;
+                    description?: T;
+                    image?: T;
                     id?: T;
                   };
               id?: T;
@@ -911,9 +918,11 @@ export interface PagesSelect<T extends boolean = true> {
         newsletter?:
           | T
           | {
+              badge?: T;
               title?: T;
               subtitle?: T;
               buttonText?: T;
+              disclaimer?: T;
               id?: T;
               blockName?: T;
             };
@@ -971,6 +980,7 @@ export interface PagesSelect<T extends boolean = true> {
                   };
               mapOverlayTitle?: T;
               mapOverlayDescription?: T;
+              mapUrl?: T;
               id?: T;
               blockName?: T;
             };
@@ -1278,38 +1288,10 @@ export interface ThemeSetting {
   inputDark?: string | null;
   ring?: string | null;
   ringDark?: string | null;
-  adminBg?: string | null;
-  adminBgDark?: string | null;
-  adminFg?: string | null;
-  adminFgDark?: string | null;
-  adminPrimary?: string | null;
-  adminPrimaryDark?: string | null;
-  adminPrimaryFg?: string | null;
-  adminPrimaryFgDark?: string | null;
-  adminSecondary?: string | null;
-  adminSecondaryDark?: string | null;
-  adminSecondaryFg?: string | null;
-  adminSecondaryFgDark?: string | null;
-  adminSurface?: string | null;
-  adminSurfaceDark?: string | null;
-  adminSurfaceFg?: string | null;
-  adminSurfaceFgDark?: string | null;
-  adminAccent?: string | null;
-  adminAccentDark?: string | null;
-  adminAccentFg?: string | null;
-  adminAccentFgDark?: string | null;
-  adminBorder?: string | null;
-  adminBorderDark?: string | null;
-  adminMuted?: string | null;
-  adminMutedDark?: string | null;
   /**
    * Advanced styling variables and layout modifications for website pages.
    */
   cssOverrides?: string | null;
-  /**
-   * Custom style overrides to modify the Payload CMS admin interface appearance.
-   */
-  adminCSSOverrides?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1392,32 +1374,7 @@ export interface ThemeSettingsSelect<T extends boolean = true> {
   inputDark?: T;
   ring?: T;
   ringDark?: T;
-  adminBg?: T;
-  adminBgDark?: T;
-  adminFg?: T;
-  adminFgDark?: T;
-  adminPrimary?: T;
-  adminPrimaryDark?: T;
-  adminPrimaryFg?: T;
-  adminPrimaryFgDark?: T;
-  adminSecondary?: T;
-  adminSecondaryDark?: T;
-  adminSecondaryFg?: T;
-  adminSecondaryFgDark?: T;
-  adminSurface?: T;
-  adminSurfaceDark?: T;
-  adminSurfaceFg?: T;
-  adminSurfaceFgDark?: T;
-  adminAccent?: T;
-  adminAccentDark?: T;
-  adminAccentFg?: T;
-  adminAccentFgDark?: T;
-  adminBorder?: T;
-  adminBorderDark?: T;
-  adminMuted?: T;
-  adminMutedDark?: T;
   cssOverrides?: T;
-  adminCSSOverrides?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

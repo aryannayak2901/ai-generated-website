@@ -38,10 +38,13 @@ export function PracticeAreasGrid({ className, title, subtitle, areas: payloadAr
         id: `payload-area-${index}`,
         title: area.title,
         description: area.description || "",
-        icon: area.icon && iconMap[area.icon] ? area.icon : "Briefcase",
+        icon: area.icon && iconMap[area.icon] ? iconMap[area.icon] : iconMap.Briefcase,
         services: area.services ? area.services.map(s => s.name) : []
       }))
-    : defaultAreas;
+    : defaultAreas.map((area) => ({
+        ...area,
+        icon: iconMap[area.icon] || iconMap.Briefcase,
+      }));
 
   return (
     <section className={`py-16 md:py-24 px-6 bg-secondary w-full ${className || ""}`}>

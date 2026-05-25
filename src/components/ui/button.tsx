@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         // Primary - Teal CTA Button (NEW)
         primary:
-          "bg-accent text-white hover:bg-accent/85 active:scale-95 hover:shadow-lg focus-visible:ring-accent/20",
+          "bg-accent text-accent-foreground hover:bg-accent/85 active:scale-95 hover:shadow-lg focus-visible:ring-accent/20",
         // Secondary - Teal Outlined (NEW)
         secondary:
           "border border-accent text-accent hover:bg-accent/10 active:scale-95 focus-visible:ring-accent/20",

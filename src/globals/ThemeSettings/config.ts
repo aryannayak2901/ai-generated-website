@@ -1,8 +1,5 @@
 import type { GlobalConfig } from "payload";
-import { 
-  syncThemeBeforeChange, 
-  syncThemeAfterChange 
-} from "./hooks/syncTheme";
+import { syncThemeBeforeChange, syncThemeAfterChange } from "./hooks/syncTheme";
 import revalidateTheme from "./hooks/revalidateTheme";
 
 export const ThemeSettings: GlobalConfig = {
@@ -36,25 +33,71 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "chambersClassic",
                   required: true,
                   options: [
-                    { label: "Chambers Classic (Deep Navy & Gold)", value: "chambersClassic" },
-                    { label: "Slate Minimalist (Stark Charcoal)", value: "slateMinimalist" },
-                    { label: "Emerald Editorial (Green & Gold)", value: "emeraldEditorial" },
-                    { label: "Amber Executive (Slate & Amber)", value: "amberExecutive" },
-                    { label: "Crimson Court (Burgundy & Brass)", value: "crimsonCourt" },
-                    { label: "Royal Bar (Royal Blue & Gold)", value: "royalBar" },
-                    { label: "Midnight Executive (Midnight & Silver)", value: "midnightExecutive" },
-                    { label: "Bronze Brief (Earthy Bronze & Brass)", value: "bronzeBrief" },
-                    { label: "Forest Fiducia (Forest Green & Slate)", value: "forestFiducia" },
-                    { label: "Sapphire Solace (Sapphire & Silver)", value: "sapphireSolace" },
-                    { label: "Platinum Prestige (Platinum & Charcoal)", value: "platinumPrestige" },
-                    { label: "Terracotta Tribunal (Terracotta & Charcoal)", value: "terracottaTribunal" },
-                    { label: "Oxford Obiter (Oxford Blue & Gold)", value: "oxfordObiter" },
-                    { label: "Teak Trustee (Teak Wood & Bronze)", value: "teakTrustee" },
-                    { label: "Custom Theme (Manual Tweaking)", value: "custom" },
+                    {
+                      label: "Chambers Classic (Deep Navy & Gold)",
+                      value: "chambersClassic",
+                    },
+                    {
+                      label: "Slate Minimalist (Stark Charcoal)",
+                      value: "slateMinimalist",
+                    },
+                    {
+                      label: "Emerald Editorial (Green & Gold)",
+                      value: "emeraldEditorial",
+                    },
+                    {
+                      label: "Amber Executive (Slate & Amber)",
+                      value: "amberExecutive",
+                    },
+                    {
+                      label: "Crimson Court (Burgundy & Brass)",
+                      value: "crimsonCourt",
+                    },
+                    {
+                      label: "Royal Bar (Royal Blue & Gold)",
+                      value: "royalBar",
+                    },
+                    {
+                      label: "Midnight Executive (Midnight & Silver)",
+                      value: "midnightExecutive",
+                    },
+                    {
+                      label: "Bronze Brief (Earthy Bronze & Brass)",
+                      value: "bronzeBrief",
+                    },
+                    {
+                      label: "Forest Fiducia (Forest Green & Slate)",
+                      value: "forestFiducia",
+                    },
+                    {
+                      label: "Sapphire Solace (Sapphire & Silver)",
+                      value: "sapphireSolace",
+                    },
+                    {
+                      label: "Platinum Prestige (Platinum & Charcoal)",
+                      value: "platinumPrestige",
+                    },
+                    {
+                      label: "Terracotta Tribunal (Terracotta & Charcoal)",
+                      value: "terracottaTribunal",
+                    },
+                    {
+                      label: "Oxford Obiter (Oxford Blue & Gold)",
+                      value: "oxfordObiter",
+                    },
+                    {
+                      label: "Teak Trustee (Teak Wood & Bronze)",
+                      value: "teakTrustee",
+                    },
+                    {
+                      label: "Custom Theme (Manual Tweaking)",
+                      value: "custom",
+                    },
                   ],
                   admin: {
                     width: "50%",
-                    description: "Selecting a preset automatically populates colors. Modifying colors will switch it to Custom.",
+                    description:
+                      "Selecting a preset automatically populates colors. Modifying colors will switch it to Custom.",
                   },
                 },
                 {
@@ -64,13 +107,17 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "system",
                   required: true,
                   options: [
-                    { label: "Sync with User System Preferences", value: "system" },
+                    {
+                      label: "Sync with User System Preferences",
+                      value: "system",
+                    },
                     { label: "Enforce Light Theme globally", value: "light" },
                     { label: "Enforce Dark Theme globally", value: "dark" },
                   ],
                   admin: {
                     width: "50%",
-                    description: "Controls the active mode of both storefront and admin panel.",
+                    description:
+                      "Controls the active mode of both storefront and admin panel.",
                   },
                 },
               ],
@@ -86,7 +133,8 @@ export const ThemeSettings: GlobalConfig = {
                   required: true,
                   admin: {
                     width: "50%",
-                    description: "Controls button, card, and input border radius on website.",
+                    description:
+                      "Controls button, card, and input border radius on website.",
                   },
                 },
                 {
@@ -97,7 +145,8 @@ export const ThemeSettings: GlobalConfig = {
                   required: true,
                   admin: {
                     width: "50%",
-                    description: "Controls button, modal, and card border radius in admin.",
+                    description:
+                      "Controls button, modal, and card border radius in admin.",
                   },
                 },
               ],
@@ -113,7 +162,8 @@ export const ThemeSettings: GlobalConfig = {
                   required: true,
                   admin: {
                     width: "50%",
-                    description: "Google Font name for all headings (h1, h2, h3, etc.).",
+                    description:
+                      "Google Font name for all headings (h1, h2, h3, etc.).",
                   },
                 },
                 {
@@ -124,7 +174,8 @@ export const ThemeSettings: GlobalConfig = {
                   required: true,
                   admin: {
                     width: "50%",
-                    description: "Google Font name for base reading text and elements.",
+                    description:
+                      "Google Font name for base reading text and elements.",
                   },
                 },
               ],
@@ -145,7 +196,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#ffffff",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -154,7 +208,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -169,7 +226,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#1e293b",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -178,7 +238,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -193,7 +256,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#0f1729",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -202,7 +268,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -217,7 +286,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#ffffff",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -226,7 +298,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -241,7 +316,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#f8fafc",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -250,7 +328,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -265,7 +346,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#0f1729",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -274,7 +358,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -289,7 +376,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#ffffff",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -298,7 +388,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -313,7 +406,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#1e293b",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -322,7 +418,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -337,7 +436,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#ffffff",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -346,7 +448,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -361,7 +466,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#1e293b",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -370,7 +478,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -385,7 +496,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#f1f5f9",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -394,7 +508,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -409,7 +526,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#64748b",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -418,7 +538,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -433,7 +556,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#d4af37",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -442,7 +568,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -457,7 +586,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#ffffff",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -466,7 +598,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -481,7 +616,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#ef4444",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -490,7 +628,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -505,7 +646,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#ffffff",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -514,7 +658,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -529,7 +676,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#e2e8f0",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -538,7 +688,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -553,7 +706,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#e2e8f0",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -562,7 +718,10 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
@@ -577,7 +736,10 @@ export const ThemeSettings: GlobalConfig = {
                   defaultValue: "#d4af37",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
                 {
@@ -586,307 +748,382 @@ export const ThemeSettings: GlobalConfig = {
                   type: "text",
                   admin: {
                     width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
+                    components: {
+                      Field:
+                        "@/components/Theme/ColorPickerField#ColorPickerField",
+                    },
                   },
                 },
               ],
             },
           ],
         },
-        {
-          label: "Admin Panel Colors",
-          fields: [
-            // Overrides for Payload CMS Admin UI
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminBg",
-                  label: "CMS Main Background (Light)",
-                  type: "text",
-                  defaultValue: "#ffffff",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminBgDark",
-                  label: "CMS Main Background (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminFg",
-                  label: "CMS Primary Text Color (Light)",
-                  type: "text",
-                  defaultValue: "#0f1729",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminFgDark",
-                  label: "CMS Primary Text Color (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminPrimary",
-                  label: "CMS Primary Action Brand Color (Light)",
-                  type: "text",
-                  defaultValue: "#0f1729",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminPrimaryDark",
-                  label: "CMS Primary Action Brand Color (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminPrimaryFg",
-                  label: "CMS Text on Buttons (Light)",
-                  type: "text",
-                  defaultValue: "#ffffff",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminPrimaryFgDark",
-                  label: "CMS Text on Buttons (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminSecondary",
-                  label: "CMS Sidebar/Header Surface (Light)",
-                  type: "text",
-                  defaultValue: "#f8fafc",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminSecondaryDark",
-                  label: "CMS Sidebar/Header Surface (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminSecondaryFg",
-                  label: "CMS Sidebar Text Color (Light)",
-                  type: "text",
-                  defaultValue: "#0f1729",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminSecondaryFgDark",
-                  label: "CMS Sidebar Text Color (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminSurface",
-                  label: "CMS Card/Panel Surface (Light)",
-                  type: "text",
-                  defaultValue: "#ffffff",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminSurfaceDark",
-                  label: "CMS Card/Panel Surface (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminSurfaceFg",
-                  label: "CMS Text inside Cards (Light)",
-                  type: "text",
-                  defaultValue: "#0f1729",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminSurfaceFgDark",
-                  label: "CMS Text inside Cards (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminAccent",
-                  label: "CMS Selected Input/Focus Ring (Light)",
-                  type: "text",
-                  defaultValue: "#d4af37",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminAccentDark",
-                  label: "CMS Selected Input/Focus Ring (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminAccentFg",
-                  label: "CMS Accent Elements Text (Light)",
-                  type: "text",
-                  defaultValue: "#ffffff",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminAccentFgDark",
-                  label: "CMS Accent Elements Text (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminBorder",
-                  label: "CMS Lines/Borders Color (Light)",
-                  type: "text",
-                  defaultValue: "#e2e8f0",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminBorderDark",
-                  label: "CMS Lines/Borders Color (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "adminMuted",
-                  label: "CMS Disabled/Muted Labels (Light)",
-                  type: "text",
-                  defaultValue: "#64748b",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-                {
-                  name: "adminMutedDark",
-                  label: "CMS Disabled/Muted Labels (Dark Override)",
-                  type: "text",
-                  admin: {
-                    width: "50%",
-                    components: { Field: "@/components/Theme/ColorPickerField#ColorPickerField" },
-                  },
-                },
-              ],
-            },
-          ],
-        },
+        // {
+        //   label: "Admin Panel Colors",
+        //   fields: [
+        //     // Overrides for Payload CMS Admin UI
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminBg",
+        //           label: "CMS Main Background (Light)",
+        //           type: "text",
+        //           defaultValue: "#ffffff",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminBgDark",
+        //           label: "CMS Main Background (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminFg",
+        //           label: "CMS Primary Text Color (Light)",
+        //           type: "text",
+        //           defaultValue: "#0f1729",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminFgDark",
+        //           label: "CMS Primary Text Color (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminPrimary",
+        //           label: "CMS Primary Action Brand Color (Light)",
+        //           type: "text",
+        //           defaultValue: "#0f1729",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminPrimaryDark",
+        //           label: "CMS Primary Action Brand Color (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminPrimaryFg",
+        //           label: "CMS Text on Buttons (Light)",
+        //           type: "text",
+        //           defaultValue: "#ffffff",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminPrimaryFgDark",
+        //           label: "CMS Text on Buttons (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminSecondary",
+        //           label: "CMS Sidebar/Header Surface (Light)",
+        //           type: "text",
+        //           defaultValue: "#f8fafc",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminSecondaryDark",
+        //           label: "CMS Sidebar/Header Surface (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminSecondaryFg",
+        //           label: "CMS Sidebar Text Color (Light)",
+        //           type: "text",
+        //           defaultValue: "#0f1729",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminSecondaryFgDark",
+        //           label: "CMS Sidebar Text Color (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminSurface",
+        //           label: "CMS Card/Panel Surface (Light)",
+        //           type: "text",
+        //           defaultValue: "#ffffff",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminSurfaceDark",
+        //           label: "CMS Card/Panel Surface (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminSurfaceFg",
+        //           label: "CMS Text inside Cards (Light)",
+        //           type: "text",
+        //           defaultValue: "#0f1729",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminSurfaceFgDark",
+        //           label: "CMS Text inside Cards (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminAccent",
+        //           label: "CMS Selected Input/Focus Ring (Light)",
+        //           type: "text",
+        //           defaultValue: "#d4af37",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminAccentDark",
+        //           label: "CMS Selected Input/Focus Ring (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminAccentFg",
+        //           label: "CMS Accent Elements Text (Light)",
+        //           type: "text",
+        //           defaultValue: "#ffffff",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminAccentFgDark",
+        //           label: "CMS Accent Elements Text (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminBorder",
+        //           label: "CMS Lines/Borders Color (Light)",
+        //           type: "text",
+        //           defaultValue: "#e2e8f0",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminBorderDark",
+        //           label: "CMS Lines/Borders Color (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       type: "row",
+        //       fields: [
+        //         {
+        //           name: "adminMuted",
+        //           label: "CMS Disabled/Muted Labels (Light)",
+        //           type: "text",
+        //           defaultValue: "#64748b",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //         {
+        //           name: "adminMutedDark",
+        //           label: "CMS Disabled/Muted Labels (Dark Override)",
+        //           type: "text",
+        //           admin: {
+        //             width: "50%",
+        //             components: {
+        //               Field:
+        //                 "@/components/Theme/ColorPickerField#ColorPickerField",
+        //             },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
         {
           label: "Theme Preview",
           fields: [
@@ -911,19 +1148,20 @@ export const ThemeSettings: GlobalConfig = {
               defaultValue: "",
               admin: {
                 language: "css",
-                description: "Advanced styling variables and layout modifications for website pages.",
+                description:
+                  "Advanced styling variables and layout modifications for website pages.",
               },
             },
-            {
-              name: "adminCSSOverrides",
-              label: "CMS Admin Custom CSS Overrides",
-              type: "code",
-              defaultValue: "",
-              admin: {
-                language: "css",
-                description: "Custom style overrides to modify the Payload CMS admin interface appearance.",
-              },
-            },
+            // {
+            //   name: "adminCSSOverrides",
+            //   label: "CMS Admin Custom CSS Overrides",
+            //   type: "code",
+            //   defaultValue: "",
+            //   admin: {
+            //     language: "css",
+            //     description: "Custom style overrides to modify the Payload CMS admin interface appearance.",
+            //   },
+            // },
           ],
         },
       ],

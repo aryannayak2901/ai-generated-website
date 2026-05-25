@@ -61,7 +61,7 @@ export function DisclaimerModal() {
         <AlertDialogFooter className="mt-6">
           <AlertDialogAction
             onClick={handleAccept}
-            className="w-full sm:w-auto bg-accent text-white hover:bg-accent/85 transition-all duration-300 font-semibold tracking-wide rounded-sm px-8 py-2.5 shadow-sm"
+            className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/85 transition-all duration-300 font-semibold tracking-wide rounded-sm px-8 py-2.5 shadow-sm"
           >
             I Agree
           </AlertDialogAction>

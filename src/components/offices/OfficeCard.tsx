@@ -25,116 +25,139 @@ export function OfficeCard({
   imageUrl,
 }: OfficeCardProps) {
   return (
-    <div className="relative py-12 lg:py-24">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch gap-0">
-          {/* Image Container */}
+    <div className="relative py-8 md:py-16">
+      <div className="max-w-[1300px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch gap-6 lg:gap-0 bg-background/40 backdrop-blur-md rounded-2xl overflow-hidden border border-border/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
+          {/* Image Container with premium parallax style zoom */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="lg:col-span-6 relative z-10"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-6 relative z-10 group overflow-hidden min-h-[350px] sm:min-h-[450px]"
           >
-            <div className="relative h-full min-h-[450px] lg:min-h-full rounded-xl lg:rounded-l-xl overflow-hidden shadow-2xl border border-slate-200">
-              <Image
-                src={imageUrl}
-                alt={name}
-                fill
-                className="object-cover transition-transform duration-1000 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-60" />
+            <Image
+              src={imageUrl}
+              alt={name}
+              fill
+              className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
+            />
+            {/* Elegant vignette overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-transparent opacity-40" />
 
-              {/* Corner Accent */}
-              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-accent -translate-x-3 -translate-y-3 opacity-50" />
+            {/* Subtle floating branding watermark */}
+            <div className="absolute bottom-6 left-6 z-20">
+              <span className="text-[10px] font-bold text-accent tracking-[0.3em] uppercase block mb-1">Chambers Premium</span>
+              <h4 className="text-white font-serif text-lg font-semibold tracking-wide">{name.split(" - ").pop()}</h4>
             </div>
-
-            {/* Background Decorative element */}
-            <div className="absolute -bottom-10 -left-10 w-56 h-56 bg-accent/10 rounded-full blur-3xl -z-10" />
+            
+            {/* Ambient Gold corner border on hover */}
+            <div className="absolute inset-4 border border-accent/0 group-hover:border-accent/20 transition-all duration-700 pointer-events-none rounded-lg" />
           </motion.div>
 
-          {/* Content Area */}
+          {/* Content Area with sophisticated typography and detailed layout */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            className="lg:col-span-6 mt-12 lg:mt-0 relative"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            className="lg:col-span-6 flex flex-col justify-between p-6 sm:p-10 lg:p-14 bg-card/60 relative"
           >
-            <div className="relative z-10 bg-white border border-slate-200 shadow-lg rounded-xl lg:rounded-r-xl lg:rounded-l-none h-full flex flex-col justify-center p-8 md:p-16">
-              <div className="flex items-center gap-5 mb-8">
-                <div className="w-16 h-[1.5px] bg-accent shadow-[0_0_10px_rgba(8,145,178,0.3)]" />
+            {/* Ambient glow in content panel */}
+            <div className="absolute right-0 top-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl pointer-events-none" />
+
+            <div>
+              {/* Category Label */}
+              <div className="flex items-center gap-4 mb-6">
+                <span className="w-10 h-[1px] bg-accent/60" />
                 <span className="text-accent font-bold tracking-[0.25em] uppercase text-[10px]">
-                  Office Location
+                  Establishment Details
                 </span>
               </div>
 
-              <h3 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-8 leading-tight">
+              {/* Office Title */}
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-foreground mb-8 leading-[1.2] tracking-tight">
                 {name}
               </h3>
 
-              <div className="space-y-8 mb-10">
-                <div className="flex gap-6">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center text-accent shadow-lg">
-                    <MapPin size={22} />
+              {/* Specifications List */}
+              <div className="space-y-6 mb-10">
+                {/* Address Item */}
+                <div className="flex gap-4 group/item">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/5 border border-accent/10 flex items-center justify-center text-accent transition-all duration-300 group-hover/item:bg-accent/10 group-hover/item:border-accent/30 shadow-sm">
+                    <MapPin size={18} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-2.5">
-                      Location
-                    </p>
-                    <p className="text-foreground font-sans text-lg leading-relaxed">
+                    <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em] mb-1">
+                      Chambers Location
+                    </h5>
+                    <p className="text-foreground/90 font-sans text-sm sm:text-base leading-relaxed">
                       {address}
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="flex gap-6">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center text-accent shadow-lg">
-                      <Phone size={22} />
+                {/* Grid for Contact Info and Office Hours */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2 border-t border-border/40">
+                  {/* Contact Details */}
+                  <div className="flex gap-4 group/item">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/5 border border-accent/10 flex items-center justify-center text-accent transition-all duration-300 group-hover/item:bg-accent/10 group-hover/item:border-accent/30 shadow-sm">
+                      <Phone size={18} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-2.5">
-                        Contact
-                      </p>
+                      <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em] mb-1.5">
+                        Inquiries & Support
+                      </h5>
                       {phone.map((p, idx) => (
-                        <p key={idx} className="text-foreground font-sans">
-                          {p}
+                        <p key={idx} className="text-foreground/90 font-sans text-xs sm:text-sm hover:text-accent transition-colors">
+                          <a href={`tel:${p.replace(/\s+/g, '')}`}>{p}</a>
                         </p>
                       ))}
+                      {email && (
+                        <p className="text-foreground/90 font-sans text-xs sm:text-sm hover:text-accent transition-colors mt-0.5 break-all">
+                          <a href={`mailto:${email}`}>{email}</a>
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  <div className="flex gap-6">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center text-accent shadow-lg">
-                      <Clock size={22} />
+                  {/* Operational Hours */}
+                  <div className="flex gap-4 group/item">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/5 border border-accent/10 flex items-center justify-center text-accent transition-all duration-300 group-hover/item:bg-accent/10 group-hover/item:border-accent/30 shadow-sm">
+                      <Clock size={18} />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-2.5">
-                        Office Hours
-                      </p>
-                      {hours.map((h, idx) => (
-                        <p key={idx} className="text-foreground font-sans text-sm">
-                          {h.day}: {h.time}
-                        </p>
-                      ))}
+                    <div className="w-full">
+                      <h5 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em] mb-1.5">
+                        Consultation Hours
+                      </h5>
+                      <div className="space-y-1">
+                        {hours.map((h, idx) => (
+                          <div key={idx} className="flex justify-between items-center text-xs text-foreground/90 font-sans">
+                            <span className="font-medium text-muted-foreground">{h.day}</span>
+                            <span className="font-light">{h.time}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-              <Button
-                asChild
-                className="w-full bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase rounded-sm h-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <a href={mapUrl} target="_blank" rel="noopener noreferrer">
-                  View on Map <MapPin className="ml-2 w-4 h-4" />
-                </a>
-              </Button>
             </div>
+
+            {/* CTA action button */}
+            <Button
+              asChild
+              className="w-full bg-accent hover:bg-accent/90 text-white font-semibold tracking-widest uppercase rounded-md h-12 transition-all duration-300 shadow-[0_4px_20px_rgba(212,175,55,0.15)] hover:shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer text-xs"
+            >
+              <a href={mapUrl} target="_blank" rel="noopener noreferrer">
+                View Strategic Map <MapPin className="ml-2 w-4 h-4 text-white/90" />
+              </a>
+            </Button>
           </motion.div>
         </div>
       </div>
     </div>
   );
 }
+

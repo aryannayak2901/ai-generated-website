@@ -1,18 +1,17 @@
 "use client";
 
 import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 export interface NewsletterProps {
   badge?: string | null;
   title?: string | null;
   subtitle?: string | null;
+  buttonText?: string | null;
   disclaimer?: string | null;
 }
 
-export function Newsletter({ badge, title, subtitle, disclaimer }: NewsletterProps) {
+export function Newsletter({ badge, title, subtitle, buttonText, disclaimer }: NewsletterProps) {
   return (
     <section className="py-16 md:py-24 px-6 bg-primary overflow-hidden relative">
       {/* Decorative Accents */}
@@ -49,8 +48,8 @@ export function Newsletter({ badge, title, subtitle, disclaimer }: NewsletterPro
               className="flex-1 px-6 py-3 rounded-sm bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-accent/50 font-sans"
               required
             />
-            <button className="px-8 py-3 bg-accent hover:bg-accent/85 text-white font-semibold uppercase tracking-wider text-sm rounded-sm transition-all duration-300 shadow-lg hover:shadow-accent/20 flex items-center gap-2">
-              Subscribe
+            <button type="submit" className="px-8 py-3 bg-accent hover:bg-accent/85 text-accent-foreground font-semibold uppercase tracking-wider text-sm rounded-sm transition-all duration-300 shadow-lg hover:shadow-accent/20 flex items-center gap-2">
+              {buttonText || "Subscribe"}
             </button>
           </form>
           

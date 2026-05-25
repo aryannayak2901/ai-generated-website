@@ -237,7 +237,7 @@ export default function TeamMemberClient({ member }: Props) {
               <CardContent className="p-6">
                 <Button
                   asChild
-                  className="w-full bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase rounded-sm h-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full bg-accent hover:bg-accent/85 text-accent-foreground font-semibold tracking-wider uppercase rounded-sm h-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Link href="/contact">
                     Get In Touch

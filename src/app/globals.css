@@ -120,7 +120,7 @@
     --muted-foreground: #64748b; /* Slate Gray */
     
     --accent: #d4af37; /* Subtle Gold */
-    --accent-foreground: #ffffff;
+    --accent-foreground: #0f1729; /* Deep Navy text for contrast */
     
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;

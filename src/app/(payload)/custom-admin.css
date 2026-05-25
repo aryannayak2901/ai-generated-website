@@ -516,3 +516,29 @@ body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-th
 body:has(.ga4-dashboard-container) .template-default__wrap::-webkit-scrollbar-thumb:hover {
   background: rgba(197, 160, 89, 0.4);
 }
+
+/* Premium targeted vertical scroll override for the Theme Settings global view */
+body:has(a[href*="globals/theme-settings"].bb-nav-item--active) {
+  overflow: hidden !important;
+}
+
+body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .template-default__wrap {
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  padding-bottom: 6rem !important;
+  scrollbar-width: thin;
+}
+
+body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar {
+  width: 6px;
+}
+
+body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.2);
+  border-radius: 10px;
+}
+
+body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 160, 89, 0.4);
+}
+

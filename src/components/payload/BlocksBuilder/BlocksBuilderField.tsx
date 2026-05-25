@@ -215,6 +215,7 @@ export function BlocksBuilderField({
                 key="edit-panel"
                 style={{ 
                   width: 340, 
+                  height: '100%',
                   display: 'flex', 
                   flexDirection: 'column', 
                   flexShrink: 0,

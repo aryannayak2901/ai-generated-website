@@ -43,10 +43,11 @@ export default async function FrontendLayout({
   let measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
   let headingFont = "Playfair Display";
   let bodyFont = "Public Sans";
+  let headerData = null;
 
   try {
     const payload = await getPayload({ config });
-    const [ga4, theme] = await Promise.all([
+    const [ga4, theme, header] = await Promise.all([
       payload.findGlobal({
         slug: "ga4",
         depth: 0,
@@ -54,6 +55,10 @@ export default async function FrontendLayout({
       payload.findGlobal({
         slug: "theme-settings",
         depth: 0,
+      }),
+      payload.findGlobal({
+        slug: "header",
+        depth: 1,
       }),
     ]);
 
@@ -65,6 +70,9 @@ export default async function FrontendLayout({
     }
     if (theme?.bodyFont) {
       bodyFont = theme.bodyFont;
+    }
+    if (header) {
+      headerData = header;
     }
   } catch (error) {
     console.error("Failed to load settings from DB:", error);
@@ -131,7 +139,7 @@ export default async function FrontendLayout({
           </Suspense>
           <StructuredData schema={generateGeneralPageSchema()} />
           <DisclaimerModal />
-          <Navbar />
+          <Navbar headerData={headerData} />
           <main className="flex-1">{children}</main>
           <Footer />
         </ThemeProvider>

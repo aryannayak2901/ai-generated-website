@@ -45,6 +45,11 @@ export const Newsletter: Block = {
   slug: 'newsletter',
   fields: [
     {
+      name: 'badge',
+      type: 'text',
+      defaultValue: 'Newsletter',
+    },
+    {
       name: 'title',
       type: 'text',
       required: true,
@@ -59,6 +64,11 @@ export const Newsletter: Block = {
       name: 'buttonText',
       type: 'text',
       defaultValue: 'Subscribe',
+    },
+    {
+      name: 'disclaimer',
+      type: 'text',
+      defaultValue: '* Your privacy is our priority. Unsubscribe at any time.',
     }
   ],
 }

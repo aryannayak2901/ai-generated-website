@@ -67,7 +67,7 @@ export function CTASection({
           <Button
             asChild
             size="lg"
-            className="bg-accent hover:bg-accent/85 text-white font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            className="bg-accent hover:bg-accent/85 text-accent-foreground font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
           >
             <Link href={ctaLink || "/contact"}>
               {ctaText || "Get In Touch"}

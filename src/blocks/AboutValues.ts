@@ -36,8 +36,8 @@ export const AboutValues: Block = {
         {
           name: 'icon',
           type: 'select',
-          options: ['Scale', 'Shield', 'Target', 'Users', 'Award', 'Handshake'],
-          defaultValue: 'Shield',
+          options: ['Scale', 'ShieldCheck', 'Award', 'Handshake', 'Gavel', 'Building2'],
+          defaultValue: 'ShieldCheck',
         }
       ]
     }

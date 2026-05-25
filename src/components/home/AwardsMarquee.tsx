@@ -59,6 +59,8 @@ export interface AwardsMarqueeProps {
     title: string;
     year?: string | null;
     organization?: string | null;
+    description?: string | null;
+    image?: any;
   }[] | null;
 }
 
@@ -78,11 +80,13 @@ const AwardCard = ({ award }: { award: AwardItem }) => {
           sizes="320px"
         />
         {/* Teal Floating Badge */}
-        <div className="absolute bottom-3 right-3 bg-accent px-3 py-1 rounded shadow-md z-10">
-          <span className="text-white text-[10px] uppercase tracking-widest font-bold">
-            {award.yearBadge}
-          </span>
-        </div>
+        {award.yearBadge && (
+          <div className="absolute bottom-3 right-3 bg-accent px-3 py-1 rounded shadow-md z-10">
+            <span className="text-white text-[10px] uppercase tracking-widest font-bold">
+              {award.yearBadge}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Bottom Half (Content) */}
@@ -114,8 +118,10 @@ export const AwardsMarquee = ({ awards: payloadAwards }: AwardsMarqueeProps) => 
         id: `payload-${i}`,
         title: a.title,
         subtitle: a.organization || "",
-        description: "",
-        image: awards[i % awards.length].image, // fallback to default images
+        description: a.description || "",
+        image: (a.image && typeof a.image === 'object' && 'url' in a.image && typeof a.image.url === 'string') 
+          ? a.image.url 
+          : (typeof a.image === 'string' ? a.image : awards[i % awards.length].image),
         yearBadge: a.year || "",
       }))
     : awards;
