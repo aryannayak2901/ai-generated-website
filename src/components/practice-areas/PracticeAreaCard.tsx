@@ -34,7 +34,7 @@ export function PracticeAreaCard({
       className="h-full"
     >
       <Card
-        className={`group h-full flex flex-col bg-white border-slate-200 transition-all duration-300 hover:border-accent hover:shadow-lg hover:scale-[1.02] overflow-hidden relative ${className || ""}`}
+        className={`group h-full flex flex-col bg-card border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:scale-[1.02] overflow-hidden relative ${className || ""}`}
       >
         {/* Decorative background icon */}
         <div className="absolute -right-10 -bottom-10 opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-700 group-hover:scale-110 pointer-events-none">
@@ -56,7 +56,7 @@ export function PracticeAreaCard({
           </CardDescription>
 
           {services && services.length > 0 && (
-            <div className="pt-6 border-t border-slate-100 mt-auto">
+            <div className="pt-6 border-t border-border/50 mt-auto">
               <h4 className="font-sans font-semibold text-accent text-[10px] tracking-[0.25em] uppercase mb-4 flex items-center gap-2">
                 <span className="w-8 h-0.5 bg-accent/30" />
                 Specialized Services

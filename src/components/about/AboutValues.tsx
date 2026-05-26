@@ -86,7 +86,7 @@ export function AboutValues({ className, tag, title, subtitle, values: payloadVa
             const Icon = iconMap[value.icon] || ShieldCheck;
             return (
               <StaggerItem key={index}>
-                <Card className="bg-white border-slate-200 h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group">
+                <Card className="bg-card border-border h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group">
                   <CardContent className="p-6 md:p-8 text-center">
                     <div className="w-16 h-16 rounded-lg bg-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-accent/20 transition-colors">
                       <Icon className="w-8 h-8 text-accent" />

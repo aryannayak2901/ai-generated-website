@@ -67,22 +67,23 @@ export function BlogHero({ tag, title, subtitle, featuredPost }: BlogHeroProps) 
       />
 
       <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12 py-20 lg:py-32 relative z-10">
-        <div className={`grid grid-cols-1 gap-12 ${postData ? 'lg:grid-cols-2 lg:gap-20' : 'max-w-3xl'}`}>
+        <div className={`grid grid-cols-1 gap-12 ${postData ? 'lg:grid-cols-2 lg:gap-20 items-center' : 'max-w-3xl mx-auto'}`}>
           {/* Left Side: Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="flex flex-col justify-center"
+            className="flex flex-col justify-center items-center text-center"
           >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-[1px] w-12 bg-accent/50" />
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="h-[1px] w-8 bg-accent/50" />
               <span className="text-accent font-bold tracking-[0.4em] uppercase text-[10px] md:text-xs">
                 {tag || "Chambers Journal"}
               </span>
+              <div className="h-[1px] w-8 bg-accent/50" />
             </div>
             
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight">
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight text-center">
               {title ? title : (
                 <>
                   <span className="block">Legal Insights</span>
@@ -99,11 +100,11 @@ export function BlogHero({ tag, title, subtitle, featuredPost }: BlogHeroProps) 
               )}
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground font-sans leading-relaxed max-w-xl mb-8">
+            <p className="text-lg md:text-xl text-muted-foreground font-sans leading-relaxed max-w-xl mx-auto mb-8 text-center">
               {subtitle || "Authoritative analysis and updates on evolving legal landscapes, designed for strategists and decision-makers."}
             </p>
 
-            <div className="flex items-center gap-8">
+            <div className="flex items-center justify-center gap-8">
               <Link 
                 href="#latest-posts" 
                 aria-label="Explore the latest journal articles"
@@ -121,7 +122,7 @@ export function BlogHero({ tag, title, subtitle, featuredPost }: BlogHeroProps) 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="relative group"
+              className="relative group flex items-center justify-center w-full"
             >
               <Link 
                 href={postData.slug ? `/blog/${postData.slug}` : "#"} 

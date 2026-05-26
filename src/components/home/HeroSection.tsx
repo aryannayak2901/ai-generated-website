@@ -108,8 +108,8 @@ export function HeroSection({
               </motion.div>
             </motion.div>
           </AnimatePresence>
-          {/* Refined gradient overlay for high contrast, legibility, and luxury aesthetic */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/45 lg:from-primary/95 lg:via-primary/75 lg:to-transparent" />
+          {/* Balanced vertical gradient overlay for high contrast, centered text legibility, and luxury aesthetic */}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/75 to-primary/90" />
           <div className="absolute inset-0 bg-primary/10 backdrop-blur-[1px]" />
         </div>
       ) : (
@@ -121,38 +121,38 @@ export function HeroSection({
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-accent z-20" />
 
       {/* Content container */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-8 lg:px-12 py-24 lg:py-36 flex flex-col justify-center min-h-[70vh] lg:min-h-[85vh]">
-        <div className="max-w-3xl">
-          {/* Headline with slide from left animation */}
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-8 lg:px-12 py-24 lg:py-36 flex flex-col items-center justify-center min-h-[70vh] lg:min-h-[85vh]">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center justify-center">
+          {/* Headline with clean fade-in-up animation */}
           <motion.h1
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white mb-6 drop-shadow-sm"
+            className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white mb-6 drop-shadow-sm text-center"
           >
             {title}
           </motion.h1>
 
-          {/* Subheading with slide from right animation */}
+          {/* Subheading with clean fade-in-up animation */}
           <motion.p
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{
               duration: 0.8,
               delay: 0.2,
               ease: [0.25, 0.46, 0.45, 0.94],
             }}
-            className="text-base sm:text-lg lg:text-xl xl:text-2xl text-muted-foreground font-sans leading-relaxed mb-10 max-w-2xl drop-shadow-sm"
+            className="text-base sm:text-lg lg:text-xl xl:text-2xl text-muted-foreground font-sans leading-relaxed mb-10 max-w-2xl mx-auto text-center drop-shadow-sm"
           >
             {subtitle}
           </motion.p>
 
-          {/* CTA Button with scale up animation */}
+          {/* CTA Button with fade-in-up and scale transition */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{
-              duration: 1,
+              duration: 0.8,
               delay: 0.4,
               ease: [0.25, 0.46, 0.45, 0.94],
             }}

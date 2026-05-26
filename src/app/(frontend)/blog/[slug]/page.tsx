@@ -149,25 +149,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* Schema graph injection */}
       <StructuredData schema={generateBlogPageSchema(post, faqs)} />
 
-      <article className="min-h-screen bg-slate-50 text-foreground flex flex-col items-center">
+      <article className="min-h-screen bg-secondary text-foreground flex flex-col items-center">
         {/* Dynamic Premium Header Block */}
-        <div className="w-full bg-[#0f1729] text-white py-16 md:py-24 px-6 md:px-12 flex flex-col items-center relative overflow-hidden border-b border-gold-accent/20">
+        <div className="w-full bg-primary text-white py-16 md:py-24 px-6 md:px-12 flex flex-col items-center relative overflow-hidden border-b border-accent/20">
           {/* Subtle design element */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1e293b] via-[#0f1729] to-[#0a0f1d] opacity-90 z-0" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/90 via-primary to-primary/95 opacity-90 z-0" />
           
           <div className="max-w-[1000px] w-full relative z-10 flex flex-col">
             {/* Breadcrumbs Navigation for SEO & UX */}
-            <nav className="flex items-center gap-2 text-xs font-sans uppercase tracking-widest text-slate-400 mb-8 self-start">
-              <Link href="/" className="hover:text-gold-accent transition-colors">Home</Link>
+            <nav className="flex items-center gap-2 text-xs font-sans uppercase tracking-widest text-muted-foreground/80 mb-8 self-start">
+              <Link href="/" className="hover:text-accent transition-colors">Home</Link>
               <ChevronRight className="w-3 h-3 text-slate-500" />
-              <Link href="/blog" className="hover:text-gold-accent transition-colors">Blog</Link>
+              <Link href="/blog" className="hover:text-accent transition-colors">Blog</Link>
               <ChevronRight className="w-3 h-3 text-slate-500" />
-              <span className="text-gold-accent truncate max-w-[200px] md:max-w-xs">{post.title}</span>
+              <span className="text-accent truncate max-w-[200px] md:max-w-xs">{post.title}</span>
             </nav>
 
             {/* Category Tag */}
             <div className="self-start mb-6">
-              <span className="bg-[#d4af37]/10 text-gold-accent border border-[#d4af37]/30 font-semibold text-[11px] px-4 py-1.5 rounded-sm uppercase tracking-wider">
+              <span className="bg-accent/10 text-accent border border-accent/30 font-semibold text-[11px] px-4 py-1.5 rounded-sm uppercase tracking-wider">
                 {post.category || "General Legal"}
               </span>
             </div>
@@ -178,19 +178,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </h1>
 
             {/* Subheading meta fields */}
-            <div className="flex flex-wrap items-center gap-6 text-slate-400 text-sm font-sans pt-4 border-t border-slate-800">
+            <div className="flex flex-wrap items-center gap-6 text-muted-foreground/80 text-sm font-sans pt-4 border-t border-accent/10">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gold-accent/15 flex items-center justify-center border border-gold-accent/30">
-                  <User className="w-4 h-4 text-gold-accent" />
+                <div className="w-8 h-8 rounded-full bg-accent/15 flex items-center justify-center border border-accent/30">
+                  <User className="w-4 h-4 text-accent" />
                 </div>
                 <span>By <strong className="text-white font-medium">{post.author || "Jeet Jayant Bhatt"}</strong></span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gold-accent" />
+                <Calendar className="w-4 h-4 text-accent" />
                 <span>Published on {dateFormatted}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gold-accent" />
+                <Clock className="w-4 h-4 text-accent" />
                 <span>{post.readTime || "10 min read"}</span>
               </div>
             </div>
@@ -199,7 +199,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Dynamic glassmorphic image preview */}
         <div className="w-full max-w-[1000px] px-6 -mt-10 md:-mt-16 z-20 relative">
-          <div className="relative aspect-[21/9] w-full rounded-lg overflow-hidden shadow-2xl border border-white/10 bg-slate-900">
+          <div className="relative aspect-[21/9] w-full rounded-lg overflow-hidden shadow-2xl border border-white/10 bg-primary/90">
             <Image
               src={featuredImage}
               alt={post.title}
@@ -214,9 +214,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Central Article Column */}
         <div className="w-full max-w-[1000px] px-6 md:px-12 py-16 flex flex-col md:flex-row gap-12 relative z-10">
           {/* Main content body */}
-          <div className="flex-1 max-w-[700px] bg-white rounded-lg border border-slate-200/60 p-8 md:p-12 shadow-sm font-sans">
+          <div className="flex-1 max-w-[700px] bg-card rounded-lg border border-border/60 p-8 md:p-12 shadow-sm font-sans">
             {post.excerpt && (
-              <p className="text-xl font-serif text-[#1e293b]/90 leading-relaxed italic border-l-4 border-gold-accent pl-6 mb-10 text-slate-700 bg-slate-50/50 py-4 pr-4 rounded-r">
+              <p className="text-xl font-serif text-foreground/90 leading-relaxed italic border-l-4 border-accent pl-6 mb-10 text-muted-foreground bg-secondary/50 py-4 pr-4 rounded-r">
                 {post.excerpt}
               </p>
             )}
@@ -226,16 +226,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             
             {/* Contextual SEO FAQ Blocks (AEO Optimized) */}
             {faqs.length > 0 && (
-              <div className="mt-16 pt-12 border-t border-slate-100">
-                <h3 className="font-serif text-2xl font-bold text-navy-primary mb-6 flex items-center gap-2">
-                  <BookOpen className="w-6 h-6 text-gold-accent" />
+              <div className="mt-16 pt-12 border-t border-border/50">
+                <h3 className="font-serif text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+                  <BookOpen className="w-6 h-6 text-accent" />
                   Key Legal FAQs
                 </h3>
                 <div className="space-y-6">
                   {faqs.map((faq, idx) => (
-                    <div key={idx} className="bg-slate-50 p-6 rounded-lg border border-slate-100 hover:border-gold-accent/20 transition-all duration-300">
-                      <h4 className="font-serif font-bold text-lg text-navy-primary mb-2">Q: {faq.question}</h4>
-                      <p className="text-slate-600 leading-relaxed font-sans text-sm">A: {faq.answer}</p>
+                    <div key={idx} className="bg-secondary p-6 rounded-lg border border-border/50 hover:border-accent/20 transition-all duration-300">
+                      <h4 className="font-serif font-bold text-lg text-foreground mb-2">Q: {faq.question}</h4>
+                      <p className="text-muted-foreground leading-relaxed font-sans text-sm">A: {faq.answer}</p>
                     </div>
                   ))}
                 </div>
@@ -246,20 +246,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Sidebar / Quick consultation */}
           <aside className="w-full md:w-[260px] shrink-0 space-y-8">
             {/* Consultation CTA Block */}
-            <div className="bg-[#0f1729] text-white p-6 rounded-lg border border-gold-accent/30 shadow-md relative overflow-hidden flex flex-col text-center">
+            <div className="bg-primary text-white p-6 rounded-lg border border-accent/30 shadow-md relative overflow-hidden flex flex-col text-center">
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#1e293b] to-[#0f1729] opacity-90 z-0" />
+              <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary/95 opacity-90 z-0" />
               
               <div className="relative z-10 flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-gold-accent/15 border border-gold-accent/30 flex items-center justify-center mb-4">
-                  <User className="w-5 h-5 text-gold-accent" />
+                <div className="w-12 h-12 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center mb-4">
+                  <User className="w-5 h-5 text-accent" />
                 </div>
                 <h3 className="font-serif text-xl font-bold mb-2">Need Expert Legal Counsel?</h3>
-                <p className="text-xs text-slate-300 mb-6 leading-relaxed">
+                <p className="text-xs text-white/80 mb-6 leading-relaxed">
                   Our elite advocates specialize in complex litigation, arbitration, & corporate advisory. Contact us for direct guidance.
                 </p>
                 <Link href="/contact" className="w-full">
-                  <Button className="w-full bg-[#d4af37] hover:bg-[#c29c2b] text-[#0f1729] font-bold uppercase tracking-wider text-xs rounded-sm h-10 transition-all shadow-md">
+                  <Button className="w-full bg-accent hover:bg-accent/85 text-accent-foreground font-bold uppercase tracking-wider text-xs rounded-sm h-10 transition-all shadow-md">
                     Consultation
                   </Button>
                 </Link>
@@ -269,7 +269,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* Back button */}
             <div className="flex flex-col gap-3">
               <Link href="/blog">
-                <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:border-gold-accent hover:text-[#0f1729] font-sans flex items-center justify-center gap-2 text-xs">
+                <Button variant="outline" className="w-full border-border text-foreground hover:border-accent hover:text-accent-foreground hover:bg-accent/10 font-sans flex items-center justify-center gap-2 text-xs">
                   <ArrowLeft className="w-4 h-4" />
                   All Legal Insights
                 </Button>

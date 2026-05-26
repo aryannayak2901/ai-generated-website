@@ -14,7 +14,20 @@ export interface AboutHeroProps {
 }
 
 export function AboutHero({ className, tag, title, subtitle, image }: AboutHeroProps) {
-  const imageUrl = typeof image === 'object' && image?.url ? image.url : (typeof image === 'string' ? image : "/images/about-hero.png");
+  let imageUrl = "/images/about-hero.png";
+  if (image) {
+    if (typeof image === 'string') {
+      imageUrl = image;
+    } else if (typeof image === 'object' && 'url' in image && typeof image.url === 'string') {
+      imageUrl = image.url;
+    }
+  }
+  
+  // Ensure imageUrl is a valid URL starting with http, https, or /
+  const isUrlValid = imageUrl && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://") || imageUrl.startsWith("/"));
+  if (!isUrlValid) {
+    imageUrl = "/images/about-hero.png";
+  }
   
   return (
     <section className={`relative w-full min-h-[60vh] flex items-center bg-primary overflow-hidden ${className || ""}`}>

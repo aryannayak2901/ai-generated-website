@@ -67,7 +67,7 @@ export interface AwardsMarqueeProps {
 const AwardCard = ({ award }: { award: AwardItem }) => {
   return (
     <ScrollReveal
-      className="w-[320px] bg-white border border-slate-200 shadow-sm overflow-hidden group hover:shadow-lg hover:border-accent transition-all duration-300 shrink-0 mx-3"
+      className="w-[320px] bg-card border border-border shadow-sm overflow-hidden group hover:shadow-lg hover:border-accent transition-all duration-300 shrink-0 mx-3"
     direction="up"
     >
       {/* Top Half (Image) */}
@@ -82,7 +82,7 @@ const AwardCard = ({ award }: { award: AwardItem }) => {
         {/* Teal Floating Badge */}
         {award.yearBadge && (
           <div className="absolute bottom-3 right-3 bg-accent px-3 py-1 rounded shadow-md z-10">
-            <span className="text-white text-[10px] uppercase tracking-widest font-bold">
+            <span className="text-accent-foreground text-[10px] uppercase tracking-widest font-bold">
               {award.yearBadge}
             </span>
           </div>
@@ -101,7 +101,7 @@ const AwardCard = ({ award }: { award: AwardItem }) => {
           {award.description}
         </p>
 
-        <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center group-hover:border-accent/30 transition-colors">
+        <div className="mt-6 pt-4 border-t border-border/50 flex justify-between items-center group-hover:border-accent/30 transition-colors">
           <span className="text-accent text-xs font-bold flex items-center gap-1 cursor-pointer group-hover:translate-x-1 transition-transform">
             VIEW DETAILS <ArrowRight className="w-3 h-3" />
           </span>
@@ -127,7 +127,7 @@ export const AwardsMarquee = ({ awards: payloadAwards }: AwardsMarqueeProps) => 
     : awards;
 
   return (
-    <section className="py-16 md:py-24 border-t border-slate-200 bg-secondary overflow-hidden">
+    <section className="py-16 md:py-24 border-t border-border bg-secondary overflow-hidden">
       <div className="max-w-[1280px] mx-auto px-6 md:px-8 lg:px-12 mb-12">
         <div className="text-center">
           <h3 className="text-muted-foreground text-xs font-bold tracking-[0.3em] uppercase mb-2">
