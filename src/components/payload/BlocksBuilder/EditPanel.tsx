@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { BlockInstance } from './hooks/useBlocksBuilder';
 import { blockMeta, FieldSchema } from './constants/blockMeta';
 import { isDeepEqual } from './utils/comparison';
@@ -16,6 +16,7 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
   const [formData, setFormData] = useState<any>({ ...block });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Dynamic collections states
   const [mediaList, setMediaList] = useState<{ id: string; filename: string; url: string }[]>([]);
@@ -26,6 +27,11 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
     slug: string;
     image: any;
     stats?: { experience?: string; cases?: string; publications?: string; clients?: string } | null;
+  }[]>([]);
+  const [postsList, setPostsList] = useState<{
+    id: string;
+    title: string;
+    slug: string;
   }[]>([]);
 
   const isDirty = useMemo(() => {
@@ -41,8 +47,10 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
   const meta = blockMeta[block.blockType];
   const fields = useMemo(() => meta?.fields || [], [meta]);
 
-  // Fetch dynamic media and team options on component mount
+  // Fetch dynamic media, team, and posts options on component mount with active flag checks to prevent memory leaks
   useEffect(() => {
+    let active = true;
+
     // 1. Fetch Media List
     fetch('/api/media?limit=150')
       .then((res) => {
@@ -50,7 +58,7 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
         return res.json();
       })
       .then((data) => {
-        if (data.docs && Array.isArray(data.docs)) {
+        if (active && data.docs && Array.isArray(data.docs)) {
           setMediaList(
             data.docs.map((d: any) => ({
               id: d.id,
@@ -69,7 +77,7 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
         return res.json();
       })
       .then((data) => {
-        if (data.docs && Array.isArray(data.docs)) {
+        if (active && data.docs && Array.isArray(data.docs)) {
           setTeamList(
             data.docs.map((d: any) => ({
               id: d.id,
@@ -83,6 +91,29 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
         }
       })
       .catch((err) => console.error('EditPanel: Error fetching team collection:', err));
+
+    // 3. Fetch Posts List
+    fetch('/api/posts?limit=150')
+      .then((res) => {
+        if (!res.ok) throw new Error('Network response not ok');
+        return res.json();
+      })
+      .then((data) => {
+        if (active && data.docs && Array.isArray(data.docs)) {
+          setPostsList(
+            data.docs.map((d: any) => ({
+              id: d.id,
+              title: d.title || d.id,
+              slug: d.slug || '',
+            }))
+          );
+        }
+      })
+      .catch((err) => console.error('EditPanel: Error fetching posts collection:', err));
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const validate = useCallback(() => {
@@ -114,16 +145,34 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
       
       for (let i = 0; i < fieldPath.length - 1; i++) {
         const p = fieldPath[i];
-        if (Array.isArray(current[p])) {
+        
+        // Prevent Prototype Pollution
+        if (p === '__proto__' || p === 'constructor' || p === 'prototype') {
+          return prev;
+        }
+
+        // Safely initialize the next level
+        if (current[p] === null || current[p] === undefined) {
+          const nextKey = fieldPath[i + 1];
+          const isNextKeyIndex = !isNaN(Number(nextKey));
+          current[p] = isNextKeyIndex ? [] : {};
+        } else if (Array.isArray(current[p])) {
           current[p] = [...current[p]];
-        } else {
+        } else if (typeof current[p] === 'object') {
           current[p] = { ...current[p] };
+        } else {
+          // Fallback if primitive
+          const nextKey = fieldPath[i + 1];
+          const isNextKeyIndex = !isNaN(Number(nextKey));
+          current[p] = isNextKeyIndex ? [] : {};
         }
         current = current[p];
       }
       
       const lastKey = fieldPath[fieldPath.length - 1];
-      current[lastKey] = value;
+      if (lastKey !== '__proto__' && lastKey !== 'constructor' && lastKey !== 'prototype') {
+        current[lastKey] = value;
+      }
       return updated;
     });
 
@@ -261,63 +310,128 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
     }
 
     if (field.type === 'relationship') {
-      const selectedIds = Array.isArray(value)
-        ? value.map((item) => (typeof item === 'object' && item ? item.id || item : item))
-        : value
-        ? [typeof value === 'object' ? value.id || value : value]
-        : [];
+      const relationTo = field.relationTo || 'team';
+      const optionsList = (relationTo === 'posts' ? postsList : teamList) as any[];
+      
+      const getLabel = (opt: any) => {
+        if (relationTo === 'posts') {
+          return opt.title || opt.id;
+        }
+        return opt.name + (opt.designation ? ` (${opt.designation})` : '');
+      };
 
-      return (
-        <div className="bb-edit__relationship-container">
-          <div className="bb-edit__relationship-list">
-            {teamList.length === 0 ? (
-              <div style={{ fontSize: '11px', color: '#8899aa', fontStyle: 'italic' }}>
-                No team members found. Create some in Team collection first.
-              </div>
-            ) : (
-              teamList.map((member) => {
-                const isChecked = selectedIds.includes(member.id);
-                return (
-                  <label key={member.id} className="bb-edit__relationship-item">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => {
-                        let nextIds;
-                        if (e.target.checked) {
-                          nextIds = [...selectedIds, member.id];
-                        } else {
-                          nextIds = selectedIds.filter((id) => id !== member.id);
-                        }
+      const isMulti = field.name === 'teamMembers' || field.name === 'members' || Array.isArray(value);
 
-                        // Map populated objects in real time to satisfy preview component instantly
-                        const populated = nextIds.map((id) => {
-                          const orig = teamList.find((t) => t.id === id);
-                          return {
-                            id,
-                            name: orig?.name || '',
-                            designation: orig?.designation || '',
-                            stats: orig?.stats || { experience: '10+' },
-                            slug: orig?.slug || orig?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '',
-                            image: orig?.image || null,
-                          };
-                        });
-                        onChange(populated);
-                      }}
-                    />
-                    <span className="bb-edit__relationship-label">
-                      {member.name}{' '}
-                      <small style={{ opacity: 0.5, fontSize: '9px' }}>
-                        ({member.designation})
-                      </small>
-                    </span>
-                  </label>
-                );
-              })
-            )}
+      if (isMulti) {
+        const selectedIds = Array.isArray(value)
+          ? value.map((item) => (typeof item === 'object' && item ? item.id || item : item))
+          : value
+          ? [typeof value === 'object' ? value.id || value : value]
+          : [];
+
+        return (
+          <div className="bb-edit__relationship-container">
+            <div className="bb-edit__relationship-list">
+              {optionsList.length === 0 ? (
+                <div style={{ fontSize: '11px', color: '#8899aa', fontStyle: 'italic' }}>
+                  No {relationTo} items found.
+                </div>
+              ) : (
+                optionsList.map((item) => {
+                  const isChecked = selectedIds.includes(item.id);
+                  return (
+                    <label key={item.id} className="bb-edit__relationship-item">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => {
+                          let nextIds;
+                          if (e.target.checked) {
+                            nextIds = [...selectedIds, item.id];
+                          } else {
+                            nextIds = selectedIds.filter((id) => id !== item.id);
+                          }
+
+                          const populated = nextIds.map((id) => {
+                            const orig = optionsList.find((opt) => opt.id === id);
+                            if (relationTo === 'posts') {
+                              return {
+                                id,
+                                title: orig?.title || '',
+                                slug: orig?.slug || '',
+                              };
+                            } else {
+                              return {
+                                id,
+                                name: orig?.name || '',
+                                designation: orig?.designation || '',
+                                stats: orig?.stats || { experience: '10+' },
+                                slug: orig?.slug || orig?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '',
+                                image: orig?.image || null,
+                              };
+                            }
+                          });
+                          onChange(populated);
+                        }}
+                      />
+                      <span className="bb-edit__relationship-label">
+                        {getLabel(item)}
+                      </span>
+                    </label>
+                  );
+                })
+              )}
+            </div>
           </div>
-        </div>
-      );
+        );
+      } else {
+        const currentId = typeof value === 'object' && value ? value.id || value : value || '';
+
+        return (
+          <div className="bb-edit__relationship-container--single">
+            <select
+              value={currentId}
+              onChange={(e) => {
+                const selectedId = e.target.value;
+                if (!selectedId) {
+                  onChange(null);
+                  return;
+                }
+                const orig = optionsList.find((opt) => opt.id === selectedId);
+                if (orig) {
+                  if (relationTo === 'posts') {
+                    onChange({
+                      id: orig.id,
+                      title: orig.title || '',
+                      slug: orig.slug || '',
+                    });
+                  } else {
+                    onChange({
+                      id: orig.id,
+                      name: orig.name || '',
+                      designation: orig.designation || '',
+                      stats: orig.stats || { experience: '10+' },
+                      slug: orig.slug || orig.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '',
+                      image: orig.image || null,
+                    });
+                  }
+                } else {
+                  onChange(selectedId);
+                }
+              }}
+              className="bb-edit__input bb-edit__select"
+              style={{ width: '100%' }}
+            >
+              <option value="">Select {relationTo === 'posts' ? 'Post' : 'Team Member'}...</option>
+              {optionsList.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {getLabel(item)}
+                </option>
+              ))}
+            </select>
+          </div>
+        );
+      }
     }
 
     if (field.type === 'array') {
@@ -353,19 +467,17 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
                 const newItems = [...items, newItem];
                 onChange(newItems);
 
-                // Auto-expand the newly created item
                 const newItemKey = `${arrayKey}-${items.length}`;
                 setExpandedItems((prev) => ({
                   ...prev,
                   [newItemKey]: true
                 }));
 
-                // Smooth scroll to the bottom of the form body
+                // Smooth scroll to the bottom of the form body using ref
                 setTimeout(() => {
-                  const scrollContainer = document.querySelector('.bb-edit__body');
-                  if (scrollContainer) {
-                    scrollContainer.scrollTo({
-                      top: scrollContainer.scrollHeight,
+                  if (scrollContainerRef.current) {
+                    scrollContainerRef.current.scrollTo({
+                      top: scrollContainerRef.current.scrollHeight,
                       behavior: 'smooth'
                     });
                   }
@@ -381,7 +493,6 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
               const itemKey = `${arrayKey}-${idx}`;
               const isExpanded = !!expandedItems[itemKey];
 
-              // Fallbacks to determine visual title insideCollapsed list item
               const itemTitle =
                 item.title ||
                 item.name ||
@@ -452,141 +563,6 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
 
   return (
     <div className="bb-edit" style={{ width: '100%', height: '100%', borderRight: 'none' }}>
-      {/* Dynamic styling override inside EditPanel itself */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .bb-edit__array-container {
-          margin-top: 12px;
-          border-top: 1px solid var(--bb-border);
-          padding-top: 12px;
-        }
-        .bb-edit__array-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 8px;
-        }
-        .bb-edit__add-btn {
-          background: var(--bb-gold) !important;
-          color: var(--bb-navy) !important;
-          border: none !important;
-          padding: 4px 10px !important;
-          border-radius: 4px !important;
-          font-size: 11px !important;
-          font-weight: 700 !important;
-          cursor: pointer !important;
-          transition: all 0.2s ease !important;
-        }
-        .bb-edit__add-btn:hover {
-          background: #f1c40f !important;
-          transform: translateY(-1px) !important;
-        }
-        .bb-edit__item-card {
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 6px;
-          margin-bottom: 8px;
-          overflow: hidden;
-          transition: all 0.2s ease;
-        }
-        .bb-edit__item-card:hover {
-          border-color: rgba(212, 175, 55, 0.3);
-        }
-        .bb-edit__item-card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 8px 12px;
-          background: rgba(255, 255, 255, 0.02);
-          cursor: pointer;
-        }
-        .bb-edit__item-card-title {
-          font-size: 12px;
-          font-weight: 600;
-          color: #fff;
-        }
-        .bb-edit__item-card-delete {
-          background: transparent !important;
-          border: none !important;
-          cursor: pointer !important;
-          font-size: 13px !important;
-          opacity: 0.6 !important;
-          transition: opacity 0.2s ease !important;
-          padding: 0 !important;
-        }
-        .bb-edit__item-card-delete:hover {
-          opacity: 1 !important;
-        }
-        .bb-edit__item-card-body {
-          padding: 12px;
-          background: rgba(0, 0, 0, 0.15);
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .bb-edit__textarea {
-          min-height: 80px;
-          resize: vertical;
-          line-height: 1.4;
-          padding: 8px;
-        }
-        .bb-edit__select {
-          background: var(--bb-navy-dark) !important;
-          color: #fff !important;
-          border: 1px solid var(--bb-border) !important;
-          padding: 6px 10px !important;
-          border-radius: 4px !important;
-          outline: none !important;
-        }
-        .bb-edit__upload-container {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .bb-edit__upload-row-or {
-          font-size: 10px;
-          color: #8899aa;
-          text-align: center;
-          font-style: italic;
-        }
-        .bb-edit__media-preview {
-          margin-top: 6px;
-          border: 1px solid var(--bb-border);
-          border-radius: 4px;
-          overflow: hidden;
-          max-height: 100px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #000;
-        }
-        .bb-edit__media-thumb {
-          max-width: 100%;
-          max-height: 100px;
-          object-fit: contain;
-        }
-        .bb-edit__relationship-container {
-          background: rgba(0, 0, 0, 0.1);
-          border: 1px solid var(--bb-border);
-          border-radius: 4px;
-          max-height: 150px;
-          overflow-y: auto;
-          padding: 8px;
-        }
-        .bb-edit__relationship-list {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .bb-edit__relationship-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-          font-size: 11px;
-        }
-        .bb-edit__relationship-label {
-          color: #ddd;
-        }
-      ` }} />
-
       <div className="bb-edit__header">
         <h4 className="bb-edit__title">
           <span className="bb-edit__icon">{meta?.icon}</span>
@@ -596,9 +572,9 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
       </div>
 
       <div 
+        ref={scrollContainerRef}
         className="bb-edit__body"
         onKeyDown={(e) => {
-          // Allow saving when hitting Enter inside text inputs
           if (
             e.key === 'Enter' &&
             e.target instanceof HTMLInputElement &&
@@ -618,7 +594,6 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
             const error = errors[field.name];
             return (
               <div key={field.name} className="bb-edit__field">
-                {/* Note: Array and checkbox label rendering is managed inside renderFieldInput */}
                 {field.type !== 'array' && field.type !== 'boolean' && (
                   <label className="bb-edit__label" htmlFor={field.name}>
                     {field.label}
