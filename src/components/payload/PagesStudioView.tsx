@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { ChevronLeft, Menu } from "lucide-react";
 import { BlocksBuilderField } from "./BlocksBuilder";
 import { Form, useForm, useField } from "@payloadcms/ui";
@@ -286,14 +286,30 @@ export const PagesStudioView = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Unsaved Changes Tracking State
-  const [isFormModified, setIsFormModified] = useState(false);
-  const [isBlockDirty, setIsBlockDirty] = useState(false);
+  // Unsaved Changes Tracking Refs
+  const isFormModifiedRef = useRef(false);
+  const isBlockDirtyRef = useRef(false);
+  const isPageDirtyRef = useRef(false);
+
   const [pendingNavigationUrl, setPendingNavigationUrl] = useState<string | null>(null);
   const [pendingPageSwitchId, setPendingPageSwitchId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const isPageDirty = isFormModified || isBlockDirty;
+  // Stable callbacks to update tracking refs without triggering re-renders
+  const handleFormModifiedChange = useCallback((modified: boolean) => {
+    isFormModifiedRef.current = modified;
+    isPageDirtyRef.current = isFormModifiedRef.current || isBlockDirtyRef.current;
+  }, []);
+
+  const handleBlockDirtyChange = useCallback((dirty: boolean) => {
+    isBlockDirtyRef.current = dirty;
+    isPageDirtyRef.current = isFormModifiedRef.current || isBlockDirtyRef.current;
+  }, []);
+
+  // Memoize form initial state with currentPageData dependency
+  const formInitialState = useMemo(() => {
+    return transformDataToFormState(currentPageData);
+  }, [currentPageData]);
 
   // Monitor native sidebar open/collapsed class list changes
   useEffect(() => {
@@ -323,27 +339,27 @@ export const PagesStudioView = () => {
     };
   }, []);
 
-  // Window Tab Reload Block (beforeunload)
+  // Window Tab Reload Block (beforeunload) - mounted exactly once, checks ref
   useEffect(() => {
-    if (!isPageDirty) return;
-
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
-      return e.returnValue;
+      if (isPageDirtyRef.current) {
+        e.preventDefault();
+        e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+        return e.returnValue;
+      }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [isPageDirty]);
+  }, []);
 
-  // Sidebar & External Routing Interceptor
+  // Sidebar & External Routing Interceptor - mounted exactly once, checks ref
   useEffect(() => {
-    if (!isPageDirty) return;
-
     const handleBodyClick = (e: MouseEvent) => {
+      if (!isPageDirtyRef.current) return;
+
       // Do NOT intercept clicks when modifier keys are pressed
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
         return;
@@ -370,10 +386,10 @@ export const PagesStudioView = () => {
     return () => {
       document.body.removeEventListener("click", handleBodyClick, true);
     };
-  }, [isPageDirty]);
+  }, []);
 
   const handleAddNewPage = useCallback(() => {
-    if (isPageDirty) {
+    if (isPageDirtyRef.current) {
       setPendingPageSwitchId("new");
       return;
     }
@@ -383,11 +399,12 @@ export const PagesStudioView = () => {
       slug: "",
       layout: [],
     });
-  }, [isPageDirty]);
+  }, []);
 
-  const handleDiscardAndLeave = () => {
-    setIsFormModified(false);
-    setIsBlockDirty(false);
+  const handleDiscardAndLeave = useCallback(() => {
+    isFormModifiedRef.current = false;
+    isBlockDirtyRef.current = false;
+    isPageDirtyRef.current = false;
     const targetUrl = pendingNavigationUrl;
     const targetPageId = pendingPageSwitchId;
 
@@ -408,7 +425,7 @@ export const PagesStudioView = () => {
         setSelectedPageId(targetPageId);
       }
     }
-  };
+  }, [pendingNavigationUrl, pendingPageSwitchId]);
 
   const handleStay = () => {
     setPendingNavigationUrl(null);
@@ -458,9 +475,9 @@ export const PagesStudioView = () => {
     }
   }, [selectedPageId]);
 
-  const handlePageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlePageChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const nextVal = e.target.value;
-    if (isPageDirty) {
+    if (isPageDirtyRef.current) {
       // Force the select value back immediately to keep it visually stable
       e.target.value = selectedPageId || "new";
       setPendingPageSwitchId(nextVal);
@@ -471,7 +488,7 @@ export const PagesStudioView = () => {
     } else {
       setSelectedPageId(nextVal);
     }
-  };
+  }, [selectedPageId, handleAddNewPage]);
 
   const handleDeletePage = async () => {
     if (!selectedPageId) return;
@@ -547,14 +564,15 @@ export const PagesStudioView = () => {
       ) : (
         <Form
           key={selectedPageId || "new"}
-          initialState={transformDataToFormState(currentPageData)}
+          initialState={formInitialState}
           disableValidationOnSubmit={true}
           action={
             selectedPageId ? `/api/pages/${selectedPageId}` : "/api/pages"
           }
           method={selectedPageId ? "PATCH" : "POST"}
           onSuccess={(json: any) => {
-            setIsBlockDirty(false);
+            isBlockDirtyRef.current = false;
+            isPageDirtyRef.current = isFormModifiedRef.current || isBlockDirtyRef.current;
 
             const doc = json?.doc || json;
             if (doc && doc.id) {
@@ -606,7 +624,7 @@ export const PagesStudioView = () => {
             initialLayout={currentPageData?.layout || []} 
             initialTitle={currentPageData?.title || ""}
             initialSlug={currentPageData?.slug || ""}
-            onChange={setIsFormModified} 
+            onChange={handleFormModifiedChange} 
           />
           <FormProcessingReporter onChange={setIsSaving} />
           <BlocksBuilderField
@@ -616,7 +634,7 @@ export const PagesStudioView = () => {
             collectionSlug="pages"
             isFullscreen={isFullscreen}
             onFullscreenChange={setIsFullscreen}
-            onChangeBlockDirty={setIsBlockDirty}
+            onChangeBlockDirty={handleBlockDirtyChange}
             customHeader={
               <StudioHeader
                 pages={pages || []}
