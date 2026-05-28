@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ChevronLeft, Menu } from "lucide-react";
 import { BlocksBuilderField } from "./BlocksBuilder";
-import { Form, useForm } from "@payloadcms/ui";
+import { Form, useForm, useField } from "@payloadcms/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { isDeepEqual } from "./BlocksBuilder/utils/comparison";
 import "./BlocksBuilder/styles.css";
@@ -210,35 +210,33 @@ const StudioHeader = ({
  */
 const FormModifiedReporter = ({ 
   initialLayout, 
+  initialTitle,
+  initialSlug,
   onChange 
 }: { 
   initialLayout: any[]; 
+  initialTitle: string;
+  initialSlug: string;
   onChange: (modified: boolean) => void 
 }) => {
-  const form = useForm();
-  const modified = (form as any)?.modified || false;
+  const titleField = useField<string>({ path: 'title' });
+  const slugField = useField<string>({ path: 'slug' });
+  const layoutField = useField<any[]>({ path: 'layout' });
 
-  // Track the current layout value from form fields safely
-  const layoutValue = (form as any)?.fields?.layout?.value;
+  const currentTitle = titleField?.value || '';
+  const currentSlug = slugField?.value || '';
+  const currentLayout = layoutField?.value || [];
 
-  const currentLayout = useMemo(() => {
-    if (form && typeof form.getData === 'function') {
-      const data = form.getData();
-      if (data && Array.isArray(data.layout)) return data.layout;
-    }
-    if (Array.isArray(layoutValue)) {
-      return layoutValue;
-    }
-    return [];
-  }, [form, layoutValue]);
-
-  const isLayoutModified = useMemo(() => {
-    return !isDeepEqual(initialLayout, currentLayout);
-  }, [initialLayout, currentLayout]);
+  const isModified = useMemo(() => {
+    const titleChanged = currentTitle !== initialTitle;
+    const slugChanged = currentSlug !== initialSlug;
+    const layoutChanged = !isDeepEqual(initialLayout, currentLayout);
+    return titleChanged || slugChanged || layoutChanged;
+  }, [currentTitle, initialTitle, currentSlug, initialSlug, currentLayout, initialLayout]);
 
   useEffect(() => {
-    onChange(modified || isLayoutModified);
-  }, [modified, isLayoutModified, onChange]);
+    onChange(isModified);
+  }, [isModified, onChange]);
 
   return null;
 };
@@ -289,10 +287,13 @@ export const PagesStudioView = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Unsaved Changes Tracking State
-  const [isPageDirty, setIsPageDirty] = useState(false);
+  const [isFormModified, setIsFormModified] = useState(false);
+  const [isBlockDirty, setIsBlockDirty] = useState(false);
   const [pendingNavigationUrl, setPendingNavigationUrl] = useState<string | null>(null);
   const [pendingPageSwitchId, setPendingPageSwitchId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const isPageDirty = isFormModified || isBlockDirty;
 
   // Monitor native sidebar open/collapsed class list changes
   useEffect(() => {
@@ -359,6 +360,7 @@ export const PagesStudioView = () => {
         const href = anchor.getAttribute("href");
         if (href && !href.startsWith("#") && !href.startsWith("javascript:")) {
           e.preventDefault();
+          e.stopPropagation();
           setPendingNavigationUrl(href);
         }
       }
@@ -384,7 +386,8 @@ export const PagesStudioView = () => {
   }, [isPageDirty]);
 
   const handleDiscardAndLeave = () => {
-    setIsPageDirty(false);
+    setIsFormModified(false);
+    setIsBlockDirty(false);
     const targetUrl = pendingNavigationUrl;
     const targetPageId = pendingPageSwitchId;
 
@@ -551,7 +554,7 @@ export const PagesStudioView = () => {
           }
           method={selectedPageId ? "PATCH" : "POST"}
           onSuccess={(json: any) => {
-            setIsPageDirty(false);
+            setIsBlockDirty(false);
 
             const doc = json?.doc || json;
             if (doc && doc.id) {
@@ -601,7 +604,9 @@ export const PagesStudioView = () => {
         >
           <FormModifiedReporter 
             initialLayout={currentPageData?.layout || []} 
-            onChange={setIsPageDirty} 
+            initialTitle={currentPageData?.title || ""}
+            initialSlug={currentPageData?.slug || ""}
+            onChange={setIsFormModified} 
           />
           <FormProcessingReporter onChange={setIsSaving} />
           <BlocksBuilderField
@@ -611,6 +616,7 @@ export const PagesStudioView = () => {
             collectionSlug="pages"
             isFullscreen={isFullscreen}
             onFullscreenChange={setIsFullscreen}
+            onChangeBlockDirty={setIsBlockDirty}
             customHeader={
               <StudioHeader
                 pages={pages || []}
