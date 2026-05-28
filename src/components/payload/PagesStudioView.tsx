@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, Menu } from "lucide-react";
 import { BlocksBuilderField } from "./BlocksBuilder";
 import { Form, useForm } from "@payloadcms/ui";
@@ -219,6 +219,21 @@ const FormModifiedReporter = ({ onChange }: { onChange: (modified: boolean) => v
 };
 
 /**
+ * A helper component that hooks into the Payload Form context
+ * to monitor and report the processing/saving status to the parent.
+ */
+const FormProcessingReporter = ({ onChange }: { onChange: (processing: boolean) => void }) => {
+  const form = useForm();
+  const processing = (form as any)?.processing || false;
+  
+  useEffect(() => {
+    onChange(processing);
+  }, [processing, onChange]);
+  
+  return null;
+};
+
+/**
  * Helper to transform raw document data into Payload Form State.
  * This prevents the "Cannot create property 'valid' on string" error.
  */
@@ -252,6 +267,7 @@ export const PagesStudioView = () => {
   const [isPageDirty, setIsPageDirty] = useState(false);
   const [pendingNavigationUrl, setPendingNavigationUrl] = useState<string | null>(null);
   const [pendingPageSwitchId, setPendingPageSwitchId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Monitor native sidebar open/collapsed class list changes
   useEffect(() => {
@@ -302,9 +318,19 @@ export const PagesStudioView = () => {
     if (!isPageDirty) return;
 
     const handleBodyClick = (e: MouseEvent) => {
+      // Do NOT intercept clicks when modifier keys are pressed
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+        return;
+      }
+
       const target = e.target as Element | null;
       const anchor = target?.closest?.("a");
       if (anchor) {
+        // Do NOT intercept links with target="_blank" or the download attribute
+        if (anchor.getAttribute("target") === "_blank" || anchor.hasAttribute("download")) {
+          return;
+        }
+
         const href = anchor.getAttribute("href");
         if (href && !href.startsWith("#") && !href.startsWith("javascript:")) {
           e.preventDefault();
@@ -319,7 +345,7 @@ export const PagesStudioView = () => {
     };
   }, [isPageDirty]);
 
-  const handleAddNewPage = () => {
+  const handleAddNewPage = useCallback(() => {
     if (isPageDirty) {
       setPendingPageSwitchId("new");
       return;
@@ -330,7 +356,7 @@ export const PagesStudioView = () => {
       slug: "",
       layout: [],
     });
-  };
+  }, [isPageDirty]);
 
   const handleDiscardAndLeave = () => {
     setIsPageDirty(false);
@@ -371,9 +397,7 @@ export const PagesStudioView = () => {
           setPages(data.docs);
           // Auto-select first page if none selected, otherwise if no pages exist, trigger 'Add New'
           if (data.docs.length > 0) {
-            if (!selectedPageId) {
-              setSelectedPageId(data.docs[0].id);
-            }
+            setSelectedPageId((prev) => prev || data.docs[0].id);
           } else {
             handleAddNewPage();
           }
@@ -383,7 +407,7 @@ export const PagesStudioView = () => {
       }
     }
     fetchPages();
-  }, []);
+  }, [handleAddNewPage]);
 
   // 2. Fetch full page data when selection changes
   useEffect(() => {
@@ -504,7 +528,7 @@ export const PagesStudioView = () => {
           onSuccess={(json: any) => {
             setIsPageDirty(false);
 
-            const doc = json?.doc;
+            const doc = json?.doc || json;
             if (doc && doc.id) {
               setCurrentPageData(doc);
               setSelectedPageId(doc.id);
@@ -551,6 +575,7 @@ export const PagesStudioView = () => {
           }}
         >
           <FormModifiedReporter onChange={setIsPageDirty} />
+          <FormProcessingReporter onChange={setIsSaving} />
           <BlocksBuilderField
             path="layout"
             label="Layout"
@@ -587,6 +612,7 @@ export const PagesStudioView = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={isSaving ? undefined : handleStay}
             style={{
               position: "fixed",
               top: 0,
@@ -608,6 +634,7 @@ export const PagesStudioView = () => {
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.95, y: 20, opacity: 0 }}
               transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
               style={{
                 width: "100%",
                 maxWidth: "520px",
@@ -657,9 +684,10 @@ export const PagesStudioView = () => {
               >
                 {/* Save & Leave */}
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={isSaving ? undefined : { scale: 1.02 }}
+                  whileTap={isSaving ? undefined : { scale: 0.98 }}
                   type="button"
+                  disabled={isSaving}
                   onClick={() => {
                     const saveBtn = document.querySelector(".bb-studio-save-btn") as HTMLButtonElement | null;
                     if (saveBtn) {
@@ -674,18 +702,20 @@ export const PagesStudioView = () => {
                     fontWeight: 600,
                     fontSize: "14px",
                     border: "none",
-                    cursor: "pointer",
+                    cursor: isSaving ? "not-allowed" : "pointer",
+                    opacity: isSaving ? 0.6 : 1,
                     textAlign: "center",
                   }}
                 >
-                  Save &amp; Leave
+                  {isSaving ? "Saving Progress..." : "Save & Leave"}
                 </motion.button>
 
                 {/* Discard & Leave */}
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={isSaving ? undefined : { scale: 1.02 }}
+                  whileTap={isSaving ? undefined : { scale: 0.98 }}
                   type="button"
+                  disabled={isSaving}
                   onClick={handleDiscardAndLeave}
                   style={{
                     padding: "14px 20px",
@@ -695,7 +725,8 @@ export const PagesStudioView = () => {
                     border: "1px solid var(--bb-danger)",
                     fontWeight: 600,
                     fontSize: "14px",
-                    cursor: "pointer",
+                    cursor: isSaving ? "not-allowed" : "pointer",
+                    opacity: isSaving ? 0.6 : 1,
                     textAlign: "center",
                   }}
                 >
@@ -704,9 +735,10 @@ export const PagesStudioView = () => {
 
                 {/* Stay on Page */}
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={isSaving ? undefined : { scale: 1.02 }}
+                  whileTap={isSaving ? undefined : { scale: 0.98 }}
                   type="button"
+                  disabled={isSaving}
                   onClick={handleStay}
                   style={{
                     padding: "14px 20px",
@@ -716,7 +748,8 @@ export const PagesStudioView = () => {
                     border: "1px solid rgba(255, 255, 255, 0.1)",
                     fontWeight: 500,
                     fontSize: "14px",
-                    cursor: "pointer",
+                    cursor: isSaving ? "not-allowed" : "pointer",
+                    opacity: isSaving ? 0.6 : 1,
                     textAlign: "center",
                   }}
                 >
