@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { useBlocksBuilder } from './hooks/useBlocksBuilder';
 import { usePreviewRefresh } from './hooks/usePreviewRefresh';
 import { BlockLibraryPanel } from './BlockLibraryPanel';
@@ -54,14 +53,14 @@ export function BlocksBuilderField({
   const [pendingBlockAction, setPendingBlockAction] = React.useState<{ type: 'close' | 'switch'; targetBlockId?: string } | null>(null);
 
   const isFullscreen = propIsFullscreen !== undefined ? propIsFullscreen : internalIsFullscreen;
-  const setIsFullscreen = (val: boolean | ((prev: boolean) => boolean)) => {
+  const setIsFullscreen = useCallback((val: boolean | ((prev: boolean) => boolean)) => {
     const nextVal = typeof val === 'function' ? val(isFullscreen) : val;
     if (propOnFullscreenChange) {
       propOnFullscreenChange(nextVal);
     } else {
       setInternalIsFullscreen(nextVal);
     }
-  };
+  }, [isFullscreen, propOnFullscreenChange]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -90,13 +89,13 @@ export function BlocksBuilderField({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen]);
+  }, [isFullscreen, setIsFullscreen]);
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-  };
+  }, []);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     
     if (!over) {
@@ -125,17 +124,17 @@ export function BlocksBuilderField({
     }
 
     setActiveId(null);
-  };
+  }, [blocks, addBlock, moveBlock]);
 
-  const handleEditBlock = (blockId: string) => {
+  const handleEditBlock = useCallback((blockId: string) => {
     if (isBlockDirty && selectedBlockId !== blockId) {
       setPendingBlockAction({ type: 'switch', targetBlockId: blockId });
     } else {
       selectBlock(blockId);
     }
-  };
+  }, [isBlockDirty, selectedBlockId, selectBlock]);
 
-  const handleSaveBlock = (blockId: string, updates: any) => {
+  const handleSaveBlock = useCallback((blockId: string, updates: any) => {
     updateBlock(blockId, updates);
     setIsBlockDirty(false);
     
@@ -145,17 +144,17 @@ export function BlocksBuilderField({
       selectBlock(null);
     }
     setPendingBlockAction(null);
-  };
+  }, [updateBlock, pendingBlockAction, selectBlock]);
 
-  const handleCancelBlock = () => {
+  const handleCancelBlock = useCallback(() => {
     if (isBlockDirty) {
       setPendingBlockAction({ type: 'close' });
     } else {
       selectBlock(null);
     }
-  };
+  }, [isBlockDirty, selectBlock]);
 
-  const handleSaveAndClose = () => {
+  const handleSaveAndClose = useCallback(() => {
     const saveBtn = document.querySelector('.bb-edit__save') as HTMLButtonElement | null;
     if (saveBtn) {
       saveBtn.click();
@@ -168,9 +167,9 @@ export function BlocksBuilderField({
       }
     }
     setPendingBlockAction(null);
-  };
+  }, [pendingBlockAction, selectBlock]);
 
-  const handleDiscardChanges = () => {
+  const handleDiscardChanges = useCallback(() => {
     setIsBlockDirty(false);
     if (pendingBlockAction?.type === 'switch' && pendingBlockAction.targetBlockId) {
       selectBlock(pendingBlockAction.targetBlockId);
@@ -178,17 +177,17 @@ export function BlocksBuilderField({
       selectBlock(null);
     }
     setPendingBlockAction(null);
-  };
+  }, [pendingBlockAction, selectBlock]);
 
-  const handleKeepEditing = () => {
+  const handleKeepEditing = useCallback(() => {
     setPendingBlockAction(null);
-  };
+  }, []);
 
-  const handleDeleteBlock = (blockId: string) => {
+  const handleDeleteBlock = useCallback((blockId: string) => {
     removeBlock(blockId);
-  };
+  }, [removeBlock]);
 
-  const handleMoveBlock = (blockId: string, direction: 'up' | 'down') => {
+  const handleMoveBlock = useCallback((blockId: string, direction: 'up' | 'down') => {
     const currentIndex = blocks.findIndex(b => b.id === blockId);
     if (currentIndex === -1) return;
 
@@ -196,7 +195,7 @@ export function BlocksBuilderField({
     if (newIndex >= 0 && newIndex < blocks.length) {
       moveBlock(currentIndex, newIndex);
     }
-  };
+  }, [blocks, moveBlock]);
 
   return (
     <motion.div 
@@ -321,7 +320,7 @@ export function BlocksBuilderField({
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'rgba(5, 10, 24, 0.85)',
+              background: 'rgba(15, 27, 45, 0.85)',
               backdropFilter: 'blur(8px)',
               display: 'flex',
               alignItems: 'center',
@@ -336,8 +335,8 @@ export function BlocksBuilderField({
               exit={{ scale: 0.95, y: 20, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               style={{
-                background: '#0A1128',
-                border: '1px solid rgba(201, 168, 76, 0.3)',
+                background: 'var(--bb-navy)',
+                border: '1px solid var(--bb-border)',
                 borderRadius: '8px',
                 padding: '32px',
                 maxWidth: '480px',
@@ -354,7 +353,7 @@ export function BlocksBuilderField({
                     fontFamily: "'Playfair Display', Georgia, serif",
                     fontSize: '24px',
                     fontWeight: 600,
-                    color: '#ffffff',
+                    color: 'var(--bb-white)',
                     letterSpacing: '0.02em',
                     margin: 0,
                   }}
@@ -364,7 +363,7 @@ export function BlocksBuilderField({
                 <p
                   style={{
                     fontSize: '14px',
-                    color: '#a0aec0',
+                    color: 'var(--bb-muted)',
                     lineHeight: '1.6',
                     margin: 0,
                   }}
@@ -382,12 +381,12 @@ export function BlocksBuilderField({
                 }}
               >
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, backgroundColor: 'var(--bb-gold-light)' }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSaveAndClose}
                   style={{
-                    background: '#c9a84c',
-                    color: '#0A1128',
+                    background: 'var(--bb-gold)',
+                    color: 'var(--bb-navy)',
                     border: 'none',
                     borderRadius: '4px',
                     padding: '12px 24px',
@@ -399,12 +398,6 @@ export function BlocksBuilderField({
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'background-color 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#d8b960';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#c9a84c';
                   }}
                 >
                   Save & Close
@@ -418,13 +411,13 @@ export function BlocksBuilderField({
                   }}
                 >
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(224, 85, 85, 0.1)', borderColor: 'var(--bb-danger)' }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleDiscardChanges}
                     style={{
                       background: 'transparent',
-                      border: '1px solid rgba(224, 85, 85, 0.4)',
-                      color: '#f36868',
+                      border: '1px solid var(--bb-danger)',
+                      color: 'var(--bb-danger)',
                       borderRadius: '4px',
                       padding: '12px 16px',
                       fontSize: '14px',
@@ -436,26 +429,18 @@ export function BlocksBuilderField({
                       justifyContent: 'center',
                       transition: 'background-color 0.2s, border-color 0.2s',
                     }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(224, 85, 85, 0.1)';
-                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(224, 85, 85, 0.6)';
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
-                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(224, 85, 85, 0.4)';
-                    }}
                   >
                     Discard Changes
                   </motion.button>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleKeepEditing}
                     style={{
                       background: 'rgba(255, 255, 255, 0.05)',
                       border: 'none',
-                      color: '#e2e8f0',
+                      color: 'var(--bb-white)',
                       borderRadius: '4px',
                       padding: '12px 16px',
                       fontSize: '14px',
@@ -466,12 +451,6 @@ export function BlocksBuilderField({
                       alignItems: 'center',
                       justifyContent: 'center',
                       transition: 'background-color 0.2s',
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
                     }}
                   >
                     Keep Editing
