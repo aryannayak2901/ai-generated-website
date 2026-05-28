@@ -3,14 +3,16 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { BlockInstance } from './hooks/useBlocksBuilder';
 import { blockMeta, FieldSchema } from './constants/blockMeta';
+import { isDeepEqual } from './utils/comparison';
 
 interface EditPanelProps {
   block: BlockInstance;
   onSave: (blockId: string, updates: any) => void;
   onCancel: () => void;
+  onChangeDirty?: (isDirty: boolean) => void;
 }
 
-export function EditPanel({ block, onSave, onCancel }: EditPanelProps) {
+export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelProps) {
   const [formData, setFormData] = useState<any>({ ...block });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
@@ -25,6 +27,16 @@ export function EditPanel({ block, onSave, onCancel }: EditPanelProps) {
     image: any;
     stats?: { experience?: string; cases?: string; publications?: string; clients?: string } | null;
   }[]>([]);
+
+  const isDirty = useMemo(() => {
+    return !isDeepEqual(block, formData);
+  }, [block, formData]);
+
+  useEffect(() => {
+    if (onChangeDirty) {
+      onChangeDirty(isDirty);
+    }
+  }, [isDirty, onChangeDirty]);
 
   const meta = blockMeta[block.blockType];
   const fields = useMemo(() => meta?.fields || [], [meta]);
@@ -126,8 +138,8 @@ export function EditPanel({ block, onSave, onCancel }: EditPanelProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent | React.MouseEvent | React.KeyboardEvent) => {
+    if (e) e.preventDefault();
     if (validate()) {
       const dataToSave = { ...formData };
       delete dataToSave.id;
@@ -583,7 +595,20 @@ export function EditPanel({ block, onSave, onCancel }: EditPanelProps) {
         <button className="bb-edit__close" onClick={onCancel}>✕</button>
       </div>
 
-      <form onSubmit={handleSubmit} className="bb-edit__body">
+      <div 
+        className="bb-edit__body"
+        onKeyDown={(e) => {
+          // Allow saving when hitting Enter inside text inputs
+          if (
+            e.key === 'Enter' &&
+            e.target instanceof HTMLInputElement &&
+            e.target.type !== 'checkbox'
+          ) {
+            e.preventDefault();
+            handleSubmit(e);
+          }
+        }}
+      >
         {fields.length === 0 ? (
           <div style={{ color: '#8899aa', fontSize: '12px', fontStyle: 'italic', padding: '12px' }}>
             No editable fields defined for this block.
@@ -605,13 +630,13 @@ export function EditPanel({ block, onSave, onCancel }: EditPanelProps) {
             );
           })
         )}
-      </form>
+      </div>
 
       <div className="bb-edit__footer">
         <button type="button" className="bb-edit__cancel" onClick={onCancel}>
           Cancel
         </button>
-        <button type="submit" className="bb-edit__save" onClick={handleSubmit}>
+        <button type="button" className="bb-edit__save" onClick={handleSubmit}>
           Save
         </button>
       </div>
