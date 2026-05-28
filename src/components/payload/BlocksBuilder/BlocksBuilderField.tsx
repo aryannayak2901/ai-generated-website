@@ -50,6 +50,8 @@ export function BlocksBuilderField({
   const { refresh, setIframeRef } = usePreviewRefresh();
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const [internalIsFullscreen, setInternalIsFullscreen] = React.useState(false);
+  const [isBlockDirty, setIsBlockDirty] = React.useState(false);
+  const [pendingBlockAction, setPendingBlockAction] = React.useState<{ type: 'close' | 'switch'; targetBlockId?: string } | null>(null);
 
   const isFullscreen = propIsFullscreen !== undefined ? propIsFullscreen : internalIsFullscreen;
   const setIsFullscreen = (val: boolean | ((prev: boolean) => boolean)) => {
@@ -126,13 +128,60 @@ export function BlocksBuilderField({
   };
 
   const handleEditBlock = (blockId: string) => {
-    selectBlock(blockId);
+    if (isBlockDirty && selectedBlockId !== blockId) {
+      setPendingBlockAction({ type: 'switch', targetBlockId: blockId });
+    } else {
+      selectBlock(blockId);
+    }
   };
 
   const handleSaveBlock = (blockId: string, updates: any) => {
     updateBlock(blockId, updates);
-    selectBlock(null);
-    // refresh() is handled by useEffect when blocks change
+    setIsBlockDirty(false);
+    
+    if (pendingBlockAction?.type === 'switch' && pendingBlockAction.targetBlockId) {
+      selectBlock(pendingBlockAction.targetBlockId);
+    } else {
+      selectBlock(null);
+    }
+    setPendingBlockAction(null);
+  };
+
+  const handleCancelBlock = () => {
+    if (isBlockDirty) {
+      setPendingBlockAction({ type: 'close' });
+    } else {
+      selectBlock(null);
+    }
+  };
+
+  const handleSaveAndClose = () => {
+    const saveBtn = document.querySelector('.bb-edit__save') as HTMLButtonElement | null;
+    if (saveBtn) {
+      saveBtn.click();
+    } else {
+      setIsBlockDirty(false);
+      if (pendingBlockAction?.type === 'switch' && pendingBlockAction.targetBlockId) {
+        selectBlock(pendingBlockAction.targetBlockId);
+      } else {
+        selectBlock(null);
+      }
+    }
+    setPendingBlockAction(null);
+  };
+
+  const handleDiscardChanges = () => {
+    setIsBlockDirty(false);
+    if (pendingBlockAction?.type === 'switch' && pendingBlockAction.targetBlockId) {
+      selectBlock(pendingBlockAction.targetBlockId);
+    } else {
+      selectBlock(null);
+    }
+    setPendingBlockAction(null);
+  };
+
+  const handleKeepEditing = () => {
+    setPendingBlockAction(null);
   };
 
   const handleDeleteBlock = (blockId: string) => {
@@ -212,7 +261,7 @@ export function BlocksBuilderField({
           <AnimatePresence mode="wait">
             {selectedBlockId && selectedBlock ? (
               <motion.div 
-                key="edit-panel"
+                key={`edit-panel-${selectedBlock.id}`}
                 style={{ 
                   width: 340, 
                   height: '100%',
@@ -232,7 +281,8 @@ export function BlocksBuilderField({
                 <EditPanel
                   block={selectedBlock}
                   onSave={handleSaveBlock}
-                  onCancel={() => selectBlock(null)}
+                  onCancel={handleCancelBlock}
+                  onChangeDirty={setIsBlockDirty}
                 />
               </motion.div>
             ) : null}
@@ -258,6 +308,180 @@ export function BlocksBuilderField({
           )}
         </DragOverlay>
       </DndContext>
+
+      <AnimatePresence>
+        {pendingBlockAction && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(5, 10, 24, 0.85)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              padding: '24px',
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              style={{
+                background: '#0A1128',
+                border: '1px solid rgba(201, 168, 76, 0.3)',
+                borderRadius: '8px',
+                padding: '32px',
+                maxWidth: '480px',
+                width: '100%',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px',
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <h3
+                  style={{
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontSize: '24px',
+                    fontWeight: 600,
+                    color: '#ffffff',
+                    letterSpacing: '0.02em',
+                    margin: 0,
+                  }}
+                >
+                  Unsaved Changes
+                </h3>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    color: '#a0aec0',
+                    lineHeight: '1.6',
+                    margin: 0,
+                  }}
+                >
+                  You have unsaved modifications in this block. Would you like to save your progress before leaving?
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  marginTop: '8px',
+                }}
+              >
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSaveAndClose}
+                  style={{
+                    background: '#c9a84c',
+                    color: '#0A1128',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'background-color 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#d8b960';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#c9a84c';
+                  }}
+                >
+                  Save & Close
+                </motion.button>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '12px',
+                  }}
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleDiscardChanges}
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid rgba(224, 85, 85, 0.4)',
+                      color: '#f36868',
+                      borderRadius: '4px',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'background-color 0.2s, border-color 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(224, 85, 85, 0.1)';
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(224, 85, 85, 0.6)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(224, 85, 85, 0.4)';
+                    }}
+                  >
+                    Discard Changes
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleKeepEditing}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: 'none',
+                      color: '#e2e8f0',
+                      borderRadius: '4px',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'background-color 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                  >
+                    Keep Editing
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
