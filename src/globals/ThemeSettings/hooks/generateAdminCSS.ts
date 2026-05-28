@@ -10,64 +10,75 @@ import {
 /**
  * Generate admin CSS from theme settings.
  * Overrides Payload's native theme properties on the root.
+ *
+ * Payload admin uses html[data-theme="light"|"dark"] attribute selector,
+ * so we target that for the admin panel.
+ *
+ * Strategy:
+ * 1. Always include ADMIN_CSS_FRAMEWORK (nav, buttons, scrollbars)
+ * 2. Generate light mode vars under :root, html[data-theme="light"]
+ * 3. Generate dark mode vars under html[data-theme="dark"]
+ * 4. If mode is forced "dark", also override :root defaults
  */
 export const generateAdminCSS = (settings: any): string => {
   if (!settings) {
-    return ADMIN_THEME_DEFAULTS.light + "\n" + ADMIN_THEME_DEFAULTS.dark + "\n" + ADMIN_CSS_FRAMEWORK;
+    // Return safe defaults when no settings are available
+    return ADMIN_CSS_FRAMEWORK + ADMIN_THEME_DEFAULTS.light + "\n" + ADMIN_THEME_DEFAULTS.dark;
   }
 
-  const {
-    mode = "light",
-    adminRadius = 0.375,
-    adminCSSOverrides = "",
-  } = settings;
+  const { mode = "light", adminRadius = 0.375 } = settings;
 
-  // 1. Start with the core custom layout styling rules
+  // Start with the core custom layout styling rules
   let css = ADMIN_CSS_FRAMEWORK;
 
-  // 2. Generate Light Mode variables
+  // Helper to get dark override value
+  const getDarkValue = (fieldName: string) => {
+    const darkFieldName = `${fieldName}Dark`;
+    return settings[darkFieldName] || settings[fieldName] || "";
+  };
+
+  // Generate Light Mode variables
   if (mode === "light" || mode === "system") {
-    let lightVars = "\n:root, html[data-theme=\"light\"] {\n";
+    let lightVars = "\n:root, html[data-theme=\"light\"] {\n  /* Admin Theme - Light Mode (from Payload ThemeSettings) */\n";
     
-    // Default base Light colors
-    lightVars += "  /* Admin Theme - Light Mode */\n";
     ADMIN_COLOR_MAPPINGS.forEach(([cssVar, fieldName]) => {
       const value = settings[fieldName];
       if (value) {
         lightVars += `  ${cssVar}: ${value};\n`;
       }
     });
-
-    // Apply radius
     lightVars += `  ${ADMIN_RADIUS_MAPPING[0]}: ${adminRadius}rem;\n`;
     lightVars += "}\n";
     css += lightVars;
   }
 
-  // 3. Generate Dark Mode variables
+  // Generate Dark Mode variables (Payload uses html[data-theme="dark"])
   if (mode === "dark" || mode === "system") {
-    let darkVars = "\nhtml[data-theme=\"dark\"] {\n";
+    let darkVars = "\nhtml[data-theme=\"dark\"] {\n  /* Admin Theme - Dark Mode (from Payload ThemeSettings) */\n";
     
-    // Default base Dark colors
-    darkVars += "  /* Admin Theme - Dark Mode */\n";
     ADMIN_COLOR_MAPPINGS.forEach(([cssVar, fieldName]) => {
-      // Look for explicit dark mode overrides like adminBgDark, adminFgDark
-      const darkFieldName = `${fieldName}Dark`;
-      const value = settings[darkFieldName] || settings[fieldName];
+      const value = getDarkValue(fieldName);
       if (value) {
         darkVars += `  ${cssVar}: ${value};\n`;
       }
     });
-
-    // Apply radius
     darkVars += `  ${ADMIN_RADIUS_MAPPING[0]}: ${adminRadius}rem;\n`;
     darkVars += "}\n";
     css += darkVars;
   }
 
-  // 4. Append custom CSS overrides for CMS
-  if (adminCSSOverrides) {
-    css += `\n/* Custom Admin CMS CSS Overrides */\n${adminCSSOverrides}\n`;
+  // If forced dark, also override :root defaults
+  if (mode === "dark") {
+    let rootDark = "\n:root {\n  /* Forced dark mode root defaults */\n";
+    ADMIN_COLOR_MAPPINGS.forEach(([cssVar, fieldName]) => {
+      const value = getDarkValue(fieldName);
+      if (value) {
+        rootDark += `  ${cssVar}: ${value};\n`;
+      }
+    });
+    rootDark += `  ${ADMIN_RADIUS_MAPPING[0]}: ${adminRadius}rem;\n`;
+    rootDark += "}\n";
+    css += rootDark;
   }
 
   return css;

@@ -63,12 +63,12 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden bg-white border border-accent/20 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.5)] flex flex-col md:flex-row"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden bg-card border border-accent/20 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.5)] flex flex-col md:flex-row"
             >
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute top-6 right-6 z-[110] p-2 rounded-full bg-slate-100 hover:bg-accent hover:text-accent-foreground transition-all duration-300 text-foreground"
+                className="absolute top-6 right-6 z-[110] p-2 rounded-full bg-muted hover:bg-accent hover:text-accent-foreground transition-all duration-300 text-foreground"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -103,7 +103,7 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
                   {post.summary}
                 </p>
 
-                <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+                <div className="flex items-center justify-between pt-6 border-t border-border">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
                       <User className="w-5 h-5 text-accent" />

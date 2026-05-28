@@ -44,7 +44,7 @@ export function DisclaimerModal() {
 
   return (
     <AlertDialog open={isOpen}>
-      <AlertDialogContent className="max-w-xl mx-auto rounded-md shadow-2xl p-8 border border-slate-200 bg-white">
+      <AlertDialogContent className="max-w-xl mx-auto rounded-md shadow-2xl p-8 border border-border bg-card">
         <AlertDialogHeader className="mb-4 space-y-3">
           <AlertDialogTitle className="text-2xl font-bold text-foreground tracking-tight font-serif">
             Important Legal Disclaimer

@@ -22,9 +22,9 @@ export default function ContactMap({ mapUrl, locationTitle, locationAddress }: C
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="max-w-[1280px] mx-auto"
       >
-        <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-slate-200 grid grid-cols-1 lg:grid-cols-12 items-stretch">
+        <div className="bg-card rounded-xl overflow-hidden shadow-lg border border-border grid grid-cols-1 lg:grid-cols-12 items-stretch">
           {/* Map Iframe */}
-          <div className="lg:col-span-8 relative h-[450px] bg-slate-100">
+          <div className="lg:col-span-8 relative h-[450px] bg-muted">
             <iframe
               src={activeMapUrl}
               width="100%"
@@ -39,7 +39,7 @@ export default function ContactMap({ mapUrl, locationTitle, locationAddress }: C
           </div>
           
           {/* Map Info Box */}
-          <div className="lg:col-span-4 p-8 md:p-12 flex flex-col justify-center bg-white space-y-6">
+          <div className="lg:col-span-4 p-8 md:p-12 flex flex-col justify-center bg-card space-y-6">
             <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center text-accent">
               <svg 
                 className="w-6 h-6" 
@@ -71,7 +71,7 @@ export default function ContactMap({ mapUrl, locationTitle, locationAddress }: C
               </p>
             </div>
             
-            <div className="pt-4 border-t border-slate-100">
+            <div className="pt-4 border-t border-border">
               <a 
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeAddress)}`}
                 target="_blank" 

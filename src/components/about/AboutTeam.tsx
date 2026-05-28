@@ -87,7 +87,7 @@ export function AboutTeam({
     : defaultTeamMembers;
 
   return (
-    <section className={`relative py-16 md:py-24 px-6 bg-white ${className || ""}`}>
+    <section className={`relative py-16 md:py-24 px-6 bg-background ${className || ""}`}>
       <div className="max-w-[1280px] mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
@@ -110,7 +110,7 @@ export function AboutTeam({
         >
           {activeMembers.map((member, index) => (
             <StaggerItem key={index}>
-              <Card className="bg-white border-slate-200 h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group overflow-hidden">
+              <Card className="bg-card border-border h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group overflow-hidden">
                 <CardContent className="p-0">
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">

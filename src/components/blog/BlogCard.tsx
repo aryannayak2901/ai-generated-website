@@ -36,7 +36,7 @@ export function BlogCard({ post, onClick, onHover, priority = false }: BlogCardP
     >
       <Card 
         onMouseEnter={() => onHover?.(post)}
-        className="group overflow-hidden border-slate-200 bg-white hover:border-accent/30 hover:shadow-lg transition-all duration-300 rounded-xl relative flex flex-col h-[450px] cursor-pointer p-0 py-0 gap-0"
+        className="group overflow-hidden border-border bg-card hover:border-accent/30 hover:shadow-lg transition-all duration-300 rounded-xl relative flex flex-col h-[450px] cursor-pointer p-0 py-0 gap-0"
         aria-label={`Read article: ${post.title}`}
       >
       <div className="relative h-full w-full overflow-hidden">

@@ -43,6 +43,8 @@ export default async function FrontendLayout({
   let measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
   let headingFont = "Playfair Display";
   let bodyFont = "Public Sans";
+  // "system" | "light" | "dark"
+  let themeMode: "system" | "light" | "dark" = "system";
   let headerData = null;
 
   try {
@@ -70,6 +72,9 @@ export default async function FrontendLayout({
     }
     if (theme?.bodyFont) {
       bodyFont = theme.bodyFont;
+    }
+    if (theme?.mode && ["system", "light", "dark"].includes(theme.mode)) {
+      themeMode = theme.mode as "system" | "light" | "dark";
     }
     if (header) {
       headerData = header;
@@ -113,6 +118,10 @@ export default async function FrontendLayout({
   const headingFontSafe = headingFont.replace(/ /g, "+");
   const bodyFontSafe = bodyFont.replace(/ /g, "+");
 
+  // Map Payload mode to next-themes props
+  // When "light" or "dark" is forced, we use forcedTheme to lock it globally.
+  const forcedTheme = themeMode === "system" ? undefined : themeMode;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -129,8 +138,9 @@ export default async function FrontendLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme={themeMode}
+          forcedTheme={forcedTheme}
+          enableSystem={themeMode === "system"}
           disableTransitionOnChange
         >
           <Suspense fallback={null}>

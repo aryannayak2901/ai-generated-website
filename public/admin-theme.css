@@ -114,7 +114,7 @@ html[data-theme="dark"] .payload-admin select:focus {
 }
 
 :root, html[data-theme="light"] {
-  /* Admin Theme - Light Mode */
+  /* Admin Theme - Light Mode (from Payload ThemeSettings) */
   --admin-bg: #ffffff;
   --admin-fg: #0f1729;
   --admin-primary: #0f1729;

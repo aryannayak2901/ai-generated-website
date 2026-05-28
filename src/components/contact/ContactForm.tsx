@@ -97,7 +97,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
                   <Input 
                     placeholder="John Doe" 
                     {...field} 
-                    className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                    className="border-border focus:border-accent focus:ring-accent/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -118,7 +118,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
                     type="email" 
                     placeholder="john@example.com" 
                     {...field} 
-                    className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                    className="border-border focus:border-accent focus:ring-accent/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -140,7 +140,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
                   type="tel" 
                   placeholder="+91 1234567890" 
                   {...field} 
-                  className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                  className="border-border focus:border-accent focus:ring-accent/20"
                 />
               </FormControl>
               <FormMessage />
@@ -160,7 +160,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
                 <Input 
                   placeholder="Legal Consultation Request" 
                   {...field} 
-                  className="border-slate-200 focus:border-accent focus:ring-accent/20"
+                  className="border-border focus:border-accent focus:ring-accent/20"
                 />
               </FormControl>
               <FormMessage />
@@ -181,7 +181,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
                   placeholder="Tell us about your legal matter..." 
                   rows={6}
                   {...field} 
-                  className="border-slate-200 focus:border-accent focus:ring-accent/20 resize-none"
+                  className="border-border focus:border-accent focus:ring-accent/20 resize-none"
                 />
               </FormControl>
               <FormMessage />
@@ -202,7 +202,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
   );
 
   return (
-    <section className="py-16 md:py-24 px-6 bg-white w-full">
+    <section className="py-16 md:py-24 px-6 bg-background w-full">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -230,7 +230,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
               </div>
               
               {/* Features List */}
-              <div className="space-y-6 pt-6 border-t border-slate-100">
+              <div className="space-y-6 pt-6 border-t border-border">
                 {features?.map((item, index) => {
                   const Icon = iconMap[item.icon] || ShieldCheck;
                   return (
@@ -255,7 +255,7 @@ export default function ContactForm({ badge, title, subtitle, features }: Contac
             </div>
             
             {/* Right Column: Form */}
-            <div className="lg:col-span-7 bg-secondary p-8 md:p-12 rounded-xl border border-slate-200 shadow-sm">
+            <div className="lg:col-span-7 bg-secondary p-8 md:p-12 rounded-xl border border-border shadow-sm">
               {renderForm()}
             </div>
           </div>

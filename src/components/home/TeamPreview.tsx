@@ -38,7 +38,7 @@ const teamMembers = [
 
 export function TeamPreview() {
   return (
-    <section className="py-16 md:py-24 px-6 bg-white">
+    <section className="py-16 md:py-24 px-6 bg-background">
       <div className="max-w-[1280px] mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">

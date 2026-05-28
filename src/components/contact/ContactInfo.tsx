@@ -73,7 +73,7 @@ export default function ContactInfo({ infoItems }: ContactInfoProps) {
             );
 
             return (
-              <Card key={index} className="border-slate-200 hover:border-accent/30 transition-all duration-300 bg-white h-full hover:shadow-lg">
+              <Card key={index} className="border-border hover:border-accent/30 transition-all duration-300 bg-card h-full hover:shadow-lg">
                 <CardContent className="p-6 md:p-8 h-full">
                   {item.link ? (
                     <a href={item.link} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 h-full w-full">

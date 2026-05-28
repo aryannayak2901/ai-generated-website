@@ -13,7 +13,7 @@ interface MediaHeroProps {
 
 export function MediaHero({ video, onWatchNow }: MediaHeroProps) {
   return (
-    <section className="relative w-full py-12 md:py-20 lg:py-24 overflow-hidden border-b border-slate-200 dark:border-white/10">
+    <section className="relative w-full py-12 md:py-20 lg:py-24 overflow-hidden border-b border-border">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid lg:grid-cols-[1fr_1.3fr] gap-12 items-center">
           <motion.div
@@ -54,7 +54,7 @@ export function MediaHero({ video, onWatchNow }: MediaHeroProps) {
             className="relative group cursor-pointer"
             onClick={() => onWatchNow(video)}
           >
-            <div className="relative aspect-video rounded-sm overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl">
+            <div className="relative aspect-video rounded-sm overflow-hidden border border-border shadow-2xl">
               <Image
                 src={video.thumbnail}
                 alt={video.title}

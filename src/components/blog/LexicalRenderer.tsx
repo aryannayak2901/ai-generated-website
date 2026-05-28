@@ -21,7 +21,7 @@ export function LexicalRenderer({ content }: { content: any }) {
 
   // If content is just a string, render it as a paragraph
   if (typeof content === 'string') {
-    return <p className="mb-6 text-slate-700 leading-relaxed text-lg">{content}</p>;
+    return <p className="mb-6 text-foreground leading-relaxed text-lg">{content}</p>;
   }
 
   // If it's a Lexical structure
@@ -49,7 +49,7 @@ export function LexicalRenderer({ content }: { content: any }) {
       if (isItalic) element = <em className="italic">{element}</em>;
       if (isUnderline) element = <span className="underline">{element}</span>;
       if (isStrikethrough) element = <span className="line-through">{element}</span>;
-      if (isCode) element = <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-sm">{element}</code>;
+      if (isCode) element = <code className="bg-muted px-1 py-0.5 rounded font-mono text-sm text-foreground">{element}</code>;
 
       return <span key={index}>{element}</span>;
     }
@@ -62,18 +62,18 @@ export function LexicalRenderer({ content }: { content: any }) {
     switch (node.type) {
       case 'paragraph':
         return (
-          <p key={index} className="mb-6 text-slate-700 leading-relaxed text-lg">
+          <p key={index} className="mb-6 text-foreground leading-relaxed text-lg">
             {renderedChildren}
           </p>
         );
       case 'heading':
         const headingTag = node.tag || 'h2';
         const classes: Record<string, string> = {
-          h1: "text-4xl md:text-5xl font-serif font-bold text-navy-primary mt-12 mb-6 tracking-tight",
-          h2: "text-2xl md:text-3xl font-serif font-bold text-navy-primary mt-10 mb-5 tracking-tight border-b border-slate-100 pb-2",
-          h3: "text-xl md:text-2xl font-serif font-bold text-navy-primary mt-8 mb-4",
-          h4: "text-lg md:text-xl font-serif font-bold text-navy-primary mt-6 mb-3",
-          h5: "text-md md:text-lg font-serif font-bold text-navy-primary mt-4 mb-2",
+          h1: "text-4xl md:text-5xl font-serif font-bold text-foreground mt-12 mb-6 tracking-tight",
+          h2: "text-2xl md:text-3xl font-serif font-bold text-foreground mt-10 mb-5 tracking-tight border-b border-border pb-2",
+          h3: "text-xl md:text-2xl font-serif font-bold text-foreground mt-8 mb-4",
+          h4: "text-lg md:text-xl font-serif font-bold text-foreground mt-6 mb-3",
+          h5: "text-md md:text-lg font-serif font-bold text-foreground mt-4 mb-2",
         };
         const HeadingComp = headingTag as any;
         return (
@@ -85,13 +85,13 @@ export function LexicalRenderer({ content }: { content: any }) {
         const isOrdered = node.listType === 'number';
         if (isOrdered) {
           return (
-            <ol key={index} className="list-decimal pl-6 mb-6 text-slate-700 text-lg space-y-2">
+            <ol key={index} className="list-decimal pl-6 mb-6 text-foreground text-lg space-y-2">
               {renderedChildren}
             </ol>
           );
         } else {
           return (
-            <ul key={index} className="list-disc pl-6 mb-6 text-slate-700 text-lg space-y-2">
+            <ul key={index} className="list-disc pl-6 mb-6 text-foreground text-lg space-y-2">
               {renderedChildren}
             </ul>
           );
@@ -100,7 +100,7 @@ export function LexicalRenderer({ content }: { content: any }) {
         return <li key={index} className="pl-1">{renderedChildren}</li>;
       case 'quote':
         return (
-          <blockquote key={index} className="border-l-4 border-gold-accent bg-slate-50/50 p-6 my-8 rounded-r-lg italic text-navy-primary text-xl font-serif">
+          <blockquote key={index} className="border-l-4 border-accent bg-muted/50 p-6 my-8 rounded-r-lg italic text-foreground text-xl font-serif">
             {renderedChildren}
           </blockquote>
         );

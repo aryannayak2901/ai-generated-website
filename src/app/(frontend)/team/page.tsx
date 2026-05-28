@@ -25,7 +25,7 @@ export default async function TeamPage() {
   const teamMembers = docs as unknown as Team[];
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Hero Section */}
       <section className="relative bg-primary py-16 md:py-24 px-6">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
@@ -54,7 +54,7 @@ export default async function TeamPage() {
             {teamMembers.map((member, index) => (
               <StaggerItem key={member.id}>
                 <Link href={`/team/${member.slug}`} className="group block">
-                  <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-accent transition-all duration-300 hover:scale-[1.02]">
+                  <div className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-accent transition-all duration-300 hover:scale-[1.02]">
                     {/* Profile Image */}
                     <div className="relative h-64 bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
                       {member.image ? (

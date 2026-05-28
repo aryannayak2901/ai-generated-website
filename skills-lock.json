@@ -307,10 +307,22 @@
       "skillPath": "skills/systematic-debugging/SKILL.md",
       "computedHash": "7246fdd3a795fc3daff0af72044ca99bf836e4e6a46844742858786fdfb86488"
     },
+    "tailwind-best-practices": {
+      "source": "mastra-ai/mastra",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/tailwind-best-practices/SKILL.md",
+      "computedHash": "7a94bb24f938aec684feaf5d93e862bc3c854d86d7d7d472293be793a2f4bda2"
+    },
     "tailwind-design-system": {
       "source": "wshobson/agents",
       "sourceType": "github",
       "computedHash": "d0e4d2ba5a99cdc6e264d3927d1d81e85e79f551c8e246fa0a86123217eaad94"
+    },
+    "tailwind-theme-builder": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/frontend/skills/tailwind-theme-builder/SKILL.md",
+      "computedHash": "6d306f1cbd4c557a689ee97c543484b394bf39d365a3f0a4fa3ea4b20028f123"
     },
     "tailwindcss-advanced-layouts": {
       "source": "josiahsiegel/claude-plugin-marketplace",

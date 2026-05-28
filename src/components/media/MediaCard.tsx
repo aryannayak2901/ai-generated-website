@@ -29,7 +29,7 @@ export function MediaCard({ video, onClick }: MediaCardProps) {
       className="cursor-pointer group"
       onClick={() => onClick?.(video)}
     >
-      <Card className="overflow-hidden bg-surface dark:bg-primary/40 border-slate-200 dark:border-white/10 hover:border-accent/40 dark:hover:border-accent/40 transition-all duration-300">
+      <Card className="overflow-hidden bg-card border-border hover:border-accent/40 transition-all duration-300">
         <div className="relative aspect-video overflow-hidden">
           <Image
             src={video.thumbnail}
@@ -50,16 +50,16 @@ export function MediaCard({ video, onClick }: MediaCardProps) {
           )}
         </div>
         <CardContent className="p-4 space-y-3">
-          <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+          <div className="flex items-center gap-3 text-[11px] text-muted-foreground font-medium">
             <span className="flex items-center gap-1.5">
               <Calendar className="w-3 h-3" />
               {formattedDate}
             </span>
           </div>
-          <h3 className="font-display font-bold text-lg leading-snug text-text-charcoal dark:text-white line-clamp-2 min-h-12 transition-colors duration-300">
+          <h3 className="font-serif font-bold text-lg leading-snug text-foreground line-clamp-2 min-h-12 transition-colors duration-300">
             {video.title}
           </h3>
-          <div className="flex items-center gap-4 text-[11px] text-slate-500 dark:text-slate-400 font-semibold border-t border-slate-100 dark:border-white/5 pt-3">
+          <div className="flex items-center gap-4 text-[11px] text-muted-foreground font-semibold border-t border-border pt-3">
             <span className="flex items-center gap-1.5">
               <Eye className="w-3 h-3 text-accent" />
               {video.viewCount} Views

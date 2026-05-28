@@ -113,7 +113,7 @@ export function PracticeAreasBento({
             return (
               <StaggerItem key={index}>
                 <Card
-                  className="h-full bg-white border border-slate-200 transition-all duration-300 ease-out hover:scale-[1.02] hover:border-accent hover:shadow-lg group cursor-pointer overflow-hidden"
+                  className="h-full bg-card border border-border transition-all duration-300 ease-out hover:scale-[1.02] hover:border-accent hover:shadow-lg group cursor-pointer overflow-hidden"
                 >
                   <CardHeader>
                     <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors duration-300">

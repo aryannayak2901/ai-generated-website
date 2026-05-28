@@ -21,7 +21,7 @@ interface Props {
 
 export default function TeamMemberClient({ member }: Props) {
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans">
+    <div className="min-h-screen bg-background flex flex-col font-sans">
       {/* Hero Section - Charcoal background with teal accents */}
       <section className="bg-primary text-white relative py-16 md:py-24 px-6 md:px-8 lg:px-12">
         {/* Gradient background */}
@@ -133,12 +133,12 @@ export default function TeamMemberClient({ member }: Props) {
       </section>
 
       {/* Main Content Area */}
-      <section className="flex-1 py-16 px-6 md:px-8 lg:px-12 bg-white">
+      <section className="flex-1 py-16 px-6 md:px-8 lg:px-12 bg-background">
         <div className="max-w-[1280px] mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Main Column */}
           <div className="lg:w-2/3">
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="bg-transparent border-b border-slate-200 w-full justify-start rounded-none h-auto p-0 mb-8 overflow-x-auto flex-nowrap hide-scrollbar">
+              <TabsList className="bg-transparent border-b border-border w-full justify-start rounded-none h-auto p-0 mb-8 overflow-x-auto flex-nowrap hide-scrollbar">
                 <TabsTrigger
                   value="overview"
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:text-accent data-[state=active]:bg-accent/5 px-6 py-4 text-sm font-semibold uppercase tracking-wider whitespace-nowrap"
@@ -210,7 +210,7 @@ export default function TeamMemberClient({ member }: Props) {
 
           {/* Sidebar */}
           <div className="lg:w-1/3 lg:sticky lg:top-32 lg:self-start space-y-6">
-            <Card className="bg-white border-slate-200 shadow-lg rounded-xl overflow-hidden py-0">
+            <Card className="bg-card border-border shadow-lg rounded-xl overflow-hidden py-0">
               <CardHeader className="bg-primary p-6 pt-8 pb-6 text-center border-b border-white/10">
                 <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
