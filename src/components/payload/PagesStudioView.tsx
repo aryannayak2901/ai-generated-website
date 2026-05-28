@@ -689,23 +689,42 @@ export const PagesStudioView = () => {
               onClick={(e) => e.stopPropagation()}
               style={{
                 width: "100%",
-                maxWidth: "520px",
-                backgroundColor: "var(--bb-navy)",
-                border: "1px solid var(--bb-border)",
-                borderRadius: "12px",
-                padding: "32px",
-                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+                maxWidth: "460px",
+                backgroundColor: "#0f1b2d",
+                border: "1px solid rgba(201, 168, 76, 0.25)",
+                borderRadius: "16px",
+                padding: "40px",
+                boxShadow: "0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
                 display: "flex",
                 flexDirection: "column",
-                gap: "24px",
+                alignItems: "center",
+                textAlign: "center",
+                gap: "28px",
               }}
             >
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {/* Premium Subtle Gold Warning Icon */}
+              <div style={{
+                width: "56px",
+                height: "56px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(201, 168, 76, 0.1)",
+                border: "1px solid rgba(201, 168, 76, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "24px",
+                color: "#c9a84c",
+                boxShadow: "0 0 20px rgba(201, 168, 76, 0.15)"
+              }}>
+                ⚠️
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <h3
                   style={{
                     fontFamily: "Playfair Display, Georgia, serif",
-                    fontSize: "24px",
-                    color: "var(--bb-white)",
+                    fontSize: "26px",
+                    color: "#f5f5f0",
                     margin: 0,
                     fontWeight: 600,
                     letterSpacing: "0.02em",
@@ -716,7 +735,7 @@ export const PagesStudioView = () => {
                 <p
                   style={{
                     fontSize: "14px",
-                    color: "var(--bb-muted)",
+                    color: "#8899aa",
                     margin: 0,
                     lineHeight: "1.6",
                   }}
@@ -730,13 +749,13 @@ export const PagesStudioView = () => {
                 style={{
                   display: "flex",
                   flexDirection: "column",
+                  width: "100%",
                   gap: "12px",
-                  marginTop: "8px",
                 }}
               >
                 {/* Save & Leave */}
                 <motion.button
-                  whileHover={isSaving ? undefined : { scale: 1.02 }}
+                  whileHover={isSaving ? undefined : { scale: 1.02, boxShadow: "0 8px 24px rgba(201, 168, 76, 0.25)" }}
                   whileTap={isSaving ? undefined : { scale: 0.98 }}
                   type="button"
                   disabled={isSaving}
@@ -748,15 +767,18 @@ export const PagesStudioView = () => {
                   }}
                   style={{
                     padding: "14px 20px",
-                    borderRadius: "6px",
-                    backgroundColor: "var(--bb-gold)",
-                    color: "var(--bb-navy)",
-                    fontWeight: 600,
+                    borderRadius: "8px",
+                    background: "linear-gradient(135deg, #c9a84c 0%, #e2c87a 100%)",
+                    color: "#0a1128",
+                    fontWeight: 700,
                     fontSize: "14px",
                     border: "none",
                     cursor: isSaving ? "not-allowed" : "pointer",
                     opacity: isSaving ? 0.6 : 1,
                     textAlign: "center",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    transition: "box-shadow 0.2s ease",
                   }}
                 >
                   {isSaving ? "Saving Progress..." : "Save & Leave"}
@@ -764,22 +786,23 @@ export const PagesStudioView = () => {
 
                 {/* Discard & Leave */}
                 <motion.button
-                  whileHover={isSaving ? undefined : { scale: 1.02 }}
+                  whileHover={isSaving ? undefined : { scale: 1.02, backgroundColor: "rgba(224, 85, 85, 0.12)" }}
                   whileTap={isSaving ? undefined : { scale: 0.98 }}
                   type="button"
                   disabled={isSaving}
                   onClick={handleDiscardAndLeave}
                   style={{
                     padding: "14px 20px",
-                    borderRadius: "6px",
-                    backgroundColor: "transparent",
-                    color: "var(--bb-danger)",
-                    border: "1px solid var(--bb-danger)",
+                    borderRadius: "8px",
+                    backgroundColor: "rgba(224, 85, 85, 0.05)",
+                    color: "#ff6b6b",
+                    border: "1px solid rgba(224, 85, 85, 0.35)",
                     fontWeight: 600,
                     fontSize: "14px",
                     cursor: isSaving ? "not-allowed" : "pointer",
                     opacity: isSaving ? 0.6 : 1,
                     textAlign: "center",
+                    transition: "background-color 0.2s ease, border-color 0.2s ease",
                   }}
                 >
                   Discard &amp; Leave
@@ -787,22 +810,23 @@ export const PagesStudioView = () => {
 
                 {/* Stay on Page */}
                 <motion.button
-                  whileHover={isSaving ? undefined : { scale: 1.02 }}
+                  whileHover={isSaving ? undefined : { scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.08)" }}
                   whileTap={isSaving ? undefined : { scale: 0.98 }}
                   type="button"
                   disabled={isSaving}
                   onClick={handleStay}
                   style={{
                     padding: "14px 20px",
-                    borderRadius: "6px",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    color: "var(--bb-muted)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    backgroundColor: "rgba(255, 255, 255, 0.03)",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
                     fontWeight: 500,
                     fontSize: "14px",
                     cursor: isSaving ? "not-allowed" : "pointer",
                     opacity: isSaving ? 0.6 : 1,
                     textAlign: "center",
+                    transition: "background-color 0.2s ease, color 0.2s ease",
                   }}
                 >
                   Stay on Page
