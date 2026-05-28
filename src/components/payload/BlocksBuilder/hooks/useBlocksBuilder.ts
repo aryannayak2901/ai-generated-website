@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { useField, useDocumentInfo } from '@payloadcms/ui';
+import { useField, useDocumentInfo, useForm } from '@payloadcms/ui';
 
 export interface BlockInstance {
   id: string;
@@ -12,6 +12,7 @@ export interface BlockInstance {
 export function useBlocksBuilder(fieldPath: string) {
   const { value, setValue } = useField<BlockInstance[]>({ path: fieldPath, validate: () => true });
   const { doc } = useDocumentInfo() as any;
+  const form = useForm();
 
   // Local state for the builder
   const [blocks, setBlocks] = useState<BlockInstance[]>([]);
@@ -64,17 +65,23 @@ export function useBlocksBuilder(fieldPath: string) {
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
     setValue(newBlocks);
+    if (form && typeof form.setModified === 'function') {
+      form.setModified(true);
+    }
     return newBlock.id;
-  }, [blocks, generateBlockId, setValue]);
+  }, [blocks, generateBlockId, setValue, form]);
 
   const removeBlock = useCallback((blockId: string) => {
     const newBlocks = blocks.filter(b => b.id !== blockId);
     setBlocks(newBlocks);
     setValue(newBlocks);
+    if (form && typeof form.setModified === 'function') {
+      form.setModified(true);
+    }
     if (selectedBlockId === blockId) {
       setSelectedBlockId(null);
     }
-  }, [blocks, selectedBlockId, setValue]);
+  }, [blocks, selectedBlockId, setValue, form]);
 
   const moveBlock = useCallback((fromIndex: number, toIndex: number) => {
     const newBlocks = [...blocks];
@@ -82,7 +89,10 @@ export function useBlocksBuilder(fieldPath: string) {
     newBlocks.splice(toIndex, 0, movedBlock);
     setBlocks(newBlocks);
     setValue(newBlocks);
-  }, [blocks, setValue]);
+    if (form && typeof form.setModified === 'function') {
+      form.setModified(true);
+    }
+  }, [blocks, setValue, form]);
 
   const updateBlock = useCallback((blockId: string, updates: Partial<BlockInstance>) => {
     const newBlocks = blocks.map(b =>
@@ -90,7 +100,10 @@ export function useBlocksBuilder(fieldPath: string) {
     );
     setBlocks(newBlocks);
     setValue(newBlocks);
-  }, [blocks, setValue]);
+    if (form && typeof form.setModified === 'function') {
+      form.setModified(true);
+    }
+  }, [blocks, setValue, form]);
 
   const selectBlock = useCallback((blockId: string | null) => {
     setSelectedBlockId(blockId);

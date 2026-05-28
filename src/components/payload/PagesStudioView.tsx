@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ChevronLeft, Menu } from "lucide-react";
 import { BlocksBuilderField } from "./BlocksBuilder";
 import { Form, useForm } from "@payloadcms/ui";
 import { motion, AnimatePresence } from "framer-motion";
+import { isDeepEqual } from "./BlocksBuilder/utils/comparison";
 import "./BlocksBuilder/styles.css";
 
 /**
@@ -207,14 +208,38 @@ const StudioHeader = ({
  * A helper component that hooks into the Payload Form context
  * to monitor and report unsaved (modified) changes to the parent.
  */
-const FormModifiedReporter = ({ onChange }: { onChange: (modified: boolean) => void }) => {
+const FormModifiedReporter = ({ 
+  initialLayout, 
+  onChange 
+}: { 
+  initialLayout: any[]; 
+  onChange: (modified: boolean) => void 
+}) => {
   const form = useForm();
   const modified = (form as any)?.modified || false;
-  
+
+  // Track the current layout value from form fields safely
+  const layoutValue = (form as any)?.fields?.layout?.value;
+
+  const currentLayout = useMemo(() => {
+    if (form && typeof form.getData === 'function') {
+      const data = form.getData();
+      if (data && Array.isArray(data.layout)) return data.layout;
+    }
+    if (Array.isArray(layoutValue)) {
+      return layoutValue;
+    }
+    return [];
+  }, [form, layoutValue]);
+
+  const isLayoutModified = useMemo(() => {
+    return !isDeepEqual(initialLayout, currentLayout);
+  }, [initialLayout, currentLayout]);
+
   useEffect(() => {
-    onChange(modified);
-  }, [modified, onChange]);
-  
+    onChange(modified || isLayoutModified);
+  }, [modified, isLayoutModified, onChange]);
+
   return null;
 };
 
@@ -574,7 +599,10 @@ export const PagesStudioView = () => {
             }
           }}
         >
-          <FormModifiedReporter onChange={setIsPageDirty} />
+          <FormModifiedReporter 
+            initialLayout={currentPageData?.layout || []} 
+            onChange={setIsPageDirty} 
+          />
           <FormProcessingReporter onChange={setIsSaving} />
           <BlocksBuilderField
             path="layout"
