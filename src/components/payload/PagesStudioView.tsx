@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, Menu } from "lucide-react";
 import { BlocksBuilderField } from "./BlocksBuilder";
 import { Form, useForm } from "@payloadcms/ui";
+import { motion, AnimatePresence } from "framer-motion";
 import "./BlocksBuilder/styles.css";
 
 /**
@@ -203,6 +204,21 @@ const StudioHeader = ({
 };
 
 /**
+ * A helper component that hooks into the Payload Form context
+ * to monitor and report unsaved (modified) changes to the parent.
+ */
+const FormModifiedReporter = ({ onChange }: { onChange: (modified: boolean) => void }) => {
+  const form = useForm();
+  const modified = (form as any)?.modified || false;
+  
+  useEffect(() => {
+    onChange(modified);
+  }, [modified, onChange]);
+  
+  return null;
+};
+
+/**
  * Helper to transform raw document data into Payload Form State.
  * This prevents the "Cannot create property 'valid' on string" error.
  */
@@ -232,6 +248,11 @@ export const PagesStudioView = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+  // Unsaved Changes Tracking State
+  const [isPageDirty, setIsPageDirty] = useState(false);
+  const [pendingNavigationUrl, setPendingNavigationUrl] = useState<string | null>(null);
+  const [pendingPageSwitchId, setPendingPageSwitchId] = useState<string | null>(null);
+
   // Monitor native sidebar open/collapsed class list changes
   useEffect(() => {
     const toggler = document.querySelector(".nav-toggler");
@@ -260,13 +281,84 @@ export const PagesStudioView = () => {
     };
   }, []);
 
+  // Window Tab Reload Block (beforeunload)
+  useEffect(() => {
+    if (!isPageDirty) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+      return e.returnValue;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isPageDirty]);
+
+  // Sidebar & External Routing Interceptor
+  useEffect(() => {
+    if (!isPageDirty) return;
+
+    const handleBodyClick = (e: MouseEvent) => {
+      const target = e.target as Element | null;
+      const anchor = target?.closest?.("a");
+      if (anchor) {
+        const href = anchor.getAttribute("href");
+        if (href && !href.startsWith("#") && !href.startsWith("javascript:")) {
+          e.preventDefault();
+          setPendingNavigationUrl(href);
+        }
+      }
+    };
+
+    document.body.addEventListener("click", handleBodyClick, true);
+    return () => {
+      document.body.removeEventListener("click", handleBodyClick, true);
+    };
+  }, [isPageDirty]);
+
   const handleAddNewPage = () => {
+    if (isPageDirty) {
+      setPendingPageSwitchId("new");
+      return;
+    }
     setSelectedPageId(null);
     setCurrentPageData({
       title: "",
       slug: "",
       layout: [],
     });
+  };
+
+  const handleDiscardAndLeave = () => {
+    setIsPageDirty(false);
+    const targetUrl = pendingNavigationUrl;
+    const targetPageId = pendingPageSwitchId;
+
+    setPendingNavigationUrl(null);
+    setPendingPageSwitchId(null);
+
+    if (targetUrl) {
+      window.location.href = targetUrl;
+    } else if (targetPageId) {
+      if (targetPageId === "new") {
+        setSelectedPageId(null);
+        setCurrentPageData({
+          title: "",
+          slug: "",
+          layout: [],
+        });
+      } else {
+        setSelectedPageId(targetPageId);
+      }
+    }
+  };
+
+  const handleStay = () => {
+    setPendingNavigationUrl(null);
+    setPendingPageSwitchId(null);
   };
 
   // 1. Fetch pages list for dropdown
@@ -315,10 +407,17 @@ export const PagesStudioView = () => {
   }, [selectedPageId]);
 
   const handlePageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === "new") {
+    const nextVal = e.target.value;
+    if (isPageDirty) {
+      // Force the select value back immediately to keep it visually stable
+      e.target.value = selectedPageId || "new";
+      setPendingPageSwitchId(nextVal);
+      return;
+    }
+    if (nextVal === "new") {
       handleAddNewPage();
     } else {
-      setSelectedPageId(e.target.value);
+      setSelectedPageId(nextVal);
     }
   };
 
@@ -403,6 +502,8 @@ export const PagesStudioView = () => {
           }
           method={selectedPageId ? "PATCH" : "POST"}
           onSuccess={(json: any) => {
+            setIsPageDirty(false);
+
             const doc = json?.doc;
             if (doc && doc.id) {
               setCurrentPageData(doc);
@@ -431,8 +532,25 @@ export const PagesStudioView = () => {
                 }[];
               });
             }
+
+            if (pendingNavigationUrl) {
+              window.location.href = pendingNavigationUrl;
+            } else if (pendingPageSwitchId) {
+              if (pendingPageSwitchId === "new") {
+                setSelectedPageId(null);
+                setCurrentPageData({
+                  title: "",
+                  slug: "",
+                  layout: [],
+                });
+              } else {
+                setSelectedPageId(pendingPageSwitchId);
+              }
+              setPendingPageSwitchId(null);
+            }
           }}
         >
+          <FormModifiedReporter onChange={setIsPageDirty} />
           <BlocksBuilderField
             path="layout"
             label="Layout"
@@ -461,6 +579,154 @@ export const PagesStudioView = () => {
           />
         </Form>
       )}
+
+      {/* Unsaved Changes Premium Modal */}
+      <AnimatePresence>
+        {(pendingNavigationUrl !== null || pendingPageSwitchId !== null) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(5, 10, 24, 0.88)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 99999,
+              padding: "20px",
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 20, opacity: 0 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+              style={{
+                width: "100%",
+                maxWidth: "520px",
+                backgroundColor: "var(--bb-navy)",
+                border: "1px solid var(--bb-border)",
+                borderRadius: "12px",
+                padding: "32px",
+                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "24px",
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <h3
+                  style={{
+                    fontFamily: "Playfair Display, Georgia, serif",
+                    fontSize: "24px",
+                    color: "var(--bb-white)",
+                    margin: 0,
+                    fontWeight: 600,
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  Unsaved Changes
+                </h3>
+                <p
+                  style={{
+                    fontSize: "14px",
+                    color: "var(--bb-muted)",
+                    margin: 0,
+                    lineHeight: "1.6",
+                  }}
+                >
+                  You have made modifications to this page that are not saved yet.
+                  Would you like to save your progress before navigating away?
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                  marginTop: "8px",
+                }}
+              >
+                {/* Save & Leave */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={() => {
+                    const saveBtn = document.querySelector(".bb-studio-save-btn") as HTMLButtonElement | null;
+                    if (saveBtn) {
+                      saveBtn.click();
+                    }
+                  }}
+                  style={{
+                    padding: "14px 20px",
+                    borderRadius: "6px",
+                    backgroundColor: "var(--bb-gold)",
+                    color: "var(--bb-navy)",
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  Save &amp; Leave
+                </motion.button>
+
+                {/* Discard & Leave */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={handleDiscardAndLeave}
+                  style={{
+                    padding: "14px 20px",
+                    borderRadius: "6px",
+                    backgroundColor: "transparent",
+                    color: "var(--bb-danger)",
+                    border: "1px solid var(--bb-danger)",
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  Discard &amp; Leave
+                </motion.button>
+
+                {/* Stay on Page */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={handleStay}
+                  style={{
+                    padding: "14px 20px",
+                    borderRadius: "6px",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    color: "var(--bb-muted)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    fontWeight: 500,
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  Stay on Page
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
