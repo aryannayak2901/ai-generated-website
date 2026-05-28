@@ -20,6 +20,7 @@ interface BlocksBuilderFieldProps {
   collectionSlug?: string;
   isFullscreen?: boolean;
   onFullscreenChange?: (isFullscreen: boolean) => void;
+  onChangeBlockDirty?: (isDirty: boolean) => void;
 }
 
 export function BlocksBuilderField({ 
@@ -29,7 +30,8 @@ export function BlocksBuilderField({
   id: propId, 
   collectionSlug: propCollectionSlug,
   isFullscreen: propIsFullscreen,
-  onFullscreenChange: propOnFullscreenChange
+  onFullscreenChange: propOnFullscreenChange,
+  onChangeBlockDirty
 }: BlocksBuilderFieldProps) {
   const {
     blocks,
@@ -51,6 +53,13 @@ export function BlocksBuilderField({
   const [internalIsFullscreen, setInternalIsFullscreen] = React.useState(false);
   const [isBlockDirty, setIsBlockDirty] = React.useState(false);
   const [pendingBlockAction, setPendingBlockAction] = React.useState<{ type: 'close' | 'switch'; targetBlockId?: string } | null>(null);
+
+  // Propagate block-level dirty state to parent
+  useEffect(() => {
+    if (onChangeBlockDirty) {
+      onChangeBlockDirty(isBlockDirty);
+    }
+  }, [isBlockDirty, onChangeBlockDirty]);
 
   const isFullscreen = propIsFullscreen !== undefined ? propIsFullscreen : internalIsFullscreen;
   const setIsFullscreen = useCallback((val: boolean | ((prev: boolean) => boolean)) => {
