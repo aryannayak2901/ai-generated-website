@@ -3,7 +3,6 @@
 import React from "react";
 import { TeamMember } from "@/data/team";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Briefcase, Building2, TrendingUp, CheckCircle2 } from "lucide-react";
 
 export default function OverviewTab({ member }: { member: TeamMember }) {

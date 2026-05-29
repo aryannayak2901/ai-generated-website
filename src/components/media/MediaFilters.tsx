@@ -23,7 +23,7 @@ export function MediaFilters({
 }: MediaFiltersProps) {
   return (
     <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200 dark:border-white/10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border">
         <div className="flex flex-wrap items-center gap-2">
           {categories.map((category) => (
             <button
@@ -56,7 +56,7 @@ export function MediaFilters({
             placeholder="Search legal insights..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10 h-10 bg-surface dark:bg-primary/40 border-slate-200 dark:border-white/10 focus:ring-accent focus:border-accent transition-all duration-300 rounded-sm"
+            className="pl-10 h-10 bg-surface dark:bg-primary/40 border-border focus:ring-accent focus:border-accent transition-all duration-300 rounded-sm"
           />
         </div>
       </div>

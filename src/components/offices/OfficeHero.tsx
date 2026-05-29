@@ -1,77 +1,121 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 
-export const OfficeHero = () => {
+export interface OfficeHeroProps {
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+}
+
+export function OfficeHero({ tag, title, subtitle }: OfficeHeroProps) {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.15,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+    },
+  };
+
   return (
-    <section className="relative h-[75vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-navy dark:bg-navy transition-colors duration-500">
-      {/* Dynamic Background Elements */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-gold/15 rounded-full blur-[140px] mix-blend-screen pointer-events-none" 
-        />
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
-          className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-slate-gray/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none" 
-        />
-      </div>
+    <section className="relative min-h-[60vh] md:min-h-[65vh] flex items-center bg-primary overflow-hidden border-b border-border/10">
+      {/* Luxury Radial Backlighting */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary via-primary/90 to-primary" />
+      
+      {/* Exquisite Architectural Mesh Overlay */}
+      <div className="absolute inset-0 opacity-[0.035] bg-[linear-gradient(to_right,#d4af37_1px,transparent_1px),linear-gradient(to_bottom,#d4af37_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_at_center,white_70%,transparent_100%)]" />
+      
+      {/* Dynamic Cinematic Gold Leak Sphere */}
+      <motion.div
+        animate={{
+          scale: [1, 1.18, 1],
+          opacity: [0.18, 0.28, 0.18],
+          x: [0, 30, 0],
+          y: [0, -20, 0],
+        }}
+        transition={{
+          duration: 14,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute -right-16 -top-16 w-[550px] h-[550px] bg-accent/20 rounded-full blur-[120px] pointer-events-none"
+      />
+      
+      <motion.div
+        animate={{
+          scale: [1, 1.12, 1],
+          opacity: [0.12, 0.22, 0.12],
+          x: [0, -25, 0],
+          y: [0, 30, 0],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute -left-20 bottom-1/4 w-[450px] h-[450px] bg-accent/10 rounded-full blur-[100px] pointer-events-none"
+      />
 
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 z-0 opacity-[0.05] dark:opacity-[0.1] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none" />
+      {/* Elite Asymmetrical Left Gold Accent Bar */}
+      <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-accent via-accent/40 to-transparent" />
 
-      <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 relative z-10">
+      {/* Top and Bottom Horizontal Ambient Accents */}
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-accent/20 via-transparent to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-accent/10 to-transparent" />
+
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-8 lg:px-12 pt-28 pb-16 sm:pt-36 sm:pb-24 md:pt-40 md:pb-28 lg:pt-48 lg:pb-36">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-5xl mx-auto text-center flex flex-col items-center"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-4xl"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 1 }}
-            className="inline-flex items-center gap-3 px-6 py-2.5 mb-10 text-[10px] font-bold tracking-[0.3em] uppercase rounded-full bg-gold/10 text-gold border border-gold/20 backdrop-blur-md shadow-lg shadow-gold/5"
-          >
-            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            Distinguished Chambers
+          {/* Tag Badge with Glassmorphism and Gold Borders */}
+          <motion.div variants={itemVariants} className="inline-flex items-center gap-3.5 mb-4 sm:mb-6">
+            <span className="h-[1px] w-8 bg-accent/60" />
+            <div className="flex items-center justify-center py-1 px-3 bg-accent/5 rounded-full border border-accent/20 backdrop-blur-sm shadow-[0_2px_10px_rgba(212,175,55,0.03)]">
+              <span className="text-accent font-bold tracking-[0.3em] uppercase text-[10px] sm:text-[11px]">
+                {tag || "Our Presence"}
+              </span>
+            </div>
+            <span className="h-[1px] w-2 bg-accent/30" />
           </motion.div>
           
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif text-white mb-10 leading-[0.95] tracking-tight">
-            Our <span className="relative inline-block">
-              <span className="text-gold italic font-medium">Chambers</span>
-              <motion.svg 
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ delay: 1, duration: 1.5, ease: "easeInOut" }}
-                className="absolute -bottom-4 left-0 w-full h-4 text-gold/40" 
-                viewBox="0 0 100 10" 
-                preserveAspectRatio="none"
-              >
-                <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="2" />
-              </motion.svg>
-            </span>
-          </h1>
+          {/* Authoritative Title in Playfair Display (font-serif) */}
+          <motion.h1 
+            variants={itemVariants} 
+            className="font-serif text-3xl sm:text-4.5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-4 sm:mb-6 leading-[1.15] sm:leading-[1.12] tracking-tight drop-shadow-md"
+          >
+            {title || "Strategic Locations"}
+          </motion.h1>
           
-          <p className="text-xl md:text-3xl text-slate-300 font-sans leading-relaxed max-w-3xl font-light mx-auto">
-            Strategically located at the heart of Gujarat&apos;s legal landscape, providing 
-            <span className="text-white font-medium"> unmatched expertise</span> and accessibility.
-          </p>
+          {/* Exquisite divider line */}
+          <motion.div 
+            variants={itemVariants}
+            className="w-16 sm:w-20 h-[2px] bg-gradient-to-r from-accent via-accent/50 to-transparent mb-6 sm:mb-8"
+          />
+          
+          {/* Subtitle / Descriptive Context */}
+          <motion.p 
+            variants={itemVariants} 
+            className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground font-sans leading-relaxed max-w-2xl font-light tracking-wide"
+          >
+            {subtitle || "Serving clients with distinction and absolute confidentiality from premier chambers across Gujarat."}
+          </motion.p>
         </motion.div>
       </div>
-      
-      {/* Decorative scroll indicator line */}
-      <motion.div 
-        initial={{ height: 0 }}
-        animate={{ height: 120 }}
-        transition={{ delay: 1, duration: 2, ease: "easeInOut" }}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1.5px] bg-gradient-to-b from-transparent via-gold/50 to-gold shadow-[0_0_15px_rgba(212,175,55,0.5)]"
-      />
     </section>
   );
-};
+}

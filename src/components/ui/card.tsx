@@ -2,12 +2,29 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+interface CardProps extends React.ComponentProps<"div"> {
+  variant?: 'default' | 'accent';
+  hover?: boolean;
+}
+
+function Card({ className, variant = 'default', hover = true, ...props }: CardProps) {
+  const baseStyles = "flex flex-col gap-6 rounded-lg border py-6 shadow-sm";
+  const hoverStyles = hover
+    ? "transition-all duration-300 hover:shadow-lg hover:border-accent/30 hover:scale-[1.02]"
+    : "";
+  
+  const variantStyles = {
+    default: "bg-card border-border text-card-foreground",
+    accent: "bg-secondary border-accent/20 text-foreground",
+  };
+
   return (
     <div
       data-slot="card"
       className={cn(
-        "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
+        baseStyles,
+        hoverStyles,
+        variantStyles[variant],
         className
       )}
       {...props}
@@ -32,7 +49,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
+      className={cn("leading-none font-semibold text-foreground", className)}
       {...props}
     />
   )
@@ -86,7 +103,7 @@ export {
   CardHeader,
   CardFooter,
   CardTitle,
-  CardAction,
   CardDescription,
+  CardAction,
   CardContent,
 }

@@ -1,50 +1,60 @@
 "use client";
 
 import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
-export function Newsletter() {
+export interface NewsletterProps {
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  buttonText?: string | null;
+  disclaimer?: string | null;
+}
+
+export function Newsletter({ badge, title, subtitle, buttonText, disclaimer }: NewsletterProps) {
   return (
-    <section className="py-24 md:py-32 bg-navy dark:bg-navy/95 text-white relative overflow-hidden">
+    <section className="py-16 md:py-24 px-6 bg-primary overflow-hidden relative">
       {/* Decorative Accents */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
       
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="container mx-auto px-6 relative z-10 text-center"
+        className="max-w-[1280px] mx-auto px-6 relative z-10 text-center"
       >
-        <div className="max-w-3xl mx-auto space-y-8">
-          <span className="text-gold font-bold tracking-[0.3em] uppercase text-xs">
-            Newsletter
+        <div className="max-w-3xl mx-auto space-y-6">
+          <span className="text-accent font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
+            {badge || "Newsletter"}
           </span>
-          <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight tracking-tight">
-            Stay Updated with <br />
-            <span className="text-gold italic font-medium">Legal Insights</span>
+          
+          <div className="w-24 h-0.5 bg-accent/50 mx-auto" />
+          
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold leading-tight">
+            {title ? title : (
+              <>Stay Updated with <span className="text-accent italic font-medium">Legal Insights</span></>
+            )}
           </h2>
-          <p className="text-lg md:text-xl text-slate-300 font-sans leading-relaxed max-w-2xl mx-auto">
-            Subscribe to our newsletter for the latest legal updates, case studies, and expert analysis delivered to your inbox.
+          
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed font-sans mb-10">
+            {subtitle || "Subscribe to our newsletter for the latest legal updates, case studies, and expert analysis delivered to your inbox."}
           </p>
           
-          <form className="flex flex-col sm:flex-row gap-4 mt-12 max-w-xl mx-auto p-2 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md shadow-2xl">
-            <Input 
-              type="email" 
-              placeholder="Your email address" 
-              className="h-14 bg-transparent border-none text-white placeholder:text-slate-400 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 text-base px-6"
+          <form className="flex flex-col sm:flex-row gap-3 mt-10 max-w-xl mx-auto p-2 bg-white/5 border border-white/10 rounded-lg backdrop-blur-md">
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="flex-1 px-6 py-3 rounded-sm bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-accent/50 font-sans"
               required
             />
-            <Button className="h-14 px-10 bg-gold hover:bg-white text-navy font-bold transition-all duration-300 shadow-xl rounded-xl uppercase tracking-widest text-xs">
-              Subscribe
-            </Button>
+            <button type="submit" className="px-8 py-3 bg-accent hover:bg-accent/85 text-accent-foreground font-semibold uppercase tracking-wider text-sm rounded-sm transition-all duration-300 shadow-lg hover:shadow-accent/20 flex items-center gap-2">
+              {buttonText || "Subscribe"}
+            </button>
           </form>
           
           <p className="text-[10px] text-slate-500 pt-6 font-bold uppercase tracking-[0.2em]">
-            * Your privacy is our priority. Unsubscribe at any time.
+            {disclaimer || "* Your privacy is our priority. Unsubscribe at any time."}
           </p>
         </div>
       </motion.div>

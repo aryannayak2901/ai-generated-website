@@ -1,156 +1,175 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, Users, Linkedin } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { motion, useInView } from "framer-motion";
+import { ArrowRight, Linkedin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { StaggerContainer, StaggerItem } from "@/components/animations";
+import type { Team } from "@/payload-types";
 
-const teamMembers = [
+interface TeamMember {
+  name: string;
+  designation: string;
+  experience: string;
+  image: string;
+  profileUrl: string;
+  linkedIn?: string;
+}
+
+const defaultTeamMembers = [
   {
     name: "Jeet Jayant Bhatt",
     designation: "Advocate, High Court of Gujarat & Senior Partner",
     experience: "15+ years experience",
-    image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=500",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=500",
     profileUrl: "/team/jeet-bhatt",
+    linkedIn: "https://linkedin.com",
   },
   {
     name: "Jayant P. Bhatt",
     designation: "Senior Advocate, High Court of Gujarat",
     experience: "40+ years experience",
-    image:
-      "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80&w=500",
+    image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80&w=500",
     profileUrl: "/team/jayant-bhatt",
   },
   {
     name: "Chetan P. Pandya",
     designation: "Advocate, Gujarat High Court",
     experience: "26+ years experience",
-    image:
-      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=500",
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=500",
     profileUrl: "/team/chetan-pandya",
-  },
-  {
-    name: "Tarun S. Rajput",
-    designation: "Advocate, Gujarat High Court",
-    experience: "2+ years experience",
-    image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=500",
-    profileUrl: "/team/tarun-rajput",
-  },
-  {
-    name: "Aman Kadri",
-    designation: "Advocate, Gujarat High Court | LLM Penn State",
-    experience: "1+ years experience",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=500",
-    profileUrl: "/team/aman-kadri",
-  },
-  {
-    name: "Haresh Shah",
-    designation: "Senior Associate",
-    experience: "Since 2018",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=500",
-    profileUrl: "/team/haresh-shah",
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
+export interface AboutTeamProps {
+  className?: string;
+  tag?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  teamMembers?: (string | Team)[] | null;
+}
 
-const itemVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-};
+export function AboutTeam({
+  className,
+  tag,
+  title,
+  subtitle,
+  teamMembers: payloadMembers,
+}: AboutTeamProps) {
+  const activeMembers = payloadMembers && payloadMembers.length > 0
+    ? payloadMembers.reduce<TeamMember[]>((acc, m) => {
+        if (typeof m === 'string') return acc;
+        
+        let imageUrl = "";
+        if (m.image) {
+          if (typeof m.image === 'string') {
+            imageUrl = m.image;
+          } else if (typeof m.image === 'object') {
+            if ('url' in m.image && typeof m.image.url === 'string') {
+              imageUrl = m.image.url;
+            }
+          }
+        }
+        
+        // Ensure imageUrl is a valid URL string starting with http, https, or /
+        const isUrlValid = imageUrl && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://") || imageUrl.startsWith("/"));
+        
+        acc.push({
+          name: m.name,
+          designation: m.designation || "",
+          experience: `${m.stats?.experience || "10+"} years experience`,
+          image: isUrlValid ? imageUrl : "",
+          profileUrl: `/team/${m.slug}`,
+        });
+        return acc;
+      }, [])
+    : defaultTeamMembers;
 
-export function AboutTeam({ className }: { className?: string }) {
   return (
-    <section className={cn("py-24 px-6 bg-background overflow-hidden", className)}>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3 text-gold">
-              <Users className="w-6 h-6" />
-              <span className="text-xs font-bold tracking-[0.2em] uppercase">
-                Legal Experts
-              </span>
-            </div>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground">
-              Meet Our Team
-            </h2>
-          </div>
-          <p className="text-muted-foreground max-w-md font-sans">
-            Our firm is comprised of highly specialized advocates with a deep
-            understanding of complex legal frameworks.
+    <section className={`relative py-16 md:py-24 px-6 bg-background ${className || ""}`}>
+      <div className="max-w-[1280px] mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-12 md:mb-16">
+          <span className="text-accent font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
+            {tag || "Our Team"}
+          </span>
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            {title || "Meet Our Legal Experts"}
+          </h2>
+          <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-6" />
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans">
+            {subtitle || "Our team brings together decades of combined experience across various legal domains."}
           </p>
         </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        {/* Team Grid */}
+        <StaggerContainer
+          staggerDelay={0.1}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {teamMembers.map((member, index) => (
-            <motion.div key={index} variants={itemVariants}>
-              <Link href={member.profileUrl} className="block group">
-                <Card className="flex flex-col h-full rounded-2xl bg-white dark:bg-navy border-border/50 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-gold/10 hover:-translate-y-2 border-b-4 hover:border-b-gold">
-                  <div className="aspect-[4/5] relative bg-muted overflow-hidden">
-                    <Image
-                      src={member.image}
-                      alt={`Portrait of ${member.name}`}
-                      fill
-                      className="object-cover object-center grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    <div className="absolute inset-0 bg-navy/20 group-hover:bg-transparent transition-colors duration-700" />
-                    
-                    {/* Floating LinkedIn Icon on Hover */}
-                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20">
-                        <Linkedin className="w-5 h-5" />
+          {activeMembers.map((member, index) => (
+            <StaggerItem key={index}>
+              <Card className="bg-card border-border h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group overflow-hidden">
+                <CardContent className="p-0">
+                  {/* Image Container */}
+                  <div className="relative h-64 overflow-hidden">
+                    {member.image ? (
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-primary to-primary/85 flex flex-col items-center justify-center border-b border-accent/20 group-hover:scale-105 transition-transform duration-500">
+                        <div className="w-20 h-20 rounded-full border border-accent/30 bg-accent/5 flex items-center justify-center mb-2 shadow-inner">
+                          <span className="font-serif text-3xl font-bold text-accent tracking-wider">
+                            {member.name
+                              .split(" ")
+                              .filter(Boolean)
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()
+                              .slice(0, 3)}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-muted-foreground/60 group-hover:text-accent transition-colors duration-300">
+                          Chambers of Jeet Bhatt
+                        </span>
                       </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <Link
+                        href={member.profileUrl}
+                        className="bg-accent text-accent-foreground px-6 py-2 rounded-sm font-semibold uppercase tracking-wider text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+                      >
+                        View Profile
+                      </Link>
                     </div>
                   </div>
-                  <CardContent className="p-8 flex flex-col grow relative">
-                    <h3 className="text-2xl font-bold mb-2 font-serif group-hover:text-gold transition-colors">
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="font-serif text-xl font-bold text-foreground mb-1 group-hover:text-accent transition-colors">
                       {member.name}
                     </h3>
-                    <p className="text-gold text-xs font-bold uppercase tracking-widest mb-4">
+                    <p className="text-muted-foreground text-sm mb-2">
                       {member.designation}
                     </p>
-                    <p className="text-muted-foreground text-sm grow font-sans leading-relaxed">
+                    <span className="inline-block text-xs font-semibold text-accent bg-accent/10 px-3 py-1 rounded-full">
                       {member.experience}
-                    </p>
-                    <div className="flex items-center gap-2 text-foreground font-bold text-sm mt-8 group-hover:text-gold transition-colors">
-                      <span>View Full Profile</span>
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </motion.div>
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </StaggerItem>
           ))}
-        </motion.div>
+        </StaggerContainer>
       </div>
     </section>
   );

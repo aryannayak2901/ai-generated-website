@@ -41,3 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 .agents
+src/payload-types.ts
+
+
+.unlighthouse
+.agents
+skills-lock.json

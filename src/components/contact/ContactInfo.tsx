@@ -1,92 +1,95 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
-const contactDetails = [
+const iconMap: Record<string, LucideIcon> = {
+  Phone: Phone,
+  Mail: Mail,
+  MapPin: MapPin,
+  Clock: Clock,
+};
+
+export interface ContactInfoProps {
+  infoItems?: {
+    icon: string;
+    title: string;
+    value: string;
+    link?: string | null;
+  }[] | null;
+}
+
+const defaultInfoItems = [
   {
-    icon: Phone,
-    title: "Phone",
+    icon: "MapPin",
+    title: "Office Address",
+    value: "Gandhinagar, Gujarat, India",
+    link: "https://maps.google.com/?q=Gandhinagar,Gujarat,India",
+  },
+  {
+    icon: "Phone",
+    title: "Contact Number",
     value: "+91 94082 82982",
-    href: "tel:+919408282982",
+    link: "tel:+919408282982",
   },
   {
-    icon: Mail,
-    title: "Email",
+    icon: "Mail",
+    title: "Email Address",
     value: "info@jeetbhatt.com",
-    href: "mailto:info@jeetbhatt.com",
-  },
-  {
-    icon: MapPin,
-    title: "Address",
-    value: "E-501, SG Business Hub,\nNear Gota Overbridge, Ahmedabad",
-    href: "https://maps.app.goo.gl/DvbBvdqVzPXPYiZp9",
-  },
-  {
-    icon: Clock,
-    title: "Hours",
-    value: "Mon-Fri: 10 AM - 7 PM\nSat: 10 AM - 3 PM",
+    link: "mailto:info@jeetbhatt.com",
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
-};
+export default function ContactInfo({ infoItems }: ContactInfoProps) {
+  const activeInfoItems = infoItems && infoItems.length > 0 ? infoItems : defaultInfoItems;
 
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
-};
-
-export default function ContactInfo() {
   return (
-    <section className="py-20 md:py-32 bg-background dark:bg-navy transition-colors duration-500 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
-      
-      <div className="container mx-auto px-6">
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10"
-        >
-          {contactDetails.map((detail, index) => (
-            <motion.div key={index} variants={item}>
-              <Card className="h-full border-navy/5 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl hover:border-gold/30 dark:hover:border-gold/30 shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden rounded-2xl">
-                <CardContent className="p-10 flex flex-col items-center text-center">
-                  <div className="mb-8 p-5 rounded-2xl bg-gold/10 text-gold group-hover:bg-gold group-hover:text-navy transition-all duration-500 shadow-lg shadow-gold/5">
-                    <detail.icon className="h-8 w-8" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="font-serif text-2xl font-bold text-navy dark:text-white mb-4">
-                    {detail.title}
+    <section className="py-16 md:py-24 px-6 bg-secondary w-full">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="max-w-[1280px] mx-auto"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {activeInfoItems.map((item, index) => {
+            const Icon = iconMap[item.icon] || MapPin;
+            const content = (
+              <>
+                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 text-accent">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                    {item.title}
                   </h3>
-                  {detail.href ? (
-                    <a
-                      href={detail.href}
-                      className="text-slate-600 dark:text-slate-400 hover:text-gold dark:hover:text-gold font-medium leading-relaxed transition-colors whitespace-pre-line text-sm tracking-wide"
-                    >
-                      {detail.value}
+                  <p className="text-foreground font-sans whitespace-pre-line leading-relaxed">
+                    {item.value}
+                  </p>
+                </div>
+              </>
+            );
+
+            return (
+              <Card key={index} className="border-border hover:border-accent/30 transition-all duration-300 bg-card h-full hover:shadow-lg">
+                <CardContent className="p-6 md:p-8 h-full">
+                  {item.link ? (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 h-full w-full">
+                      {content}
                     </a>
                   ) : (
-                    <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed whitespace-pre-line text-sm tracking-wide">
-                      {detail.value}
-                    </p>
+                    <div className="flex items-start gap-4 h-full w-full">
+                      {content}
+                    </div>
                   )}
                 </CardContent>
               </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
+            );
+          })}
+        </div>
+      </motion.div>
     </section>
   );
 }

@@ -1,0 +1,28 @@
+<h2>Payload CMS Redesign Direction</h2>
+<p class="subtitle">How far should we go to make the admin UI modern and attractive?</p>
+
+<div class="options">
+  <div class="option" data-choice="premium-reskin" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Premium Brand Reskin (Recommended)</h3>
+      <p>Inject custom CSS and components into the native Payload Admin to match our Deep Navy and Subtle Gold design system. We customize the Logo, Header, and Sidebar while keeping the robust native functionality.</p>
+    </div>
+  </div>
+  
+  <div class="option" data-choice="glassmorphism" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Glassmorphism Modernization</h3>
+      <p>A heavier CSS override using backdrop blurs, floating cards, and translucent nav elements, pushing Payload into a futuristic, high-end "Apple-style" aesthetic. Requires more CSS maintenance.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="custom-dashboard" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Fully Custom Headless Dashboard</h3>
+      <p>Build our own Next.js admin dashboard from scratch using Payload purely as an API. Maximum design freedom and wow-factor, but we must rebuild all CMS features (lists, editors, versions).</p>
+    </div>
+  </div>
+</div>
