@@ -65,6 +65,9 @@
   --color-ring: var(--ring);
 
   /* Typography - Fonts (next/font injects --font-public-sans and --font-playfair-display) */
+  /* NOTE: --font-sans and --font-serif below serve as Tailwind defaults.
+     The theme system (generateThemeCSS) overrides --font-sans and --font-serif
+     at :root level at runtime, so dynamic fonts from ThemeSettings take effect. */
   --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair-display), ui-serif, Georgia, serif;
 
@@ -179,10 +182,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-bold tracking-tight;
+    @apply font-bold tracking-tight;
+    font-family: var(--font-serif);
   }
 }
 

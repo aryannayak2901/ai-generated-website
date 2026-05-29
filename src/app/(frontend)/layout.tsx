@@ -46,6 +46,7 @@ export default async function FrontendLayout({
   // "system" | "light" | "dark"
   let themeMode: "system" | "light" | "dark" = "system";
   let headerData = null;
+  let themeDoc: any = null;
 
   try {
     const payload = await getPayload({ config });
@@ -64,6 +65,9 @@ export default async function FrontendLayout({
       }),
     ]);
 
+    if (theme) {
+      themeDoc = theme;
+    }
     if (ga4?.measurementId) {
       measurementId = ga4.measurementId;
     }
@@ -131,7 +135,13 @@ export default async function FrontendLayout({
           rel="stylesheet"
           href={`https://fonts.googleapis.com/css2?family=${bodyFontSafe}:wght@300;400;500;600;700&family=${headingFontSafe}:wght@300;400;500;600;700;800&display=swap`}
         />
-        <link rel="stylesheet" href="/theme-overrides.css" />
+        {/* Inline CSS Theme Overrides directly from Payload settings to ensure instant updates and bypass browser caching */}
+        <style
+          id="payload-theme-overrides"
+          dangerouslySetInnerHTML={{
+            __html: generateThemeCSS(themeDoc || {}),
+          }}
+        />
       </head>
       <body
         className={`${publicSans.variable} ${playfairDisplay.variable} antialiased min-h-screen flex flex-col font-sans`}

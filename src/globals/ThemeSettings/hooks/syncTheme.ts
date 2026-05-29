@@ -2,6 +2,7 @@ import type { GlobalBeforeChangeHook, GlobalAfterChangeHook } from "payload";
 import { THEME_PRESETS, WEBSITE_COLOR_KEYS, ADMIN_COLOR_KEYS } from "../../../components/Theme/theme-presets";
 import { generateThemeCSS } from "./generateThemeCSS";
 import { generateAdminCSS } from "./generateAdminCSS";
+import { parseCssOverrides, updateCssOverrides } from "../color-utils";
 import fs from "fs/promises";
 import path from "path";
 
@@ -72,6 +73,39 @@ export const syncThemeBeforeChange: GlobalBeforeChangeHook = async ({ data, orig
         nextData.adminRadius = presetConfig.adminRadius;
       }
     }
+  }
+
+  // Server-side Bi-directional Failsafe Alignment
+  const originalCss = originalDoc?.cssOverrides || "";
+  const nextCss = nextData.cssOverrides || "";
+  const cssChanged = nextCss !== originalCss;
+
+  let colorsChanged = false;
+  if (nextData.radius !== originalDoc?.radius) {
+    colorsChanged = true;
+  } else {
+    for (const key of WEBSITE_COLOR_KEYS) {
+      if (nextData[key] !== originalDoc?.[key]) {
+        colorsChanged = true;
+        break;
+      }
+      const darkKey = `${key}Dark`;
+      if (nextData[darkKey] !== originalDoc?.[darkKey]) {
+        colorsChanged = true;
+        break;
+      }
+    }
+  }
+
+  if (colorsChanged && !cssChanged) {
+    // Colors updated -> synchronize the custom CSS overrides string
+    nextData.cssOverrides = updateCssOverrides(nextCss, nextData);
+  } else if (cssChanged && !colorsChanged) {
+    // CSS overrides code block updated -> parse and align individual fields
+    const parsed = parseCssOverrides(nextCss);
+    Object.entries(parsed).forEach(([field, val]) => {
+      nextData[field] = val;
+    });
   }
 
   return nextData;

@@ -18,20 +18,20 @@ import {
 } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/animations";
 
+export interface AreaItem {
+  title: string;
+  description?: string | null;
+  icon?: string | null;
+  link?: string | null;
+}
+
 export interface PracticeAreasBentoProps {
   title?: string | null;
   subtitle?: string | null;
-  areas?:
-    | {
-        title: string;
-        description?: string | null;
-        icon?: string | null;
-        link?: string | null;
-      }[]
-    | null;
+  areas?: AreaItem[] | null;
 }
 
-const defaultAreas = [
+const defaultAreas: AreaItem[] = [
   {
     title: "Corporate Law",
     description:
@@ -110,11 +110,11 @@ export function PracticeAreasBento({
                 ? iconMap[area.icon as keyof typeof iconMap]
                 : iconMap.Briefcase;
 
+            console.log("area: ", typeof area.link);
+
             return (
               <StaggerItem key={index}>
-                <Card
-                  className="h-full bg-card border border-border transition-all duration-300 ease-out hover:scale-[1.02] hover:border-accent hover:shadow-lg group cursor-pointer overflow-hidden"
-                >
+                <Card className="h-full bg-card border border-border transition-all duration-300 ease-out hover:scale-[1.02] hover:border-accent hover:shadow-lg group cursor-pointer overflow-hidden">
                   <CardHeader>
                     <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors duration-300">
                       <IconComponent
@@ -132,12 +132,14 @@ export function PracticeAreasBento({
                         {area.description}
                       </CardDescription>
                     )}
-                    <Link
-                      href="/practice-areas"
-                      className="inline-flex items-center text-accent font-semibold text-sm uppercase tracking-wider group-hover:translate-x-2 transition-transform duration-300"
-                    >
-                      Learn More <ArrowRight className="ml-2 w-4 h-4" />
-                    </Link>
+                    {area.link && area.link !== "#" && (
+                      <Link
+                        href={`${area.link}`}
+                        className="inline-flex items-center text-accent font-semibold text-sm uppercase tracking-wider group-hover:translate-x-2 transition-transform duration-300"
+                      >
+                        Learn More <ArrowRight className="ml-2 w-4 h-4" />
+                      </Link>
+                    )}
                   </CardContent>
                 </Card>
               </StaggerItem>

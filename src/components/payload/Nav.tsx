@@ -16,6 +16,16 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+/**
+ * Payload's internal system collections — must never appear in the custom navigation.
+ * These are CMS-managed collections for document locking, user preferences, and migrations.
+ */
+const PAYLOAD_SYSTEM_COLLECTIONS = new Set([
+  "payload-locked-documents",
+  "payload-preferences",
+  "payload-migrations",
+]);
+
 export const Nav: React.FC = () => {
   const { config } = useConfig();
   const { user } = useAuth();
@@ -28,7 +38,9 @@ export const Nav: React.FC = () => {
   const adminPath =
     (config as any).routes?.admin || (config as any).admin?.routes?.admin || "/admin";
 
-  const collections = (config.collections || []).filter((c) => !(c.admin as any)?.hidden);
+  const collections = (config.collections || []).filter(
+    (c) => !PAYLOAD_SYSTEM_COLLECTIONS.has(c.slug) && !(c.admin as any)?.hidden
+  );
   const globals = (config.globals || []).filter((g) => !(g.admin as any)?.hidden);
 
   const getIcon = (slug: string) => {

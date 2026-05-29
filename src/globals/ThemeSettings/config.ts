@@ -18,6 +18,24 @@ export const ThemeSettings: GlobalConfig = {
   },
   fields: [
     {
+      name: "themePreview",
+      type: "ui",
+      admin: {
+        components: {
+          Field: "@/components/Theme/ThemePlayground#ThemePlayground",
+        },
+      },
+    },
+    // {
+    //   name: "themeSynchronizer",
+    //   type: "ui",
+    //   admin: {
+    //     components: {
+    //       Field: "@/components/Theme/ThemeSynchronizer#ThemeSynchronizer",
+    //     },
+    //   },
+    // },
+    {
       type: "tabs",
       tabs: [
         {
@@ -1124,20 +1142,6 @@ export const ThemeSettings: GlobalConfig = {
         //     },
         //   ],
         // },
-        {
-          label: "Theme Preview",
-          fields: [
-            {
-              name: "themePreview",
-              type: "ui",
-              admin: {
-                components: {
-                  Field: "@/components/Theme/ThemePlayground#ThemePlayground",
-                },
-              },
-            },
-          ],
-        },
         {
           label: "CSS Overrides",
           fields: [

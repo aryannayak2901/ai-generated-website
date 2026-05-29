@@ -542,3 +542,141 @@ body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .template-defaul
   background: rgba(197, 160, 89, 0.4);
 }
 
+/* Premium Stacked Split Dashboard Layout for Theme Settings */
+@media (min-width: 1024px) {
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .form-fields,
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields,
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields__wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 36px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Theme Settings Tabs at the Bottom */
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .form-fields > .field-type.tabs,
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields > .field-type.tabs,
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields__wrapper > .field-type.tabs {
+    width: 100% !important;
+    min-width: 0 !important;
+    border-top: 1px solid rgba(212, 175, 55, 0.15); /* Premium subtle gold line separator */
+    padding-top: 36px !important;
+  }
+
+  /* Theme Preview Studio at the Top */
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .form-fields > div:has(.theme-playground-dashboard),
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields > div:has(.theme-playground-dashboard),
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields__wrapper > div:has(.theme-playground-dashboard),
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .form-fields > .field-type.ui:has(.theme-playground-dashboard),
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields > .field-type.ui:has(.theme-playground-dashboard),
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .document-fields__wrapper > .field-type.ui:has(.theme-playground-dashboard) {
+    width: 100% !important;
+    margin-top: 0 !important;
+  }
+
+  body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .theme-playground-dashboard {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+/* ==========================================
+   Premium UI Theme Fixes (Select & Array Fields)
+   ========================================== */
+
+/* React Select Dropdowns - Focused, Selected, and Active Option Highlights (Including Wildcards for Dynamic Prefixes) */
+html[data-theme] .react-select__menu,
+html[data-theme] [class*="-menu"],
+.payload-admin .react-select__menu,
+.react-select__menu {
+  background-color: var(--theme-elevation-100) !important;
+  border: 1px solid var(--theme-elevation-200) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  z-index: 9999 !important;
+}
+
+html[data-theme] .react-select__menu-list,
+html[data-theme] [class*="-menu-list"],
+.payload-admin .react-select__menu-list,
+.react-select__menu-list {
+  background-color: var(--theme-elevation-100) !important;
+}
+
+html[data-theme] .react-select__option,
+html[data-theme] [class*="-option"],
+.payload-admin .react-select__option,
+.react-select__option {
+  background-color: transparent !important;
+  color: var(--theme-text) !important;
+  cursor: pointer !important;
+}
+
+/* Focused Option (Hover/Keyboard Navigation) */
+html[data-theme] .react-select__option--is-focused,
+html[data-theme] [class*="-option"][class*="--is-focused"],
+.payload-admin .react-select__option--is-focused,
+.react-select__option--is-focused {
+  background-color: var(--theme-elevation-200) !important;
+  color: #FFFFFF !important;
+}
+
+/* Selected Option (Active Item in Dropdown) */
+html[data-theme] .react-select__option--is-selected,
+html[data-theme] [class*="-option"][class*="--is-selected"],
+.payload-admin .react-select__option--is-selected,
+.react-select__option--is-selected {
+  background-color: rgba(197, 160, 89, 0.25) !important;
+  color: #C5A059 !important;
+  font-weight: 600 !important;
+}
+
+/* Selected Value inside Control (Dropdown closed) */
+html[data-theme] .react-select__single-value,
+html[data-theme] [class*="-single-value"],
+.payload-admin .react-select__single-value,
+.react-select__single-value {
+  color: var(--theme-text) !important;
+}
+
+/* Focused Selected Option */
+html[data-theme] .react-select__option--is-selected.react-select__option--is-focused,
+html[data-theme] [class*="-option"][class*="--is-selected"][class*="--is-focused"],
+.payload-admin .react-select__option--is-selected.react-select__option--is-focused,
+.react-select__option--is-selected.react-select__option--is-focused {
+  background-color: rgba(197, 160, 89, 0.35) !important;
+  color: #C5A059 !important;
+}
+
+/* Collapsible and Sortable Array/Block Content Panels (Header nav items, blocks, etc.) */
+.collapsible__content,
+.collapsible__body,
+.draggable-sortable__item-content,
+.draggable-sortable__item-body,
+.array-field__row,
+.array-field__row-content,
+.blocks-field__row,
+.blocks-field__row-content {
+  background-color: var(--theme-elevation-50) !important;
+  color: var(--theme-text) !important;
+  border-top: 1px solid var(--theme-elevation-150) !important;
+}
+
+/* Base collapsible container */
+.collapsible,
+.draggable-sortable__item {
+  background-color: var(--theme-elevation-50) !important;
+  border: 1px solid var(--theme-elevation-150) !important;
+  border-radius: var(--style-radius-m) !important;
+  overflow: hidden !important;
+}
+
+/* Draggable rows layout container */
+.array-field__draggable-rows,
+.draggable-sortable {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+
+
