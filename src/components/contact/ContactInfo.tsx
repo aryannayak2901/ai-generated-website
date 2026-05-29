@@ -1,19 +1,51 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
+const iconMap: Record<string, LucideIcon> = {
+  Phone: Phone,
+  Mail: Mail,
+  MapPin: MapPin,
+  Clock: Clock,
+};
+
 export interface ContactInfoProps {
-  address?: string | null;
-  phone?: string | null;
-  email?: string | null;
-  hours?: string | null;
+  infoItems?: {
+    icon: string;
+    title: string;
+    value: string;
+    link?: string | null;
+  }[] | null;
 }
 
-export default function ContactInfo({ address, phone, email, hours }: ContactInfoProps) {
+const defaultInfoItems = [
+  {
+    icon: "MapPin",
+    title: "Office Address",
+    value: "Gandhinagar, Gujarat, India",
+    link: "https://maps.google.com/?q=Gandhinagar,Gujarat,India",
+  },
+  {
+    icon: "Phone",
+    title: "Contact Number",
+    value: "+91 94082 82982",
+    link: "tel:+919408282982",
+  },
+  {
+    icon: "Mail",
+    title: "Email Address",
+    value: "info@jeetbhatt.com",
+    link: "mailto:info@jeetbhatt.com",
+  },
+];
+
+export default function ContactInfo({ infoItems }: ContactInfoProps) {
+  const activeInfoItems = infoItems && infoItems.length > 0 ? infoItems : defaultInfoItems;
+
   return (
-    <section className="py-16 md:py-24 px-6 bg-gray-light">
+    <section className="py-16 md:py-24 px-6 bg-secondary w-full">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -22,62 +54,40 @@ export default function ContactInfo({ address, phone, email, hours }: ContactInf
         className="max-w-[1280px] mx-auto"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Address Card */}
-          <Card className="border-slate-200 hover:border-teal-primary/30 transition-colors bg-white">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-teal-primary/10 flex items-center justify-center shrink-0">
-                  <MapPin className="w-6 h-6 text-teal-primary" />
+          {activeInfoItems.map((item, index) => {
+            const Icon = iconMap[item.icon] || MapPin;
+            const content = (
+              <>
+                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 text-accent">
+                  <Icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-secondary uppercase tracking-wider mb-2">
-                    Office Address
+                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                    {item.title}
                   </h3>
-                  <p className="text-slate-primary font-sans">
-                    {address || "Gandhinagar, Gujarat, India"}
+                  <p className="text-foreground font-sans whitespace-pre-line leading-relaxed">
+                    {item.value}
                   </p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </>
+            );
 
-          {/* Phone Card */}
-          <Card className="border-slate-200 hover:border-teal-primary/30 transition-colors bg-white">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-teal-primary/10 flex items-center justify-center shrink-0">
-                  <Phone className="w-6 h-6 text-teal-primary" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-secondary uppercase tracking-wider mb-2">
-                    Contact Number
-                  </h3>
-                  <p className="text-slate-primary font-sans">
-                    {phone || "+91 94082 82982"}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Email Card */}
-          <Card className="border-slate-200 hover:border-teal-primary/30 transition-colors bg-white">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-teal-primary/10 flex items-center justify-center shrink-0">
-                  <Mail className="w-6 h-6 text-teal-primary" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-secondary uppercase tracking-wider mb-2">
-                    Email Address
-                  </h3>
-                  <p className="text-slate-primary font-sans">
-                    {email || "info@jeetbhatt.com"}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            return (
+              <Card key={index} className="border-border hover:border-accent/30 transition-all duration-300 bg-card h-full hover:shadow-lg">
+                <CardContent className="p-6 md:p-8 h-full">
+                  {item.link ? (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 h-full w-full">
+                      {content}
+                    </a>
+                  ) : (
+                    <div className="flex items-start gap-4 h-full w-full">
+                      {content}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </motion.div>
     </section>

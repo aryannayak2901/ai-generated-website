@@ -54,7 +54,7 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[100] bg-charcoal-primary/80 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+            className="fixed inset-0 z-[100] bg-primary/80 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
           >
             {/* Modal Container */}
             <motion.div
@@ -63,12 +63,12 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden bg-white border border-teal-primary/20 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.5)] flex flex-col md:flex-row"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden bg-card border border-accent/20 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.5)] flex flex-col md:flex-row"
             >
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute top-6 right-6 z-[110] p-2 rounded-full bg-slate-100 hover:bg-teal-primary hover:text-white transition-all duration-300 text-slate-primary"
+                className="absolute top-6 right-6 z-[110] p-2 rounded-full bg-muted hover:bg-accent hover:text-accent-foreground transition-all duration-300 text-foreground"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -89,28 +89,28 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
               <div className="flex-1 p-8 md:p-10 overflow-y-auto">
                 <div className="flex items-center gap-3 mb-4">
                   <Badge variant="teal">{post.category}</Badge>
-                  <span className="text-sm text-slate-secondary flex items-center gap-1">
+                  <span className="text-sm text-muted-foreground flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     {post.date}
                   </span>
                 </div>
 
-                <h2 className="font-serif text-2xl md:text-3xl font-bold text-slate-primary mb-4">
+                <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-4">
                   {post.title}
                 </h2>
 
-                <p className="text-slate-secondary leading-relaxed mb-6">
+                <p className="text-muted-foreground leading-relaxed mb-6">
                   {post.summary}
                 </p>
 
-                <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+                <div className="flex items-center justify-between pt-6 border-t border-border">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-teal-primary/10 flex items-center justify-center">
-                      <User className="w-5 h-5 text-teal-primary" />
+                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                      <User className="w-5 h-5 text-accent" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-primary">{post.author}</p>
-                      <p className="text-xs text-slate-secondary flex items-center gap-1">
+                      <p className="text-sm font-semibold text-foreground">{post.author}</p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {post.readTime}
                       </p>
@@ -119,7 +119,7 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
 
                   <button
                     onClick={onClose}
-                    className="flex items-center gap-2 text-teal-primary hover:text-teal-light font-semibold text-sm transition-colors"
+                    className="flex items-center gap-2 text-accent hover:text-accent/85 font-semibold text-sm transition-colors"
                   >
                     Close
                     <ArrowRight className="w-4 h-4" />

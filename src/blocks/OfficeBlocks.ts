@@ -136,6 +136,11 @@ export const MapSection: Block = {
     {
       name: 'mapOverlayDescription',
       type: 'textarea',
+    },
+    {
+      name: 'mapUrl',
+      type: 'text',
+      defaultValue: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.697926017772!2d72.5222!3d23.0784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e833444444445%3A0x6b74ad4a4e63480e!2sSG+Business+Hub!5e0!3m2!1sen!2sin!4v1710450000000!5m2!1sen!2sin',
     }
   ],
 }

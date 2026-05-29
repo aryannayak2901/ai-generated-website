@@ -1,19 +1,20 @@
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
+import { mongooseAdapter } from "@payloadcms/db-mongodb";
+import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import path from "path";
+import { buildConfig } from "payload";
+import { fileURLToPath } from "url";
 
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
-import { Posts } from './collections/Posts'
-import { Pages } from './collections/Pages'
-import { Header } from './globals/Header'
+import { Users } from "./collections/Users";
+import { Media } from "./collections/Media";
+import { Posts } from "./collections/Posts";
+import { Pages } from "./collections/Pages";
+import { Team } from "./collections/Team";
+import { Header } from "./globals/Header";
+import { GA4Settings } from "./globals/GA4Settings";
+import { ThemeSettings } from "./globals/ThemeSettings/config";
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
-
-import { Team } from './collections/Team'
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 export default buildConfig({
   admin: {
@@ -23,20 +24,26 @@ export default buildConfig({
     },
     components: {
       graphics: {
-        Logo: '@/components/payload/Logo#Logo',
-        Icon: '@/components/payload/Icon#Icon',
+        Logo: "@/components/payload/Logo#Logo",
+        Icon: "@/components/payload/Icon#Icon",
       },
-      beforeLogin: ['@/components/payload/BeforeLogin#BeforeLogin'],
+      Nav: "@/components/payload/Nav#Nav",
+      beforeLogin: ["@/components/payload/BeforeLogin#BeforeLogin"],
     },
   },
+
   collections: [Pages, Team, Users, Media, Posts],
-  globals: [Header],
+  globals: [Header, GA4Settings, ThemeSettings],
+
   editor: lexicalEditor({}),
-  secret: process.env.PAYLOAD_SECRET || 'REPLACE_WITH_A_REAL_SECRET',
+
+  secret: process.env.PAYLOAD_SECRET || "REPLACE_WITH_A_REAL_SECRET",
+
   db: mongooseAdapter({
-    url: process.env.MONGODB_URI || '',
+    url: process.env.MONGODB_URI || "",
   }),
+
   typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    outputFile: path.resolve(dirname, "payload-types.ts"),
   },
-})
+});

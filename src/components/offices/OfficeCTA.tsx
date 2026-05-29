@@ -15,77 +15,122 @@ export interface OfficeCTAProps {
   disclaimer?: string | null;
 }
 
-export const OfficeCTA = ({ badge, title, subtitle, ctaText1, ctaLink1, ctaText2, ctaLink2, disclaimer }: OfficeCTAProps) => {
+export const OfficeCTA = ({ 
+  badge, 
+  title, 
+  subtitle, 
+  ctaText1, 
+  ctaLink1, 
+  ctaText2, 
+  ctaLink2, 
+  disclaimer 
+}: OfficeCTAProps) => {
   return (
-    <section className="relative py-16 md:py-24 px-6 bg-charcoal-primary overflow-hidden">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-charcoal-primary via-charcoal-primary to-slate-dark" />
+    <section className="relative py-28 md:py-36 px-6 bg-primary overflow-hidden border-t border-border/10">
       
-      {/* Teal accent bar - left side */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-primary" />
+      {/* Premium dark mesh radial background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary via-primary/95 to-primary" />
+      <div className="absolute inset-0 opacity-[0.025] bg-[linear-gradient(to_right,#d4af37_1px,transparent_1px),linear-gradient(to_bottom,#d4af37_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
       
-      {/* Decorative glow */}
+      {/* Drifting warm golden spotlight sphere animations */}
       <motion.div 
-        initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-teal-primary/5 rounded-full blur-3xl pointer-events-none" 
+        animate={{
+          scale: [1, 1.25, 1],
+          opacity: [0.18, 0.28, 0.18],
+          x: [0, 20, 0],
+          y: [0, -30, 0],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute left-1/3 top-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-accent/15 rounded-full blur-[130px] pointer-events-none" 
+      />
+      
+      <motion.div 
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.1, 0.2, 0.1],
+          x: [0, -40, 0],
+          y: [0, 40, 0],
+        }}
+        transition={{
+          duration: 16,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute right-1/4 bottom-1/4 w-[450px] h-[450px] bg-accent/10 rounded-full blur-[110px] pointer-events-none" 
       />
 
+      {/* Elite asymmetrical side gold accent bar */}
+      <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-accent via-accent/30 to-transparent" />
+
+      {/* Whisper thin horizontal dividers */}
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-accent/15 via-transparent to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-accent/10 to-transparent" />
+
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="max-w-[1280px] mx-auto text-center relative z-10"
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-[1300px] mx-auto text-center relative z-10"
       >
-        <div className="inline-flex items-center gap-3 mb-6">
-          <div className="w-8 h-8 rounded-full bg-teal-primary/20 flex items-center justify-center">
-            <svg className="w-4 h-4 text-teal-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0115 3z" />
-            </svg>
+        {/* Luxury Tag Badge with custom borders */}
+        <div className="inline-flex items-center gap-3.5 mb-8">
+          <span className="h-[1px] w-6 bg-accent/50" />
+          <div className="py-0.5 px-3 bg-accent/5 rounded-full border border-accent/20 backdrop-blur-sm">
+            <span className="text-accent font-bold tracking-[0.35em] uppercase text-[10px] font-sans">
+              {badge || "Exclusive Advocacy"}
+            </span>
           </div>
-          <span className="text-teal-primary font-bold tracking-[0.4em] uppercase text-[10px]">
-            {badge || "Trust & Excellence"}
-          </span>
+          <span className="h-[1px] w-6 bg-accent/50" />
         </div>
         
-        <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+        {/* Playfair Display Title */}
+        <h2 className="font-serif text-3.5xl sm:text-4xl md:text-5xl lg:text-6.5xl font-bold text-white mb-8 leading-[1.18] tracking-tight max-w-4xl mx-auto drop-shadow-md">
           {title ? title : (
-            <>Schedule a <span className="text-teal-primary italic font-medium">Private Consultation</span></>
+            <>Arrange a <span className="text-accent italic font-serif font-light">Confidential Consultation</span></>
           )}
         </h2>
         
-        <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
+        {/* Sleek divider line */}
+        <div className="w-16 h-[1px] bg-accent/40 mx-auto mb-8" />
         
-        <p className="text-lg md:text-xl text-slate-secondary leading-relaxed mb-10 max-w-2xl mx-auto font-sans">
-          {subtitle || "Each consultation is held with absolute discretion. Reach out to secure your appointment at our offices."}
+        {/* Subtitle */}
+        <p className="text-base sm:text-lg md:text-xl text-muted-foreground/80 leading-relaxed mb-12 max-w-2xl mx-auto font-sans font-light tracking-wide">
+          {subtitle || "Every engagement is managed with absolute privilege and discretion. Secure your session at our administrative chambers."}
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
+        {/* High-end interactive CTAs */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 max-w-md sm:max-w-none mx-auto">
+          
+          {/* Primary CTA: Elegant Gold-to-Brass Gradient */}
           <Button
             size="lg"
-            className="w-full sm:w-auto bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full sm:w-auto bg-gradient-to-r from-accent to-accent/85 hover:from-accent/95 hover:to-accent/90 text-accent-foreground font-bold tracking-[0.2em] uppercase rounded-lg h-14 px-8 sm:px-10 text-xs transition-all duration-300 shadow-[0_4px_25px_rgba(212,175,55,0.2)] hover:shadow-[0_4px_30px_rgba(212,175,55,0.45)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer group"
             onClick={() => window.open(ctaLink1 || "/contact", "_self")}
           >
-            <CalendarCheck className="mr-2 w-4 h-4 sm:w-5 sm:h-5" />
-            {ctaText1 || "Book An Appointment"}
+            <CalendarCheck className="mr-2 w-4 h-4 sm:w-5 sm:h-5 text-accent-foreground" />
+            {ctaText1 || "Schedule Appointment"}
           </Button>
           
+          {/* Secondary CTA: Transparent Glass button with thin borders */}
           <Button
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300"
+            className="w-full sm:w-auto border-white/10 text-white bg-white/5 hover:bg-white/10 hover:border-accent/45 font-bold tracking-[0.2em] uppercase rounded-lg h-14 px-8 sm:px-10 text-xs transition-all duration-300 cursor-pointer backdrop-blur-sm group"
             onClick={() => window.open(ctaLink2 || "tel:+919408282982", "_self")}
           >
-            <PhoneCall className="mr-2 w-4 h-4 sm:w-5 sm:h-5 text-teal-primary" />
-            {ctaText2 || "Call Direct"}
+            <PhoneCall className="mr-2 w-4 h-4 sm:w-5 sm:h-5 text-accent transition-transform duration-300 group-hover:scale-105" />
+            {ctaText2 || "Direct Contact"}
           </Button>
         </div>
         
-        <div className="mt-8 text-slate-secondary font-sans text-[10px] uppercase tracking-[0.5em] font-bold">
-          {disclaimer || "Monday — Saturday • 24/7 Priority Support"}
+        {/* Footnote Disclaimer */}
+        <div className="mt-14 text-muted-foreground/45 font-sans text-[8px] sm:text-[9px] uppercase tracking-[0.45em] font-semibold">
+          {disclaimer || "Monday — Saturday • 24/7 Priority Advocacy Registry"}
         </div>
       </motion.div>
     </section>

@@ -1,3 +1,5 @@
+import { BlocksBuilderField as BlocksBuilderField_0286592052b98f5f0055fad3b77f9419 } from '@/components/payload'
+import { PagesStudioView as PagesStudioView_0286592052b98f5f0055fad3b77f9419 } from '@/components/payload'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -20,8 +22,17 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { GA4Dashboard as GA4Dashboard_2f69165967948fca0b1ad7615040911c } from '@/components/payload/GA4Dashboard'
+import { ThemePlayground as ThemePlayground_2e39d33a991e4ebd7f5650dfb764480d } from '@/components/Theme/ThemePlayground'
+import { ColorPickerField as ColorPickerField_e2125401031640e0009e2d9c60c91d20 } from '@/components/Theme/ColorPickerField'
+import { Nav as Nav_6a3490dcdf999345f7d9ebf36f3d3644 } from '@/components/payload/Nav'
+import { Icon as Icon_6f14b747d7d9d385f91171711bbf7132 } from '@/components/payload/Icon'
+import { Logo as Logo_e34c28bdc97e3fecf976b23b26d64cc9 } from '@/components/payload/Logo'
+import { BeforeLogin as BeforeLogin_be7cf7eb3883beb9807d8789bb1dd363 } from '@/components/payload/BeforeLogin'
 
 export const importMap = {
+  "@/components/payload#BlocksBuilderField": BlocksBuilderField_0286592052b98f5f0055fad3b77f9419,
+  "@/components/payload#PagesStudioView": PagesStudioView_0286592052b98f5f0055fad3b77f9419,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient": InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
@@ -43,5 +54,12 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#StrikethroughFeatureClient": StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
+  "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/components/payload/GA4Dashboard#GA4Dashboard": GA4Dashboard_2f69165967948fca0b1ad7615040911c,
+  "@/components/Theme/ThemePlayground#ThemePlayground": ThemePlayground_2e39d33a991e4ebd7f5650dfb764480d,
+  "@/components/Theme/ColorPickerField#ColorPickerField": ColorPickerField_e2125401031640e0009e2d9c60c91d20,
+  "@/components/payload/Nav#Nav": Nav_6a3490dcdf999345f7d9ebf36f3d3644,
+  "@/components/payload/Icon#Icon": Icon_6f14b747d7d9d385f91171711bbf7132,
+  "@/components/payload/Logo#Logo": Logo_e34c28bdc97e3fecf976b23b26d64cc9,
+  "@/components/payload/BeforeLogin#BeforeLogin": BeforeLogin_be7cf7eb3883beb9807d8789bb1dd363
 }

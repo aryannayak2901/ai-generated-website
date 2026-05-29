@@ -19,6 +19,15 @@ export const AwardsMarquee: Block = {
         {
           name: 'organization',
           type: 'text',
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
         }
       ]
     }

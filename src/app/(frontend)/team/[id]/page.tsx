@@ -4,6 +4,9 @@ import configPromise from "@/payload.config";
 import TeamMemberClient from "@/components/team/TeamMemberClient";
 import type { Team, Media } from "@/payload-types";
 import type { TeamMember } from "@/data/team";
+import { generateSeoMetadata } from "@/lib/seo/metadata-generator";
+import { generateTeamPageSchema } from "@/lib/seo/schema-generator";
+import StructuredData from "@/components/SEO/StructuredData";
 
 export async function generateMetadata({
   params,
@@ -25,15 +28,29 @@ export async function generateMetadata({
   const member = docs[0] as unknown as Team;
 
   if (!member) {
-    return {
-      title: "Team Member Not Found",
-    };
+    return generateSeoMetadata({
+      titleConfig: { type: "custom", title: "Team Member Not Found" },
+      slug: `team/${p.id}`,
+    });
   }
 
-  return {
-    title: `${member.name} - ${member.designation} | Chambers of Jeet Bhatt`,
-    description: member.subtitle,
-  };
+  return generateSeoMetadata({
+    titleConfig: {
+      type: 'team',
+      name: member.name,
+      title: member.designation,
+      specialty: member.overview?.expertise?.[0]?.item || "Advocate"
+    },
+    descriptionConfig: {
+      type: 'team',
+      name: member.name,
+      yearsOfExp: `${member.stats?.experience || "10+"} years`,
+      specialty: member.overview?.expertise?.[0]?.item || "Complex Litigation",
+      credential: member.subtitle || undefined
+    },
+    slug: `team/${p.id}`,
+    image: (member.image as Media)?.url || undefined,
+  });
 }
 
 export default async function TeamMemberPage({
@@ -103,5 +120,10 @@ export default async function TeamMemberPage({
     })) || [],
   };
 
-  return <TeamMemberClient member={member as unknown as TeamMember} />; // We still need to cast to any for TeamMemberClient if it expects a specific interface we didn't fully define here, but it solves the local any errors
+  return (
+    <>
+      <StructuredData schema={generateTeamPageSchema(memberData)} />
+      <TeamMemberClient member={member as unknown as TeamMember} />
+    </>
+  );
 }

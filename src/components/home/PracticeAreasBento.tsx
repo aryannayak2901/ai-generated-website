@@ -18,20 +18,20 @@ import {
 } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/animations";
 
+export interface AreaItem {
+  title: string;
+  description?: string | null;
+  icon?: string | null;
+  link?: string | null;
+}
+
 export interface PracticeAreasBentoProps {
   title?: string | null;
   subtitle?: string | null;
-  areas?:
-    | {
-        title: string;
-        description?: string | null;
-        icon?: string | null;
-        link?: string | null;
-      }[]
-    | null;
+  areas?: AreaItem[] | null;
 }
 
-const defaultAreas = [
+const defaultAreas: AreaItem[] = [
   {
     title: "Corporate Law",
     description:
@@ -87,14 +87,14 @@ export function PracticeAreasBento({
   const activeAreas = areas && areas.length > 0 ? areas : defaultAreas;
 
   return (
-    <section className="py-16 md:py-24 px-6 bg-gray-light">
+    <section className="py-16 md:py-24 px-6 bg-secondary">
       <div className="max-w-[1280px] mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-primary mb-4 tracking-tight">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
             {title}
           </h2>
-          <p className="text-slate-secondary text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
             {subtitle}
           </p>
         </div>
@@ -110,34 +110,36 @@ export function PracticeAreasBento({
                 ? iconMap[area.icon as keyof typeof iconMap]
                 : iconMap.Briefcase;
 
+            console.log("area: ", typeof area.link);
+
             return (
               <StaggerItem key={index}>
-                <Card
-                  className="h-full bg-white border border-slate-200 transition-all duration-300 ease-out hover:scale-[1.02] hover:border-teal-primary hover:shadow-lg group cursor-pointer overflow-hidden"
-                >
+                <Card className="h-full bg-card border border-border transition-all duration-300 ease-out hover:scale-[1.02] hover:border-accent hover:shadow-lg group cursor-pointer overflow-hidden">
                   <CardHeader>
-                    <div className="w-12 h-12 rounded-lg bg-teal-primary/10 flex items-center justify-center mb-4 group-hover:bg-teal-primary/20 transition-colors duration-300">
+                    <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors duration-300">
                       <IconComponent
-                        className="w-6 h-6 text-teal-primary group-hover:scale-110 transition-transform duration-300"
+                        className="w-6 h-6 text-accent group-hover:scale-110 transition-transform duration-300"
                         strokeWidth={1.5}
                       />
                     </div>
-                    <CardTitle className="text-xl font-bold text-slate-primary group-hover:text-teal-primary transition-colors duration-300">
+                    <CardTitle className="text-xl font-bold text-foreground group-hover:text-accent transition-colors duration-300">
                       {area.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {area.description && (
-                      <CardDescription className="text-slate-secondary text-base leading-relaxed mb-4">
+                      <CardDescription className="text-muted-foreground text-base leading-relaxed mb-4">
                         {area.description}
                       </CardDescription>
                     )}
-                    <Link
-                      href="/practice-areas"
-                      className="inline-flex items-center text-teal-primary font-semibold text-sm uppercase tracking-wider group-hover:translate-x-2 transition-transform duration-300"
-                    >
-                      Learn More <ArrowRight className="ml-2 w-4 h-4" />
-                    </Link>
+                    {area.link && area.link !== "#" && (
+                      <Link
+                        href={`${area.link}`}
+                        className="inline-flex items-center text-accent font-semibold text-sm uppercase tracking-wider group-hover:translate-x-2 transition-transform duration-300"
+                      >
+                        Learn More <ArrowRight className="ml-2 w-4 h-4" />
+                      </Link>
+                    )}
                   </CardContent>
                 </Card>
               </StaggerItem>

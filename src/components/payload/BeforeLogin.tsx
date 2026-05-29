@@ -1,6 +1,6 @@
 import React from 'react'
 
-const BeforeLogin: React.FC = () => {
+export const BeforeLogin: React.FC = () => {
   return (
     <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
       <h1 

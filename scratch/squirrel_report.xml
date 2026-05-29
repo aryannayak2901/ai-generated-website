@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<audit version="0.0.38">
+<site url="http://localhost:3000" crawled="16" date="2026-05-21T09:25:59.497Z"/>
+<score overall="48" grade="F">
+ <cat name="Accessibility" score="92"/>
+ <cat name="Security" score="49"/>
+ <cat name="Performance" score="62"/>
+ <cat name="Structured Data" score="59"/>
+ <cat name="Core SEO" score="86"/>
+ <cat name="Images" score="82"/>
+ <cat name="Links" score="72"/>
+ <cat name="Crawlability" score="86"/>
+ <cat name="Content" score="71"/>
+ <cat name="Social Media" score="93"/>
+ <cat name="E-E-A-T" score="80"/>
+ <cat name="Analytics" score="100"/>
+ <cat name="Internationalization" score="100"/>
+ <cat name="Legal Compliance" score="100"/>
+ <cat name="Mobile" score="100"/>
+ <cat name="URL Structure" score="100"/>
+</score>
+<summary passed="1211" warnings="204" failed="49"/>
+<issues>
+ <category name="Crawlability" errors="1" warnings="2">
+  <rule id="crawl/sitemap-domain" severity="error" status="fail" docs="https://docs.squirrelscan.com/rules/crawl/sitemap-domain">
+   20 URL(s) point to different domain(s)
+   Items (5/20):
+    - https://jeetbhatt.com [host: jeetbhatt.com]
+    - https://jeetbhatt.com/about [host: jeetbhatt.com]
+    - https://jeetbhatt.com/contact [host: jeetbhatt.com]
+    - https://jeetbhatt.com/offices [host: jeetbhatt.com]
+    - https://jeetbhatt.com/practice-areas [host: jeetbhatt.com]
+  </rule>
+  <rule id="crawl/sitemap-coverage" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/crawl/sitemap-coverage">
+   14 indexable page(s) not in sitemap (88%); 20 sitemap URL(s) were not crawled
+   Items (5/34):
+    - /
+    - /about
+    - /contact
+    - /blog
+    - /practice-areas
+  </rule>
+ </category>
+ <category name="Core SEO" errors="1" warnings="17">
+  <rule id="core/meta-title" severity="error" status="warn" docs="https://docs.squirrelscan.com/rules/core/meta-title">
+   Title too long
+   Pages (5/8): /, /blog, /media, /blog/cji-legacy, /blog/emergency-50
+   Items (5/8):
+    - / (Chambers of Jeet Bhatt | Premium Legal Services |  (66 chars))
+    - /blog (Chambers of Jeet Bhatt | Premium Legal Services |  (66 chars))
+    - /media (Chambers of Jeet Bhatt | Premium Legal Services |  (66 chars))
+    - /team/jeet-bhatt (Jeet Jayant Bhatt - Advocate, High Court of Gujara (132 chars))
+    - /blog/future-corporate-law (The Future of Corporate Law in India | Legal Insig (78 chars))
+  </rule>
+  <rule id="core/h1" severity="error" status="fail" docs="https://docs.squirrelscan.com/rules/core/h1">
+   No H1 tag found
+   Pages (1): /media
+   Items (1):
+    - /media (No H1 tag found)
+  </rule>
+  <rule id="core/meta-description" severity="error" status="warn" docs="https://docs.squirrelscan.com/rules/core/meta-description">
+   Description too short; Description too long
+   Pages (5/8): /offices, /team, /blog/cji-legacy, /blog/emergency-50, /blog/family-law-disputes
+   Items (5/8):
+    - /offices (Visit our professional legal chambers in Ahmedabad (115 chars))
+    - /blog/test (Read our latest legal insights on General Legal. S (91 chars))
+    - /blog/future-corporate-law (Read our latest legal insights on General Legal. S (91 chars))
+    - /team (Meet our experienced team of legal professionals d (100 chars))
+    - /blog/family-law-disputes (Read our latest legal insights on General Legal. S (91 chars))
+  </rule>
+  <rule id="core/title-unique" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/core/title-unique">
+   1 duplicate title(s) affecting 3 pages
+   Items (1):
+    - chambers of jeet bhatt | premium legal services | global adv (&quot;chambers of jeet bhatt | premium legal s...&quot; (3 pages)) [pageCount: 3] (from: /, /blog, /media)
+  </rule>
+ </category>
+ <category name="Security" errors="14" warnings="4">
+  <rule id="security/leaked-secrets" severity="error" status="warn" docs="https://docs.squirrelscan.com/rules/security/leaked-secrets">
+   11 potential secret(s) detected (verify manually)
+   Items (5/11):
+    - DigitalOcean Spaces Key: DO29CQ********************FBLE (Found in external-script (http://localhost:3000/_next/static/chunks/app-pages-internals.js))
+    - DigitalOcean Spaces Key: DO29CQ********************FBLE (Found in external-script (http://localhost:3000/_next/static/chunks/app-pages-internals.js))
+    - Sanity Token: ske0pT********************IiJ9 (Found in external-script (http://localhost:3000/_next/static/chunks/app-pages-internals.js))
+    - DigitalOcean Spaces Key: DO3VDQ************UFBU (Found in external-script (http://localhost:3000/_next/static/chunks/app/(frontend)/layout.js))
+    - DigitalOcean Spaces Key: DO1FBQ**************CQUF (Found in external-script (http://localhost:3000/_next/static/chunks/app/(frontend)/layout.js))
+  </rule>
+  <rule id="security/https" severity="error" status="fail" docs="https://docs.squirrelscan.com/rules/security/https">
+   Page not served over HTTPS
+   Pages (5/14): /, /about, /blog, /contact, /media
+  </rule>
+  <rule id="security/csp" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/security/csp">
+   No Content-Security-Policy header
+  </rule>
+  <rule id="security/form-captcha" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/security/form-captcha">
+   1 public form(s) without CAPTCHA
+   Pages (2): /blog, /contact
+   Items (1):
+    - form[0]
+  </rule>
+ </category>
+ <category name="Links" errors="1" warnings="2">
+  <rule id="links/broken-links" severity="error" status="fail" docs="https://docs.squirrelscan.com/rules/links/broken-links">
+   2 broken internal link(s) (4xx/5xx)
+   Items (2):
+    - /privacy (http://localhost:3000/privacy (404)) [statusCode: 404, linkedFrom: 14] (from: /, /about, /contact, /blog, /practice-areas; +9 more)
+    - /terms (http://localhost:3000/terms (404)) [statusCode: 404, linkedFrom: 14] (from: /, /about, /contact, /blog, /practice-areas; +9 more)
+  </rule>
+  <rule id="links/orphan-pages" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/links/orphan-pages">
+   6 orphan page(s) with &lt;2 incoming links
+   Items (5/6):
+    - /blog/test
+    - /blog/future-corporate-law
+    - /team
+    - /blog/family-law-disputes
+    - /blog/emergency-50
+  </rule>
+  <rule id="links/weak-internal-links" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/links/weak-internal-links">
+   6 page(s) have only 1 internal link
+   Items (5/6):
+    - /blog/test
+    - /blog/future-corporate-law
+    - /team
+    - /blog/family-law-disputes
+    - /blog/emergency-50
+  </rule>
+ </category>
+ <category name="Content" errors="0" warnings="37">
+  <rule id="content/duplicate-title" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/content/duplicate-title">
+   1 duplicate title(s) found across 3 pages
+   Items (1):
+    - chambers of jeet bhatt | premium legal services | global adv (&quot;chambers of jeet bhatt | premium legal s...&quot; (3 pages)) [pageCount: 3] (from: /, /blog, /media)
+  </rule>
+  <rule id="content/duplicate-description" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/content/duplicate-description">
+   2 duplicate description(s) found across 8 pages
+   Items (2):
+    - award-winning law firm specializing in corporate law, crimin (&quot;award-winning law firm specializing in c...&quot; (3 pages)) [pageCount: 3] (from: /, /blog, /media)
+    - read our latest legal insights on general legal. stay inform (&quot;read our latest legal insights on genera...&quot; (5 pages)) [pageCount: 5] (from: /blog/test, /blog/future-corporate-law, /blog/family-law-disputes, /blog/emergency-50, /blog/cji-legacy)
+  </rule>
+  <rule id="content/heading-hierarchy" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/content/heading-hierarchy">
+   Skipped heading levels detected
+   Pages (5): /blog/cji-legacy, /blog/emergency-50, /blog/family-law-disputes, /blog/future-corporate-law, /blog/test
+   Items (1):
+    - H1 -&gt; H3
+  </rule>
+  <rule id="content/keyword-stuffing" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/content/keyword-stuffing">
+   N word(s) may be overused
+   Pages (5/11): /, /about, /blog, /practice-areas, /team
+   Items (3):
+    - legal (&quot;legal&quot; (4.8%)) [count: 7, density: 4.794520547945205]
+    - details (&quot;details&quot; (4.1%)) [count: 6, density: 4.10958904109589]
+    - specialized (&quot;specialized&quot; (5.8%)) [count: 8, density: 5.755395683453238]
+  </rule>
+  <rule id="content/article-links" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/content/article-links">
+   short article has 0 external links (min 1)
+   Pages (5): /blog/cji-legacy, /blog/emergency-50, /blog/family-law-disputes, /blog/future-corporate-law, /blog/test
+   Items (5):
+    - /blog/test (short article has 0 external links (min 1))
+    - /blog/future-corporate-law (short article has 0 external links (min 1))
+    - /blog/family-law-disputes (short article has 0 external links (min 1))
+    - /blog/emergency-50 (short article has 0 external links (min 1))
+    - /blog/cji-legacy (short article has 0 external links (min 1))
+  </rule>
+  <rule id="content/word-count" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/content/word-count">
+   Thin content: N words (min N)
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (5/14):
+    - / (Thin content: 150 words (min 300))
+    - /about (Thin content: 142 words (min 300))
+    - /contact (Thin content: 109 words (min 300))
+    - /blog (Thin content: 129 words (min 300))
+    - /practice-areas (Thin content: 146 words (min 300))
+  </rule>
+ </category>
+ <category name="Structured Data" errors="5" warnings="0">
+  <rule id="schema/json-ld-valid" severity="warning" status="fail" docs="https://docs.squirrelscan.com/rules/schema/json-ld-valid">
+   Invalid JSON-LD syntax
+   Pages (5): /blog/cji-legacy, /blog/emergency-50, /blog/family-law-disputes, /blog/future-corporate-law, /blog/test
+   Items (4):
+    - parse-0 (Validation: Article.publisher.name is required)
+    - parse-1 (Validation: Article.publisher.logo is required)
+    - Article:publisher.name (Article missing publisher.name) [message: Validation: Article.publisher.name is required, severity: missing, path: [&quot;publisher&quot;,&quot;name&quot;]]
+    - Article:publisher.logo (Article missing publisher.logo) [message: Validation: Article.publisher.logo is required, severity: missing, path: [&quot;publisher&quot;,&quot;logo&quot;]]
+  </rule>
+ </category>
+ <category name="Images" errors="1" warnings="11">
+  <rule id="images/image-file-size" severity="error" status="warn" docs="https://docs.squirrelscan.com/rules/images/image-file-size">
+   1 image(s) exceed 200.0 KB
+   Items (1):
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest4.png&amp;w=3840&amp;q=75 [sizeBytes: 254356, size: 248.4 KB, status: 200, contentType: image/png] (from: /blog, /blog/family-law-disputes)
+  </rule>
+  <rule id="images/alt-text" severity="warning" status="fail" docs="https://docs.squirrelscan.com/rules/images/alt-text">
+   5 image(s) missing alt text
+   Pages (1): /blog
+   Items (5):
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest1.jpg&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest5.png&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest4.png&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest2.png&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest3.png&amp;w=3840&amp;q=75
+  </rule>
+  <rule id="images/offscreen-lazy" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/images/offscreen-lazy">
+   2 below-fold image(s) without lazy loading
+   Pages (1): /blog
+   Items (2):
+    - image
+    - image
+  </rule>
+  <rule id="images/dimensions" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/images/dimensions">
+   N image(s) missing width/height (causes CLS)
+   Pages (5/9): /, /about, /blog, /offices, /blog/cji-legacy
+   Items (5/13):
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1589829085413-56de8ae18c73%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75 | &lt;img src=&quot;http://localhost:3000/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1589829085413-56de8ae18c73%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75&quot; alt=&quot;Legal Excellence 2023&quot;&gt;
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1541339907198-e08756dedf3f%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75 | &lt;img src=&quot;http://localhost:3000/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1541339907198-e08756dedf3f%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75&quot; alt=&quot;Top 10 Chambers&quot;&gt;
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1521587760476-6c12a4b040da%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75 | &lt;img src=&quot;http://localhost:3000/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1521587760476-6c12a4b040da%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75&quot; alt=&quot;Best Corporate Firm&quot;&gt;
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1589829085413-56de8ae18c73%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75 | &lt;img src=&quot;http://localhost:3000/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1589829085413-56de8ae18c73%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75&quot; alt=&quot;Legal Excellence 2023&quot;&gt;
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1541339907198-e08756dedf3f%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75 | &lt;img src=&quot;http://localhost:3000/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1541339907198-e08756dedf3f%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75&quot; alt=&quot;Top 10 Chambers&quot;&gt;
+  </rule>
+ </category>
+ <category name="Performance" errors="11" warnings="99">
+  <rule id="perf/js-file-size" severity="error" status="fail" docs="https://docs.squirrelscan.com/rules/perf/js-file-size">
+   6 JS file(s) exceed 1.0 MB
+   Items (5/6):
+    - /_next/static/chunks/main-app.js?v=1779355568812 [sizeBytes: 7611951, size: 7.3 MB, status: 200, contentType: application/javascript; charset=UTF-8] (from: /)
+    - /_next/static/chunks/app/(frontend)/page.js [sizeBytes: 6163498, size: 5.9 MB, status: 200, contentType: application/javascript; charset=UTF-8] (from: /, /blog, /media, /offices, /team/jeet-bhatt)
+    - /_next/static/chunks/app/(frontend)/layout.js [sizeBytes: 1343172, size: 1.3 MB, status: 200, contentType: application/javascript; charset=UTF-8] (from: /, /about, /contact, /blog, /practice-areas; +9 more)
+    - /_next/static/chunks/main-app.js?v=1779355569515 [sizeBytes: 7611951, size: 7.3 MB, status: 200, contentType: application/javascript; charset=UTF-8] (from: /about)
+    - /_next/static/chunks/app/(frontend)/about/page.js [sizeBytes: 6035586, size: 5.8 MB, status: 200, contentType: application/javascript; charset=UTF-8] (from: /about)
+  </rule>
+  <rule id="perf/lcp-hints" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/perf/lcp-hints">
+   N potential LCP image(s) without preload
+   Pages (5/7): /about, /blog, /blog/cji-legacy, /blog/emergency-50, /blog/family-law-disputes
+   Items (5/6):
+    - /_next/image?url=%2Fimages%2Fabout-hero.png&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest1.jpg&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest5.png&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest4.png&amp;w=3840&amp;q=75
+    - /_next/image?url=%2Fapi%2Fmedia%2Ffile%2Ftest2.png&amp;w=3840&amp;q=75
+  </rule>
+  <rule id="perf/ttfb" severity="warning" status="fail" docs="https://docs.squirrelscan.com/rules/perf/ttfb">
+   Slow server response (770ms); Very slow server response (Nms)
+   Pages (5/10): /about, /blog, /contact, /media, /offices
+   Items (5/10):
+    - /about (Slow server response (770ms))
+    - /contact (Very slow server response (6111ms))
+    - /blog (Very slow server response (7876ms))
+    - /practice-areas (Very slow server response (3519ms))
+    - /media (Very slow server response (3550ms))
+  </rule>
+  <rule id="perf/css-file-size" severity="error" status="warn" docs="https://docs.squirrelscan.com/rules/perf/css-file-size">
+   14 CSS file(s) exceed 150.0 KB
+   Items (5/14):
+    - /_next/static/css/app/(frontend)/layout.css?v=1779355568812 [sizeBytes: 170741, size: 166.7 KB, status: 200, contentType: text/css; charset=UTF-8] (from: /)
+    - /_next/static/css/app/(frontend)/layout.css?v=1779355569515 [sizeBytes: 170741, size: 166.7 KB, status: 200, contentType: text/css; charset=UTF-8] (from: /about)
+    - /_next/static/css/app/(frontend)/layout.css?v=1779355574770 [sizeBytes: 170741, size: 166.7 KB, status: 200, contentType: text/css; charset=UTF-8] (from: /contact)
+    - /_next/static/css/app/(frontend)/layout.css?v=1779355575263 [sizeBytes: 170741, size: 166.7 KB, status: 200, contentType: text/css; charset=UTF-8] (from: /blog)
+    - /_next/static/css/app/(frontend)/layout.css?v=1779355581636 [sizeBytes: 170741, size: 166.7 KB, status: 200, contentType: text/css; charset=UTF-8] (from: /practice-areas)
+  </rule>
+  <rule id="perf/render-blocking" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/perf/render-blocking">
+   4 render-blocking resources
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (5/17):
+    - /_next/static/css/app/(frontend)/layout.css?v=1779355568812
+    - https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@300;400;500;600;700;800&amp;display=swap
+    - /theme-overrides.css
+    - /_next/static/chunks/polyfills.js
+    - /_next/static/css/app/(frontend)/layout.css?v=1779355569515
+  </rule>
+  <rule id="perf/total-byte-weight" severity="warning" status="fail" docs="https://docs.squirrelscan.com/rules/perf/total-byte-weight">
+   Total tracked resources: 39331KB (very heavy)
+  </rule>
+  <rule id="perf/critical-request-chains" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/perf/critical-request-chains">
+   4 critical request chain(s) found
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (5/17):
+    - CSS: /_next/static/css/app/(frontend)/layout.css?v=1779355568812
+    - CSS: https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@300;400;500;600;700;800&amp;display=swap
+    - CSS: /theme-overrides.css
+    - JS: /_next/static/chunks/polyfills.js
+    - CSS: /_next/static/css/app/(frontend)/layout.css?v=1779355569515
+  </rule>
+  <rule id="perf/duplicate-js" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/perf/duplicate-js">
+   1 library(s) loaded multiple times
+   Pages (4): /blog, /media, /offices, /team/jeet-bhatt
+   Items (1):
+    - page (2x)
+  </rule>
+  <rule id="perf/lazy-above-fold" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/perf/lazy-above-fold">
+   N above-fold image(s) with lazy loading
+   Pages (2): /, /offices
+   Items (4):
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1589829085413-56de8ae18c73%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1541339907198-e08756dedf3f%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1521587760476-6c12a4b040da%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D800&amp;w=3840&amp;q=75
+    - /_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1497366216548-37526070297c%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D1200&amp;w=3840&amp;q=75
+  </rule>
+  <rule id="perf/unminified-js" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/perf/unminified-js">
+   4 JavaScript file(s) appear unminified
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (4):
+    - app-pages-internals.js (245.3KB, ~241.4KB savings) [reason: 189 comments, long function names, excessive whitespace]
+    - layout.js (1311.7KB, ~1258.2KB savings) [reason: 2046 comments, long function names, excessive whitespace]
+    - webpack.js (139.7KB, ~101.3KB savings) [reason: high newlines (1.00%), 1532 comments, long function names]
+    - webpack.js (139.7KB, ~101.3KB savings) [reason: high newlines (1.00%), 1532 comments, long function names]
+  </rule>
+  <rule id="perf/http2" severity="info" status="warn" docs="https://docs.squirrelscan.com/rules/perf/http2">
+   HTTP/2 requires HTTPS
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (5/14):
+    - / (HTTP/2 requires HTTPS)
+    - /about (HTTP/2 requires HTTPS)
+    - /contact (HTTP/2 requires HTTPS)
+    - /blog (HTTP/2 requires HTTPS)
+    - /practice-areas (HTTP/2 requires HTTPS)
+  </rule>
+  <rule id="perf/source-maps" severity="info" status="warn" docs="https://docs.squirrelscan.com/rules/perf/source-maps">
+   41 potential source map(s) detected; 101 inline source map(s) found
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (5/13):
+    - /_next/static/chunks/bfcache.js.map/n/n/n;/n (from /_next/static/chunks/app-pages-internals.js)
+    - /_next/static/chunks/client-page.js.map/nvar (from /_next/static/chunks/app-pages-internals.js)
+    - /_next/static/chunks/client-segment.js.map/nvar (from /_next/static/chunks/app-pages-internals.js)
+    - /_next/static/chunks/layout-router.js.map/nvar (from /_next/static/chunks/app-pages-internals.js)
+    - /_next/static/chunks/async-metadata.js.map/nvar (from /_next/static/chunks/app-pages-internals.js)
+  </rule>
+ </category>
+ <category name="Social Media" errors="0" warnings="5">
+  <rule id="social/og-url-match" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/social/og-url-match">
+   og:url does not match canonical URL
+   Pages (5): /about, /contact, /offices, /practice-areas, /team
+  </rule>
+ </category>
+ <category name="Accessibility" errors="15" warnings="25">
+  <rule id="a11y/duplicate-id-aria" severity="error" status="fail" docs="https://docs.squirrelscan.com/rules/a11y/duplicate-id-aria">
+   N problematic ID(s) in ARIA attributes
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (5/7):
+    - &quot;radix-_R_14l9etb_&quot; (not found)
+    - &quot;_R_169matpetl9etb_-form-item-description&quot; (not found)
+    - &quot;_R_269matpetl9etb_-form-item-description&quot; (not found)
+    - &quot;_R_a9matpetl9etb_-form-item-description&quot; (not found)
+    - &quot;_R_e9matpetl9etb_-form-item-description&quot; (not found)
+  </rule>
+  <rule id="a11y/label-content-name-mismatch" severity="error" status="fail" docs="https://docs.squirrelscan.com/rules/a11y/label-content-name-mismatch">
+   1 element(s) where visible text doesn&apos;t match accessible name
+   Pages (1): /blog
+   Items (1):
+    - a: visible=&quot;explore journal&quot; vs aria-label=&quot;explore the latest j&quot;
+  </rule>
+  <rule id="a11y/color-contrast" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/a11y/color-contrast">
+   N potential color contrast issue(s)
+   Pages (5/14): /, /about, /blog, /contact, /media
+   Items (5/24):
+    - p with class &quot;text-muted-foreground font-san...&quot; may have low contrast
+    - p with class &quot;text-lg sm:text-xl lg:text-2xl...&quot; may have low contrast
+    - p with class &quot;text-muted-foreground text-lg ...&quot; may have low contrast
+    - div with class &quot;text-muted-foreground text-bas...&quot; may have low contrast
+    - h3 with class &quot;text-muted-foreground text-xs ...&quot; may have low contrast
+  </rule>
+  <rule id="a11y/focus-visible" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/a11y/focus-visible">
+   outline:none found - ensure alternative focus styles exist
+   Pages (1): /team/jeet-bhatt
+  </rule>
+  <rule id="a11y/heading-order" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/a11y/heading-order">
+   1 heading level skip(s) detected
+   Pages (5/9): /blog, /contact, /practice-areas, /team, /blog/cji-legacy
+   Items (2):
+    - H3 after H1
+    - H4 after H2
+  </rule>
+  <rule id="a11y/link-text" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/a11y/link-text">
+   4 link(s) with generic text
+   Pages (1): /
+   Items (1):
+    - learn more
+  </rule>
+ </category>
+ <category name="E-E-A-T" errors="0" warnings="2">
+  <rule id="eeat/author-byline" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/eeat/author-byline">
+   No content pages have author attribution
+  </rule>
+  <rule id="eeat/content-dates" severity="warning" status="warn" docs="https://docs.squirrelscan.com/rules/eeat/content-dates">
+   No content pages have datePublished
+  </rule>
+ </category>
+</issues>
+</audit>

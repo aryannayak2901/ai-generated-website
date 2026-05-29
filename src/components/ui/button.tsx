@@ -11,13 +11,13 @@ const buttonVariants = cva(
       variant: {
         // Primary - Teal CTA Button (NEW)
         primary:
-          "bg-teal-primary text-white hover:bg-teal-light active:scale-95 hover:shadow-lg focus-visible:ring-teal-primary/20",
+          "bg-accent text-accent-foreground hover:bg-accent/85 active:scale-95 hover:shadow-lg focus-visible:ring-accent/20",
         // Secondary - Teal Outlined (NEW)
         secondary:
-          "border border-teal-primary text-teal-primary hover:bg-slate-light active:scale-95 focus-visible:ring-teal-primary/20",
+          "border border-accent text-accent hover:bg-accent/10 active:scale-95 focus-visible:ring-accent/20",
         // Ghost - Text Only (NEW)
         ghost:
-          "text-slate-primary hover:text-teal-primary hover:underline active:scale-95",
+          "text-foreground hover:text-accent hover:underline active:scale-95",
         // Legacy variants (preserved)
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:

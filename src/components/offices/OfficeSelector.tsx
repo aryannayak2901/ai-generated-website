@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { OfficeCard } from "./OfficeCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import type { Media } from "@/payload-types";
 
 const OFFICES = [
@@ -89,59 +88,86 @@ export const OfficeSelector = ({
   const selectedOffice = activeOffices.find((o) => o.id === activeTabId);
 
   return (
-    <section className="py-16 md:py-24 px-6 bg-gray-light relative overflow-hidden">
-      <div className="max-w-[1280px] mx-auto relative z-10">
+    <section className="py-24 md:py-32 px-6 bg-secondary relative overflow-hidden">
+      {/* Premium background mesh overlay */}
+      <div className="absolute inset-0 opacity-[0.015] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+      
+      {/* Exquisite warm amber/gold ambient leak */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-accent/5 rounded-full blur-[130px] pointer-events-none" />
+
+      <div className="max-w-[1300px] mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-primary mb-4">
-            {title || "Our Offices"}
+        <div className="text-center mb-16 md:mb-24">
+          <div className="flex justify-center items-center gap-2 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            <span className="text-[10px] font-bold text-accent tracking-[0.35em] uppercase font-sans">
+              Exclusive Jurisdictions
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+          </div>
+          
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
+            {title || "Select Your Jurisdiction"}
           </h2>
-          <div className="w-24 h-0.5 bg-teal-primary/50 mx-auto mb-6" />
-          <p className="text-lg text-slate-secondary max-w-2xl mx-auto leading-relaxed font-sans">
-            {subtitle || "Visit us at our conveniently located offices across Gujarat."}
+          
+          <div className="w-20 h-[1px] bg-accent/40 mx-auto mb-6" />
+          
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans font-light">
+            {subtitle || "Initiate contact with our respective chambers for specialized professional counsel tailored to your location."}
           </p>
         </div>
 
-        {/* Office Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {activeOffices.map((office) => (
-            <Button
-              key={office.id}
-              variant={activeTabId === office.id ? "default" : "outline"}
-              onClick={() => setSelectedTabId(office.id)}
-              className={
-                activeTabId === office.id
-                  ? "bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase text-xs"
-                  : "border-slate-200 text-slate-primary hover:border-teal-primary/30 hover:text-teal-primary font-semibold tracking-wider uppercase text-xs"
-              }
-            >
-              {office.label}
-            </Button>
-          ))}
+        {/* Office Navigation Tabs - Luxurious Segment Bar */}
+        <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-1.5 mb-16 max-w-md mx-auto p-1.5 bg-background/60 dark:bg-card/60 backdrop-blur-xl rounded-xl border border-border/40 shadow-[0_10px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.15)]">
+          {activeOffices.map((office) => {
+            const isActive = activeTabId === office.id;
+            return (
+              <button
+                key={office.id}
+                onClick={() => setSelectedTabId(office.id)}
+                className={`relative flex-1 py-3 px-6 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? "text-[#0f1729] dark:text-[#0f1729]" // strictly dark navy text for AA gold background contrast
+                    : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeOfficeTab"
+                    className="absolute inset-0 bg-accent rounded-lg shadow-[0_4px_15px_rgba(212,175,55,0.25)] -z-10"
+                    transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                  />
+                )}
+                {office.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Office Card with Animation */}
-        <AnimatePresence mode="wait">
-          {selectedOffice && (
-            <motion.div
-              key={selectedOffice.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <OfficeCard
-                name={selectedOffice.name}
-                address={selectedOffice.address}
-                phone={selectedOffice.phone}
-                email={selectedOffice.email}
-                hours={selectedOffice.hours}
-                mapUrl={selectedOffice.mapUrl}
-                imageUrl={selectedOffice.imageUrl}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Office Card with custom smooth content entrance */}
+        <div className="min-h-[500px]">
+          <AnimatePresence mode="wait">
+            {selectedOffice && (
+              <motion.div
+                key={selectedOffice.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <OfficeCard
+                  name={selectedOffice.name}
+                  address={selectedOffice.address}
+                  phone={selectedOffice.phone}
+                  email={selectedOffice.email}
+                  hours={selectedOffice.hours}
+                  mapUrl={selectedOffice.mapUrl}
+                  imageUrl={selectedOffice.imageUrl}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );

@@ -11,6 +11,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import { trackEvent } from "@/components/GoogleAnalyticsTracker";
+
 export function DisclaimerModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -30,6 +32,9 @@ export function DisclaimerModal() {
 
   const handleAccept = () => {
     localStorage.setItem("chambers_bhatt_disclaimer_accepted", "true");
+    trackEvent("disclaimer_accepted", {
+      accepted_at: new Date().toISOString(),
+    });
     setIsOpen(false);
   };
 
@@ -39,12 +44,12 @@ export function DisclaimerModal() {
 
   return (
     <AlertDialog open={isOpen}>
-      <AlertDialogContent className="max-w-xl mx-auto rounded-md shadow-2xl p-8 border border-slate-200 bg-white">
+      <AlertDialogContent className="max-w-xl mx-auto rounded-md shadow-2xl p-8 border border-border bg-card">
         <AlertDialogHeader className="mb-4 space-y-3">
-          <AlertDialogTitle className="text-2xl font-bold text-slate-primary tracking-tight font-serif">
+          <AlertDialogTitle className="text-2xl font-bold text-foreground tracking-tight font-serif">
             Important Legal Disclaimer
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-slate-secondary leading-relaxed text-base">
+          <AlertDialogDescription className="text-muted-foreground leading-relaxed text-base">
             As per the rules of the Bar Council of India, we are not permitted
             to solicit work and advertise. By clicking &quot;I Agree&quot;, the
             user acknowledges there has been no advertisement, personal
@@ -56,7 +61,7 @@ export function DisclaimerModal() {
         <AlertDialogFooter className="mt-6">
           <AlertDialogAction
             onClick={handleAccept}
-            className="w-full sm:w-auto bg-teal-primary text-white hover:bg-teal-light transition-all duration-300 font-semibold tracking-wide rounded-sm px-8 py-2.5 shadow-sm"
+            className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/85 transition-all duration-300 font-semibold tracking-wide rounded-sm px-8 py-2.5 shadow-sm"
           >
             I Agree
           </AlertDialogAction>

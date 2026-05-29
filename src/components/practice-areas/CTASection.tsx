@@ -26,13 +26,13 @@ export function CTASection({
 }: CTASectionProps) {
   return (
     <section
-      className={`relative py-16 md:py-24 px-6 bg-charcoal-primary overflow-hidden w-full ${className || ""}`}
+      className={`relative py-16 md:py-24 px-6 bg-primary overflow-hidden w-full ${className || ""}`}
     >
       {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-charcoal-primary via-charcoal-primary to-slate-dark" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
 
       {/* Decorative element */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-teal-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ export function CTASection({
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="max-w-[1280px] mx-auto text-center relative z-10"
       >
-        <span className="text-teal-primary font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
+        <span className="text-accent font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
           {badge || "Take the next step"}
         </span>
 
@@ -51,14 +51,14 @@ export function CTASection({
           ) : (
             <>
               Ready to Discuss Your <br className="hidden md:block" />
-              <span className="text-teal-primary italic font-medium">
+              <span className="text-accent italic font-medium">
                 Legal Strategy?
               </span>
             </>
           )}
         </h2>
 
-        <p className="text-lg md:text-xl text-slate-secondary max-w-2xl mb-10 mx-auto font-sans leading-relaxed">
+        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 mx-auto font-sans leading-relaxed">
           {subtitle ||
             "Our experienced attorneys are ready to help you navigate your legal challenges. Contact us today for a strategic consultation focused on your success."}
         </p>
@@ -67,7 +67,7 @@ export function CTASection({
           <Button
             asChild
             size="lg"
-            className="bg-teal-primary hover:bg-teal-light text-white font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            className="bg-accent hover:bg-accent/85 text-accent-foreground font-semibold tracking-wider uppercase rounded-sm h-12 sm:h-14 px-8 sm:px-10 text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
           >
             <Link href={ctaLink || "/contact"}>
               {ctaText || "Get In Touch"}

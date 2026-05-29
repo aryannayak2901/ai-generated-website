@@ -1,0 +1,148 @@
+
+/* ==========================================
+   Chambers Unified Theme - Payload 3.x Overrides
+   ========================================== */
+
+:root, html {
+  /* Direct Variable Mapping to Native Payload CMS 3.x Properties */
+  --theme-bg: var(--admin-bg);
+  --theme-text: var(--admin-fg);
+  --theme-border-color: var(--admin-border);
+  --theme-input-border: var(--admin-border);
+  --theme-radius: var(--admin-radius);
+
+  /* Primary Accent & Brand Mapping */
+  --theme-color-primary-50: var(--admin-secondary);
+  --theme-color-primary-100: var(--admin-secondary);
+  --theme-color-primary-200: var(--admin-accent);
+  --theme-color-primary-300: var(--admin-primary);
+  --theme-color-primary-400: var(--admin-primary);
+  --theme-color-primary-500: var(--admin-primary);
+  --theme-color-primary-600: var(--admin-primary);
+  --theme-color-primary-700: var(--admin-primary);
+  --theme-color-primary-800: var(--admin-primary);
+  --theme-color-primary-900: var(--admin-primary);
+  --theme-color-primary-950: var(--admin-primary);
+
+  /* Elevation Surfaces Mapping */
+  --theme-elevation-0: var(--admin-bg);
+  --theme-elevation-50: var(--admin-secondary);
+  --theme-elevation-100: var(--admin-surface);
+  --theme-elevation-150: var(--admin-surface);
+  --theme-elevation-200: var(--admin-surface);
+  --theme-elevation-300: var(--admin-surface);
+  --theme-elevation-400: var(--admin-surface);
+  --theme-elevation-500: var(--admin-surface);
+  --theme-elevation-600: var(--admin-surface);
+  --theme-elevation-700: var(--admin-surface);
+  --theme-elevation-800: var(--admin-surface);
+  --theme-elevation-850: var(--admin-surface);
+  --theme-elevation-900: var(--admin-surface);
+  --theme-elevation-950: var(--admin-surface);
+
+  /* Custom Professional Typography Setup */
+  --theme-font-body: 'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --theme-font-header: 'Playfair Display', Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+/* Elegant visual micro-interactions and refinements */
+.payload-admin {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Nav Wrapper (Sidebar) Style Polish */
+.payload-admin .nav-wrapper {
+  background-color: var(--admin-secondary);
+  border-right: 1px solid var(--admin-border);
+}
+
+.payload-admin .nav-wrapper a, 
+.payload-admin .nav-wrapper button {
+  border-radius: var(--admin-radius);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.payload-admin .nav-wrapper a:hover, 
+.payload-admin .nav-wrapper button:hover {
+  background-color: rgba(13, 148, 136, 0.05); /* very soft teal tint */
+  color: var(--theme-color-primary-500);
+}
+
+/* Buttons visual polish */
+.payload-admin button, 
+.payload-admin [role="button"] {
+  border-radius: var(--admin-radius);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.payload-admin button.btn--style-primary:hover,
+.payload-admin [role="button"].btn--style-primary:hover {
+  filter: brightness(1.1) contrast(1.05);
+}
+
+/* Input styles focus ring */
+.payload-admin input:focus, 
+.payload-admin textarea:focus, 
+.payload-admin select:focus {
+  border-color: var(--admin-primary) !important;
+  box-shadow: 0 0 0 2px rgba(15, 23, 41, 0.08) !important;
+}
+
+html[data-theme="dark"] .payload-admin input:focus,
+html[data-theme="dark"] .payload-admin textarea:focus,
+html[data-theme="dark"] .payload-admin select:focus {
+  box-shadow: 0 0 0 2px rgba(30, 41, 59, 0.3) !important;
+}
+
+/* Custom premium scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--admin-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--admin-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-muted);
+}
+
+:root, html[data-theme="light"] {
+  /* Admin Theme - Light Mode (from Payload ThemeSettings) */
+  --admin-bg: #f8fafc;
+  --admin-fg: #0f1729;
+  --admin-primary: #0f1729;
+  --admin-primary-fg: #ffffff;
+  --admin-secondary: #f8fafc;
+  --admin-secondary-fg: #0f1729;
+  --admin-surface: #f8fafc;
+  --admin-surface-fg: #0f1729;
+  --admin-accent: #d4af37;
+  --admin-accent-fg: #ffffff;
+  --admin-border: #e2e8f0;
+  --admin-muted: #64748b;
+  --admin-radius: 0.25rem;
+}
+
+html[data-theme="dark"] {
+  /* Admin Theme - Dark Mode (from Payload ThemeSettings) */
+  --admin-bg: #f8fafc;
+  --admin-fg: #0f1729;
+  --admin-primary: #0f1729;
+  --admin-primary-fg: #ffffff;
+  --admin-secondary: #f8fafc;
+  --admin-secondary-fg: #0f1729;
+  --admin-surface: #f8fafc;
+  --admin-surface-fg: #0f1729;
+  --admin-accent: #d4af37;
+  --admin-accent-fg: #ffffff;
+  --admin-border: #e2e8f0;
+  --admin-muted: #64748b;
+  --admin-radius: 0.25rem;
+}
