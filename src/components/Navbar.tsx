@@ -77,51 +77,6 @@ export function Navbar({ headerData }: NavbarProps) {
       ? headerData.logo.alt
       : "Chambers of Jeet Bhatt Logo";
 
-  // Common Logo Component
-  const LogoBranding = ({ isMinimalMode = false }) => {
-    if (isMinimalMode) {
-      return (
-        <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <span className="font-serif text-xl sm:text-2xl font-black text-foreground tracking-widest uppercase hover:text-accent transition-colors duration-300">
-            CJB
-          </span>
-          <span className="h-5 w-0.5 bg-accent/50 hidden sm:block"></span>
-          <span className="text-[10px] tracking-widest text-muted-foreground uppercase hidden sm:block font-bold">
-            Advocacy
-          </span>
-        </Link>
-      );
-    }
-
-    return (
-      <Link href="/" className="flex items-center gap-3 group shrink-0">
-        {logoUrl ? (
-          <div className="flex items-center justify-center p-0.5 rounded-sm shrink-0 w-10 h-10 shadow-xl transition-all duration-300 group-hover:scale-105 overflow-hidden">
-            <img
-              src={logoUrl}
-              alt={logoAlt}
-              className="w-full h-full object-contain"
-            />
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center bg-white/10 p-2 rounded-sm shrink-0 w-10 h-10 shadow-xl transition-all duration-300 group-hover:scale-105">
-            <span className="text-white font-serif font-bold text-sm leading-none">
-              JJB
-            </span>
-          </div>
-        )}
-        <div className="flex flex-col justify-center overflow-hidden text-left">
-          <span className="font-serif text-base sm:text-lg lg:text-xl font-bold text-white leading-tight group-hover:text-accent transition-colors duration-300 whitespace-nowrap">
-            Chambers of Jeet Bhatt
-          </span>
-          <p className="text-muted-foreground font-sans text-[9px] sm:text-[10px] tracking-[0.15em] uppercase font-semibold mt-0.5 whitespace-nowrap hidden sm:block">
-            Advocates & Legal Strategists
-          </p>
-        </div>
-      </Link>
-    );
-  };
-
   // RENDER: GLASSMORPHIC FLOAT
   if (headerStyle === "glassmorphic") {
     return (
@@ -134,7 +89,7 @@ export function Navbar({ headerData }: NavbarProps) {
           }`}
         >
           <div className="flex flex-row items-center justify-between gap-4">
-            <LogoBranding />
+            <LogoBranding logoUrl={logoUrl} logoAlt={logoAlt} />
             
             <nav className="hidden lg:flex items-center gap-x-8">
               {navLinks.map((link) => (
@@ -225,7 +180,7 @@ export function Navbar({ headerData }: NavbarProps) {
         <div className="max-w-[1280px] w-full mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo Initials only for Minimal style */}
-            <LogoBranding isMinimalMode={true} />
+            <LogoBranding isMinimalMode={true} logoUrl={logoUrl} logoAlt={logoAlt} />
 
             {/* Right Side Controls */}
             <div className="flex items-center gap-8">
@@ -256,7 +211,7 @@ export function Navbar({ headerData }: NavbarProps) {
       <div className="w-full bg-primary border-b border-accent/10 backdrop-blur-xl shadow-sm">
         <div className="max-w-[1280px] w-full mx-auto px-6 md:px-8 lg:px-12 py-4">
           <div className="flex flex-row items-center justify-between gap-4">
-            <LogoBranding />
+            <LogoBranding logoUrl={logoUrl} logoAlt={logoAlt} />
 
             <nav className="hidden lg:flex items-center gap-x-8">
               {navLinks.map((link) => (
@@ -365,4 +320,56 @@ function MobileMenuTrigger({ isOpen, setIsOpen, navLinks, logoUrl, logoAlt, show
     </Sheet>
   );
 }
+
+// Outer Standalone Logo Branding Component
+interface LogoBrandingProps {
+  isMinimalMode?: boolean;
+  logoUrl: string | null;
+  logoAlt: string;
+}
+
+function LogoBranding({ isMinimalMode = false, logoUrl, logoAlt }: LogoBrandingProps) {
+  if (isMinimalMode) {
+    return (
+      <Link href="/" className="flex items-center gap-2 group shrink-0">
+        <span className="font-serif text-xl sm:text-2xl font-black text-foreground tracking-widest uppercase hover:text-accent transition-colors duration-300">
+          CJB
+        </span>
+        <span className="h-5 w-0.5 bg-accent/50 hidden sm:block"></span>
+        <span className="text-[10px] tracking-widest text-muted-foreground uppercase hidden sm:block font-bold">
+          Advocacy
+        </span>
+      </Link>
+    );
+  }
+
+  return (
+    <Link href="/" className="flex items-center gap-3 group shrink-0">
+      {logoUrl ? (
+        <div className="flex items-center justify-center p-0.5 rounded-sm shrink-0 w-10 h-10 shadow-xl transition-all duration-300 group-hover:scale-105 overflow-hidden">
+          <img
+            src={logoUrl}
+            alt={logoAlt}
+            className="w-full h-full object-contain"
+          />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center bg-white/10 p-2 rounded-sm shrink-0 w-10 h-10 shadow-xl transition-all duration-300 group-hover:scale-105">
+          <span className="text-white font-serif font-bold text-sm leading-none">
+            JJB
+          </span>
+        </div>
+      )}
+      <div className="flex flex-col justify-center overflow-hidden text-left">
+        <span className="font-serif text-base sm:text-lg lg:text-xl font-bold text-white leading-tight group-hover:text-accent transition-colors duration-300 whitespace-nowrap">
+          Chambers of Jeet Bhatt
+        </span>
+        <p className="text-muted-foreground font-sans text-[9px] sm:text-[10px] tracking-[0.15em] uppercase font-semibold mt-0.5 whitespace-nowrap hidden sm:block">
+          Advocates & Legal Strategists
+        </p>
+      </div>
+    </Link>
+  );
+}
+
 

@@ -31,7 +31,6 @@ export const HeaderPreview: React.FC = () => {
   const sticky = formData.sticky !== false; // default to true if undefined
   const showCTA = formData.showCTA !== false; // default to true if undefined
   const ctaLabel = formData.ctaLabel || "Get In Touch";
-  const ctaLink = formData.ctaLink || "/contact";
   
   // Resolve dynamic logo object (could be an ID string, an object populated, or undefined)
   const logoUrl = typeof formData.logo === "object" && formData.logo?.url 
@@ -571,7 +570,7 @@ export const HeaderPreview: React.FC = () => {
                 <span style={{ fontSize: "28px", display: "block", marginBottom: "12px" }}>⚖️</span>
                 <h3 style={{ fontFamily: "Playfair Display, serif", color: "#ffffff", fontSize: "16px", marginBottom: "6px" }}>Chambers of Jeet Bhatt</h3>
                 <p style={{ fontSize: "11px", lineHeight: "1.6" }}>
-                  Select "Desktop" or toggle menu button on the top right to simulate user interaction in mobile drawer mode.
+                  Select &quot;Desktop&quot; or toggle menu button on the top right to simulate user interaction in mobile drawer mode.
                 </p>
               </div>
             </div>
