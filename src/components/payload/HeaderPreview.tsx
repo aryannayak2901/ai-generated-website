@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useForm } from "@payloadcms/ui";
-import { Laptop, Smartphone, Menu, ArrowRight, Eye, Check } from "lucide-react";
+import { Laptop, Smartphone, Menu, ArrowRight, Eye, Check, ChevronDown } from "lucide-react";
 
 // Default navigation links to display when no navItems are set
 const defaultNavLinks = [
@@ -17,6 +17,7 @@ export const HeaderPreview: React.FC = () => {
   const form = useForm();
   const [viewport, setViewport] = useState<"desktop" | "mobile">("desktop");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileExpandedItem, setMobileExpandedItem] = useState<string | null>(null);
 
   // Fetch live form state from Payload CMS UI Form Context
   const formData = useMemo(() => {
@@ -743,22 +744,46 @@ export const HeaderPreview: React.FC = () => {
                 </div>
 
                 {mobileDrawerNavItems.map((item: any, i: number) => (
-                  <div 
-                    key={i} 
-                    style={{ 
-                      fontSize: "14px", 
-                      fontFamily: "Playfair Display, serif", 
-                      color: "rgba(255, 255, 255, 0.9)",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "4px 0",
-                      cursor: "pointer",
-                      borderBottom: "1px solid rgba(255, 255, 255, 0.03)"
-                    }}
-                  >
-                    <span>{item.label}</span>
-                    <ArrowRight size={12} style={{ color: "#d4af37" }} />
+                  <div key={i} style={{ display: "flex", flexDirection: "column" }}>
+                    <div 
+                      onClick={() => {
+                        if (headerStyle === "mega" && item.dropdownColumns?.length > 0) {
+                          setMobileExpandedItem(mobileExpandedItem === item.label ? null : item.label);
+                        }
+                      }}
+                      style={{ 
+                        fontSize: "14px", 
+                        fontFamily: "Playfair Display, serif", 
+                        color: "rgba(255, 255, 255, 0.9)",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "8px 0",
+                        cursor: "pointer",
+                        borderBottom: "1px solid rgba(255, 255, 255, 0.03)"
+                      }}
+                    >
+                      <span>{item.label}</span>
+                      {headerStyle === "mega" && item.dropdownColumns?.length > 0 ? (
+                        <ChevronDown size={12} style={{ color: "#d4af37", transform: mobileExpandedItem === item.label ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }} />
+                      ) : (
+                        <ArrowRight size={12} style={{ color: "#d4af37" }} />
+                      )}
+                    </div>
+                    {headerStyle === "mega" && mobileExpandedItem === item.label && item.dropdownColumns?.length > 0 && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "16px", paddingLeft: "16px", borderLeft: "1px solid rgba(212, 175, 55, 0.2)", marginTop: "8px", marginBottom: "8px" }}>
+                        {item.dropdownColumns.map((col: any, cIdx: number) => (
+                          <div key={cIdx} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            {col.columnTitle && (
+                              <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#d4af37", fontWeight: "bold" }}>{col.columnTitle}</span>
+                            )}
+                            {col.subLinks?.map((sub: any, sIdx: number) => (
+                              <span key={sIdx} style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{sub.label}</span>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
 

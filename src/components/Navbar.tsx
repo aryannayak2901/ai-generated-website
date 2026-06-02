@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Mail, MapPin, Menu, X } from "lucide-react";
+import { Phone, Mail, MapPin, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -604,7 +604,8 @@ export function Navbar({ headerData }: NavbarProps) {
             <MobileMenuTrigger
               isOpen={isOpen}
               setIsOpen={setIsOpen}
-              navLinks={megaNavItems.map((item) => ({ title: item.label, href: item.link }))}
+              navLinks={navLinks}
+              megaNavItems={megaNavItems}
               logoUrl={logoUrl}
               logoAlt={logoAlt}
               showCTA={showCTA}
@@ -682,6 +683,14 @@ interface MobileMenuTriggerProps {
   ctaLink: string;
   isMinimal?: boolean;
   side?: "left" | "right";
+  megaNavItems?: {
+    label: string;
+    link: string;
+    dropdownColumns?: {
+      columnTitle?: string | null;
+      subLinks?: { label: string; link: string }[] | null;
+    }[] | null;
+  }[] | null;
 }
 
 function MobileMenuTrigger({
@@ -695,7 +704,14 @@ function MobileMenuTrigger({
   ctaLink,
   isMinimal,
   side,
+  megaNavItems,
 }: MobileMenuTriggerProps) {
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+
+  const toggleExpand = (label: string) => {
+    setExpandedItem((prev) => (prev === label ? null : label));
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -746,16 +762,75 @@ function MobileMenuTrigger({
 
         <div className="flex-1 overflow-y-auto px-8 py-10">
           <nav className="flex flex-col space-y-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.title}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={`text-xl font-serif font-bold ${isMinimal ? "text-foreground/80 hover:text-accent" : "text-white/80 hover:text-accent"} transition-colors`}
-              >
-                {link.title}
-              </Link>
-            ))}
+            {megaNavItems && megaNavItems.length > 0 ? (
+              megaNavItems.map((item) => (
+                <div key={item.label} className="flex flex-col space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      href={item.link}
+                      onClick={() => setIsOpen(false)}
+                      className={`text-xl font-serif font-bold ${isMinimal ? "text-foreground/80 hover:text-accent" : "text-white/80 hover:text-accent"} transition-colors`}
+                    >
+                      {item.label}
+                    </Link>
+                    {item.dropdownColumns && item.dropdownColumns.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => toggleExpand(item.label)}
+                        className="p-1 text-white/50 hover:text-accent transition-colors"
+                      >
+                        <ChevronDown
+                          className={`h-5 w-5 transition-transform duration-300 ${expandedItem === item.label ? "rotate-180 text-accent" : ""}`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  <AnimatePresence>
+                    {expandedItem === item.label && item.dropdownColumns && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden flex flex-col gap-6 pl-4 border-l border-accent/20 mt-2"
+                      >
+                        {item.dropdownColumns.map((col, cIdx) => (
+                          <div key={cIdx} className="flex flex-col space-y-3">
+                            {col.columnTitle && (
+                              <h4 className="text-[10px] uppercase tracking-widest text-accent font-bold">
+                                {col.columnTitle}
+                              </h4>
+                            )}
+                            <div className="flex flex-col space-y-3">
+                              {col.subLinks?.map((subLink, sIdx) => (
+                                <Link
+                                  key={sIdx}
+                                  href={subLink.link}
+                                  onClick={() => setIsOpen(false)}
+                                  className={`text-sm font-medium ${isMinimal ? "text-foreground/60 hover:text-accent" : "text-white/60 hover:text-white"} transition-colors`}
+                                >
+                                  {subLink.label}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))
+            ) : (
+              navLinks.map((link) => (
+                <Link
+                  key={link.title}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-serif font-bold ${isMinimal ? "text-foreground/80 hover:text-accent" : "text-white/80 hover:text-accent"} transition-colors`}
+                >
+                  {link.title}
+                </Link>
+              ))
+            )}
           </nav>
         </div>
 
