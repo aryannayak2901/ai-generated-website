@@ -365,61 +365,79 @@ export const HeaderPreview: React.FC = () => {
 
               {/* LAYOUT 3: GLASSMORPHIC FLOAT (Contemporary, Floating Capsule, Soft Shadows) */}
               {headerStyle === "glassmorphic" && (
-                <div 
-                  style={{ 
-                    padding: "24px 32px", 
-                    background: "radial-gradient(circle, #0e1424 0%, #070a13 100%)",
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
-                  <div 
-                    style={{ 
-                      display: "flex", 
-                      justifyContent: "space-between", 
-                      alignItems: "center", 
-                      padding: "10px 24px", 
-                      background: "rgba(15, 23, 41, 0.8)", 
-                      backdropFilter: "blur(16px)", 
-                      WebkitBackdropFilter: "blur(16px)", 
-                      border: "1px solid rgba(212, 175, 55, 0.25)", 
-                      borderRadius: "50px", 
-                      width: "100%",
-                      maxWidth: "1100px",
-                      boxShadow: "0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05)"
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-                      <span style={{ color: "#d4af37", fontSize: "14px" }}>⚖️</span>
-                      <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "12px", letterSpacing: "0.05em", color: "#ffffff" }}>JEET BHATT</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "24px", padding: "24px 16px", background: "radial-gradient(circle, #0e1424 0%, #070a13 100%)", width: "100%" }}>
+                  {/* State 1: At Page Top */}
+                  <div>
+                    <div style={{ fontSize: "10px", color: "#d4af37", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px", paddingLeft: "8px" }}>
+                      State 1: At Page Top (Full-width, flat)
                     </div>
-
-                    <div style={{ display: "flex", gap: "20px", fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)" }}>
-                      {navItems.map((item: any, i: number) => (
-                        <span key={i} style={{ cursor: "pointer" }}>{item.label}</span>
-                      ))}
+                    <div 
+                      style={{ 
+                        display: "flex", 
+                        justifyContent: "space-between", 
+                        alignItems: "center", 
+                        padding: "14px 24px", 
+                        background: "rgba(15, 23, 41, 0.85)", 
+                        backdropFilter: "blur(12px)", 
+                        WebkitBackdropFilter: "blur(12px)", 
+                        borderBottom: "1px solid rgba(212, 175, 55, 0.15)",
+                        width: "100%"
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                        <span style={{ color: "#d4af37", fontSize: "14px" }}>⚖️</span>
+                        <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "12px", letterSpacing: "0.05em", color: "#ffffff" }}>JEET BHATT</span>
+                      </div>
+                      <div style={{ display: "flex", gap: "20px", fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)" }}>
+                        {navItems.map((item: any, i: number) => (
+                          <span key={i} style={{ cursor: "pointer" }}>{item.label}</span>
+                        ))}
+                      </div>
+                      {showCTA && (
+                        <div style={{ background: "#d4af37", color: "#0f1729", padding: "6px 16px", fontSize: "10px", fontWeight: "700", borderRadius: "20px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                          {ctaLabel}
+                        </div>
+                      )}
                     </div>
+                  </div>
 
-                    {showCTA ? (
+                  {/* State 2: On Scroll */}
+                  <div>
+                    <div style={{ fontSize: "10px", color: "#d4af37", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px", paddingLeft: "24px" }}>
+                      State 2: On Scroll (Rounded floating pill)
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "center", padding: "0 16px" }}>
                       <div 
                         style={{ 
-                          background: "#d4af37",
-                          color: "#0f1729", 
-                          padding: "6px 16px", 
-                          fontSize: "10px", 
-                          fontWeight: "700", 
-                          borderRadius: "20px",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.05em",
-                          cursor: "pointer",
-                          boxShadow: "0 4px 12px rgba(212, 175, 55, 0.25)"
+                          display: "flex", 
+                          justifyContent: "space-between", 
+                          alignItems: "center", 
+                          padding: "10px 24px", 
+                          background: "rgba(15, 23, 41, 0.9)", 
+                          backdropFilter: "blur(16px)", 
+                          WebkitBackdropFilter: "blur(16px)", 
+                          border: "1px solid rgba(212, 175, 55, 0.25)", 
+                          borderRadius: "50px", 
+                          width: "100%",
+                          boxShadow: "0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05)"
                         }}
                       >
-                        {ctaLabel}
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                          <span style={{ color: "#d4af37", fontSize: "14px" }}>⚖️</span>
+                          <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "12px", letterSpacing: "0.05em", color: "#ffffff" }}>JEET BHATT</span>
+                        </div>
+                        <div style={{ display: "flex", gap: "20px", fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)" }}>
+                          {navItems.map((item: any, i: number) => (
+                            <span key={i} style={{ cursor: "pointer" }}>{item.label}</span>
+                          ))}
+                        </div>
+                        {showCTA && (
+                          <div style={{ background: "#d4af37", color: "#0f1729", padding: "6px 16px", fontSize: "10px", fontWeight: "700", borderRadius: "20px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                            {ctaLabel}
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div style={{ width: "20px" }} />
-                    )}
+                    </div>
                   </div>
                 </div>
               )}

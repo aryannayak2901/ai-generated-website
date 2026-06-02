@@ -80,12 +80,12 @@ export function Navbar({ headerData }: NavbarProps) {
   // RENDER: GLASSMORPHIC FLOAT
   if (headerStyle === "glassmorphic") {
     return (
-      <header className={`${isSticky ? "sticky top-0 z-40" : "relative"} w-full px-6 transition-all duration-300 ${scrolled ? "py-2" : "py-4"}`}>
+      <header className={`${isSticky ? "sticky top-0 z-40" : "relative"} w-full transition-all duration-300 ${scrolled ? "px-6 py-2" : "px-0 py-0"}`}>
         <div 
-          className={`max-w-[1280px] w-full mx-auto px-6 md:px-8 py-3 rounded-full border transition-all duration-300 ${
+          className={`w-full transition-all duration-500 ease-out ${
             scrolled 
-              ? "bg-primary/95 backdrop-blur-xl border-accent/20 shadow-2xl" 
-              : "bg-primary/50 backdrop-blur-md border-white/5 shadow-lg"
+              ? "max-w-[1280px] mx-auto px-6 md:px-8 py-3 rounded-full border bg-primary/95 backdrop-blur-xl border-accent/20 shadow-2xl" 
+              : "bg-primary/85 backdrop-blur-md border-b border-accent/15 rounded-none px-6 md:px-8 py-4"
           }`}
         >
           <div className="flex flex-row items-center justify-between gap-4">
@@ -112,7 +112,9 @@ export function Navbar({ headerData }: NavbarProps) {
               )}
               
               {/* Mobile Trigger */}
-              <MobileMenuTrigger isOpen={isOpen} setIsOpen={setIsOpen} navLinks={navLinks} logoUrl={logoUrl} logoAlt={logoAlt} showCTA={showCTA} ctaLabel={ctaLabel} ctaLink={ctaLink} />
+              <div className="lg:hidden flex items-center">
+                <MobileMenuTrigger isOpen={isOpen} setIsOpen={setIsOpen} navLinks={navLinks} logoUrl={logoUrl} logoAlt={logoAlt} showCTA={showCTA} ctaLabel={ctaLabel} ctaLink={ctaLink} />
+              </div>
             </div>
           </div>
         </div>
