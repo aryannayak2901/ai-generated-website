@@ -45,6 +45,30 @@ export const HeaderPreview: React.FC = () => {
     ? formData.navItems
     : defaultNavLinks;
 
+  // Resolve layout-specific settings
+  const splitSettings = formData.splitSettings || {};
+  const leftNavItems = Array.isArray(splitSettings.leftNavItems) && splitSettings.leftNavItems.length > 0 ? splitSettings.leftNavItems : navItems.slice(0, Math.ceil(navItems.length / 2));
+  const rightNavItems = Array.isArray(splitSettings.rightNavItems) && splitSettings.rightNavItems.length > 0 ? splitSettings.rightNavItems : navItems.slice(Math.ceil(navItems.length / 2));
+
+  const corporateSettings = formData.corporateSettings || {};
+  const contactEmail = corporateSettings.contactEmail || "contact@jeetbhatt.com";
+  const contactPhone = corporateSettings.contactPhone || "+91 123 456 7890";
+
+  const sidebarSettings = formData.sidebarSettings || {};
+  const drawerPosition = sidebarSettings.drawerPosition || "right";
+  const menuLabel = sidebarSettings.menuLabel || "MENU";
+  const sidebarNavItems = Array.isArray(sidebarSettings.navItems) && sidebarSettings.navItems.length > 0 ? sidebarSettings.navItems : navItems;
+
+  const megaNavSettings = formData.megaNavSettings || {};
+  const megaNavItems = Array.isArray(megaNavSettings.megaNavItems) && megaNavSettings.megaNavItems.length > 0 ? megaNavSettings.megaNavItems : navItems.map((item: any) => ({ ...item, dropdownColumns: [] }));
+
+  // Resolve which nav items to display in the mobile simulator drawer
+  const mobileDrawerNavItems = useMemo(() => {
+    if (headerStyle === "mega") return megaNavItems;
+    if (headerStyle === "sidebar") return sidebarNavItems;
+    return navItems;
+  }, [headerStyle, megaNavItems, sidebarNavItems, navItems]);
+
   return (
     <div 
       className="header-preview-container"
@@ -473,6 +497,183 @@ export const HeaderPreview: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* LAYOUT 5: SPLIT LUXURY */}
+              {headerStyle === "split" && (
+                <div 
+                  style={{ 
+                    display: "flex", 
+                    justifyContent: "center", 
+                    alignItems: "center", 
+                    padding: "20px 32px", 
+                    background: "#0f1729", 
+                    borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
+                    gap: "40px"
+                  }}
+                >
+                  <div style={{ display: "flex", gap: "20px", fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)", flex: 1, justifyContent: "flex-end" }}>
+                    {leftNavItems.map((item: any, i: number) => (
+                      <span key={i} style={{ cursor: "pointer" }} className="hover-gold-text">{item.label}</span>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer" }}>
+                    {logoUrl ? (
+                      <img src={logoUrl} alt={logoAlt} style={{ height: "40px", objectFit: "contain", marginBottom: "4px" }} />
+                    ) : (
+                      <span style={{ color: "#d4af37", fontSize: "20px" }}>⚖️</span>
+                    )}
+                    <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.05em", textTransform: "uppercase" }}>JEET BHATT</span>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "20px", fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)", flex: 1, justifyContent: "flex-start", alignItems: "center" }}>
+                    {rightNavItems.map((item: any, i: number) => (
+                      <span key={i} style={{ cursor: "pointer" }} className="hover-gold-text">{item.label}</span>
+                    ))}
+                    {showCTA && (
+                      <span style={{ border: "1px solid #d4af37", color: "#d4af37", padding: "4px 10px", borderRadius: "2px", marginLeft: "10px", cursor: "pointer" }}>{ctaLabel}</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* LAYOUT 6: SIDEBAR / APP STYLE */}
+              {headerStyle === "sidebar" && (
+                <div 
+                  style={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    alignItems: "center", 
+                    padding: "16px 24px", 
+                    background: "#060911", 
+                    borderBottom: "1px solid rgba(255,255,255,0.05)"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                    <span style={{ color: "#d4af37", fontSize: "18px" }}>☰</span>
+                    <span style={{ fontWeight: "600", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#ffffff" }}>{menuLabel}</span>
+                  </div>
+                  
+                  <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                    <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "16px", color: "#ffffff", letterSpacing: "0.05em", textTransform: "uppercase" }}>JEET BHATT</span>
+                  </div>
+
+                  {showCTA ? (
+                    <div style={{ background: "#d4af37", color: "#0f1729", padding: "6px 16px", fontSize: "10px", fontWeight: "700", borderRadius: "4px", textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer" }}>
+                      {ctaLabel}
+                    </div>
+                  ) : <div style={{ width: "80px" }} />}
+                </div>
+              )}
+
+              {/* LAYOUT 7: TOP BAR CORPORATE */}
+              {headerStyle === "corporate" && (
+                <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                  {/* Top thin bar */}
+                  <div style={{ background: "#0a0e1a", padding: "6px 32px", display: "flex", justifyContent: "flex-end", borderBottom: "1px solid rgba(255,255,255,0.05)", fontSize: "9px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.05em" }}>
+                    <span>{contactEmail} | {contactPhone}</span>
+                  </div>
+                  {/* Main bar */}
+                  <div style={{ background: "#0f1729", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                      {logoUrl ? <img src={logoUrl} alt={logoAlt} style={{ height: "30px", objectFit: "contain" }} /> : <span style={{ color: "#d4af37", fontSize: "16px" }}>⚖️</span>}
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.05em" }}>Chambers of Jeet Bhatt</span>
+                        <span style={{ fontSize: "8px", color: "#d4af37", letterSpacing: "0.1em", textTransform: "uppercase" }}>Advocates & Legal Strategists</span>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: "20px", fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)", alignItems: "center" }}>
+                      {navItems.map((item: any, i: number) => (
+                        <span key={i} style={{ cursor: "pointer" }} className="hover-gold-text">{item.label}</span>
+                      ))}
+                      {showCTA && (
+                        <div style={{ border: "1px solid #d4af37", color: "#d4af37", padding: "6px 14px", borderRadius: "2px", cursor: "pointer" }}>{ctaLabel}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* LAYOUT 8: FLOATING ISLAND */}
+              {headerStyle === "island" && (
+                <div style={{ padding: "24px", display: "flex", justifyContent: "center", background: "radial-gradient(circle, #0e1424 0%, #070a13 100%)", minHeight: "140px" }}>
+                  <div 
+                    style={{ 
+                      display: "flex", 
+                      justifyContent: "space-between", 
+                      alignItems: "center", 
+                      padding: "8px 12px 8px 20px", 
+                      background: "rgba(15, 23, 41, 0.95)", 
+                      backdropFilter: "blur(20px)",
+                      WebkitBackdropFilter: "blur(20px)",
+                      border: "1px solid rgba(212, 175, 55, 0.3)", 
+                      borderRadius: "50px", 
+                      boxShadow: "0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
+                      maxWidth: "700px",
+                      width: "100%"
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                      {logoUrl ? <img src={logoUrl} alt={logoAlt} style={{ height: "24px", objectFit: "contain" }} /> : <span style={{ fontWeight: "800", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.1em" }}>CJB</span>}
+                    </div>
+                    <div style={{ display: "flex", gap: "16px", fontSize: "10px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)", alignItems: "center" }}>
+                      {navItems.map((item: any, i: number) => (
+                        <span key={i} style={{ cursor: "pointer" }} className="hover-gold-text">{item.label}</span>
+                      ))}
+                    </div>
+                    {showCTA && (
+                      <div style={{ background: "#d4af37", color: "#0f1729", padding: "8px 16px", fontSize: "10px", fontWeight: "700", borderRadius: "30px", textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer" }}>{ctaLabel}</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* LAYOUT 9: MEGA-NAV PORTAL */}
+              {headerStyle === "mega" && (
+                <div 
+                  style={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    alignItems: "center", 
+                    padding: "20px 36px", 
+                    background: "#0f1729", 
+                    borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    position: "relative"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                    {logoUrl ? <img src={logoUrl} alt={logoAlt} style={{ height: "30px", objectFit: "contain" }} /> : <span style={{ color: "#d4af37", fontSize: "18px" }}>⚖️</span>}
+                    <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.05em", textTransform: "uppercase" }}>JEET BHATT</span>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "24px", fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)", alignItems: "center" }}>
+                    {megaNavItems.map((item: any, i: number) => (
+                      <span key={i} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }} className="hover-gold-text">
+                        {item.label} {item.dropdownColumns?.length > 0 && <span style={{ fontSize: "8px" }}>▼</span>}
+                      </span>
+                    ))}
+                    {showCTA && (
+                      <div style={{ background: "transparent", border: "1px solid #d4af37", color: "#d4af37", padding: "8px 16px", fontSize: "10px", fontWeight: "700", borderRadius: "4px", textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer", marginLeft: "10px" }}>{ctaLabel}</div>
+                    )}
+                  </div>
+                  
+                  {/* Simulated Mega Menu dropdown (static for preview based on first mega item) */}
+                  {megaNavItems[0]?.dropdownColumns?.length > 0 && (
+                    <div style={{ position: "absolute", top: "100%", left: "36px", right: "36px", background: "rgba(15, 23, 41, 0.98)", border: "1px solid rgba(212, 175, 55, 0.2)", borderTop: "none", padding: "20px", display: "flex", gap: "40px", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", zIndex: 10, opacity: 0.5 }}>
+                      {megaNavItems[0].dropdownColumns.map((col: any, colIndex: number) => (
+                        <div key={colIndex} style={{ flex: 1 }}>
+                          <div style={{ fontSize: "10px", color: "#d4af37", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.1em" }}>{col.columnTitle}</div>
+                          <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", display: "flex", flexDirection: "column", gap: "6px" }}>
+                            {col.subLinks?.map((subLink: any, subIndex: number) => (
+                              <span key={subIndex}>{subLink.label}</span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             /* =========================================================
@@ -529,7 +730,7 @@ export const HeaderPreview: React.FC = () => {
                   bottom: 0,
                   background: "linear-gradient(to bottom, #0f1729, #060911)",
                   padding: "24px",
-                  transform: mobileMenuOpen ? "translateX(0)" : "translateX(100%)",
+                  transform: mobileMenuOpen ? "translateX(0)" : (drawerPosition === "left" ? "translateX(-100%)" : "translateX(100%)"),
                   transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
                   zIndex: 10,
                   display: "flex",
@@ -541,7 +742,7 @@ export const HeaderPreview: React.FC = () => {
                   <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#d4af37", fontWeight: "700", letterSpacing: "0.15em" }}>NAVIGATION DIRECTORY</span>
                 </div>
 
-                {navItems.map((item: any, i: number) => (
+                {mobileDrawerNavItems.map((item: any, i: number) => (
                   <div 
                     key={i} 
                     style={{ 
