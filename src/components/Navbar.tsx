@@ -426,7 +426,7 @@ export function Navbar({ headerData }: NavbarProps) {
         className={`${isSticky ? "sticky top-0 z-40" : "relative"} w-full flex flex-col`}
       >
         {/* Top Tier */}
-        <div className="w-full bg-[#0a0e1a] border-b border-white/5 hidden md:block">
+        <div className="w-full bg-[#0a0e1a] border-b border-white/5">
           <div className="max-w-[1280px] mx-auto px-6 py-2 flex justify-end">
             <span className="text-[10px] text-white/50 uppercase tracking-widest font-semibold">
               {contactEmail} | {contactPhone}

@@ -682,7 +682,12 @@ export const HeaderPreview: React.FC = () => {
                ========================================================= */
             <div style={{ background: "#0a0e1a", height: "100%", position: "relative" }}>
               
-              {/* Dynamic Simulated Mobile Top Bar */}
+                            {/* Dynamic Simulated Mobile Top Bar */}
+              {headerStyle === "corporate" && (
+                <div style={{ background: "#0a0e1a", padding: "4px 16px", display: "flex", justifyContent: "flex-end", borderBottom: "1px solid rgba(255,255,255,0.05)", fontSize: "8px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.05em" }}>
+                  <span>{contactEmail} | {contactPhone}</span>
+                </div>
+              )}
               <div 
                 style={{ 
                   background: headerStyle === "glassmorphic" ? "rgba(15, 23, 41, 0.85)" : 
@@ -725,7 +730,7 @@ export const HeaderPreview: React.FC = () => {
                       <span style={{ color: "#d4af37", fontSize: headerStyle === "island" ? "12px" : "14px" }}>⚖️</span>
                     )}
                     {(headerStyle !== "minimal" || !logoUrl) && (
-                      <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: headerStyle === "island" ? "11px" : "12px", color: "#ffffff", letterSpacing: "0.5px" }}>Chambers of JB</span>
+                      <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: headerStyle === "island" ? "11px" : "12px", color: "#ffffff", letterSpacing: "0.5px" }}>Chambers of Jeet Bhatt</span>
                     )}
                   </div>
                   
