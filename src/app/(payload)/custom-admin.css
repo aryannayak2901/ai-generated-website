@@ -542,6 +542,31 @@ body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .template-defaul
   background: rgba(197, 160, 89, 0.4);
 }
 
+/* Premium targeted vertical scroll override for the Header global view */
+body:has(a[href*="globals/header"].bb-nav-item--active) {
+  overflow: hidden !important;
+}
+
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap {
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  padding-bottom: 6rem !important;
+  scrollbar-width: thin;
+}
+
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar {
+  width: 6px;
+}
+
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.2);
+  border-radius: 10px;
+}
+
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 160, 89, 0.4);
+}
+
 /* Premium Stacked Split Dashboard Layout for Theme Settings */
 @media (min-width: 1024px) {
   body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .form-fields,
@@ -668,7 +693,7 @@ html[data-theme] [class*="-option"][class*="--is-selected"][class*="--is-focused
   background-color: var(--theme-elevation-50) !important;
   border: 1px solid var(--theme-elevation-150) !important;
   border-radius: var(--style-radius-m) !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 
 /* Draggable rows layout container */
@@ -678,5 +703,137 @@ html[data-theme] [class*="-option"][class*="--is-selected"][class*="--is-focused
   border: none !important;
 }
 
+/* --- High-End Overrides for Array/Collapsible Popups (Three Dot Menu) --- */
 
+/* Round the top corners of row headers explicitly to prevent visual bleeding */
+.collapsible__toggle,
+.collapsible__header,
+.draggable-sortable__item-header,
+.draggable-sortable__item-handle {
+  border-top-left-radius: var(--style-radius-m) !important;
+  border-top-right-radius: var(--style-radius-m) !important;
+}
 
+/* If the row is collapsed, apply bottom corners as well */
+.collapsible--collapsed .collapsible__toggle,
+.collapsible--collapsed .collapsible__header,
+.draggable-sortable__item--collapsed .draggable-sortable__item-header,
+.draggable-sortable__item--collapsed .draggable-sortable__item-handle {
+  border-bottom-left-radius: var(--style-radius-m) !important;
+  border-bottom-right-radius: var(--style-radius-m) !important;
+}
+
+/* Apply bottom rounded corners to the body of expanded panels */
+.collapsible__content,
+.collapsible__body,
+.draggable-sortable__item-content,
+.draggable-sortable__item-body {
+  border-bottom-left-radius: var(--style-radius-m) !important;
+  border-bottom-right-radius: var(--style-radius-m) !important;
+}
+
+/* Premium Styling for the 3-Dot Button Trigger */
+.popup__trigger,
+.popup__button,
+.array-actions__button {
+  background-color: var(--theme-elevation-100) !important;
+  border: 1px solid var(--theme-elevation-200) !important;
+  color: #A0ABC0 !important; /* Muted slate gray color */
+  border-radius: 50% !important; /* Keep it perfectly circular */
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  padding: 0 !important;
+}
+
+/* Muted icon color inside the trigger */
+.popup__trigger svg,
+.popup__button svg,
+.array-actions__button svg {
+  stroke: #A0ABC0 !important;
+  fill: #A0ABC0 !important;
+  width: 14px !important;
+  height: 14px !important;
+  transition: all 0.25s ease !important;
+}
+
+/* Hover state for 3-Dot Button Trigger */
+.popup__trigger:hover,
+.popup__button:hover,
+.array-actions__button:hover,
+.popup__trigger.popup__trigger--active,
+.popup__button.popup__button--active {
+  background-color: var(--theme-elevation-200) !important;
+  border-color: #C5A059 !important; /* Premium Gold border on hover/active */
+  color: #C5A059 !important; /* Gold text/icon on hover/active */
+}
+
+.popup__trigger:hover svg,
+.popup__button:hover svg,
+.array-actions__button:hover svg,
+.popup__trigger.popup__trigger--active svg,
+.popup__button.popup__button--active svg {
+  stroke: #C5A059 !important;
+  fill: #C5A059 !important;
+}
+
+/* Premium Glassmorphism for the 3-Dot Dropdown Menu Content */
+.popup__content {
+  background-color: rgba(14, 23, 54, 0.96) !important; /* Deep Navy base matching --theme-bg */
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(197, 160, 89, 0.25) !important; /* Sleek gold-accent border */
+  border-radius: var(--style-radius-m) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  padding: 6px !important;
+  z-index: 1000 !important;
+}
+
+/* Dropdown Arrow matching the custom styling */
+.popup__content::after,
+.popup__content::before {
+  border-bottom-color: rgba(197, 160, 89, 0.25) !important;
+}
+
+/* Styling Dropdown Action Items */
+.popup__content button,
+.popup__content a,
+.popup__content [class*="__action"],
+.popup__content .popup__item {
+  background: transparent !important;
+  color: #E2E8F0 !important; /* Light text for readability */
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  font-family: var(--font-body) !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  text-align: left !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+}
+
+/* Hover/Focus states for Dropdown Options */
+.popup__content button:hover,
+.popup__content a:hover,
+.popup__content [class*="__action"]:hover,
+.popup__content .popup__item:hover {
+  background-color: rgba(197, 160, 89, 0.12) !important; /* Gold glow tint */
+  color: #C5A059 !important; /* Gold accent color */
+}
+
+/* Icon colors inside dropdown options */
+.popup__content button:hover svg,
+.popup__content a:hover svg,
+.popup__content [class*="__action"]:hover svg {
+  stroke: #C5A059 !important;
+  fill: #C5A059 !important;
+}
