@@ -1181,6 +1181,11 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: string;
+  headerStyle?: ('classic' | 'centered' | 'glassmorphic' | 'minimal') | null;
+  sticky?: boolean | null;
+  showCTA?: boolean | null;
+  ctaLabel?: string | null;
+  ctaLink?: string | null;
   logo?: (string | null) | Media;
   navItems?:
     | {
@@ -1300,6 +1305,11 @@ export interface ThemeSetting {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  headerStyle?: T;
+  sticky?: T;
+  showCTA?: T;
+  ctaLabel?: T;
+  ctaLink?: T;
   logo?: T;
   navItems?:
     | T
