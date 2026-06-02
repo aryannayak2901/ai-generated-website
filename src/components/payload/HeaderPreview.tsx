@@ -597,7 +597,7 @@ export const HeaderPreview: React.FC = () => {
 
               {/* LAYOUT 8: FLOATING ISLAND */}
               {headerStyle === "island" && (
-                <div style={{ padding: "24px", display: "flex", justifyContent: "center", background: "radial-gradient(circle, #0e1424 0%, #070a13 100%)", minHeight: "140px" }}>
+                <div style={{ padding: "24px", display: "flex", justifyContent: "center", position: "absolute", top: 0, left: 0, right: 0, zIndex: 50 }}>
                   <div 
                     style={{ 
                       display: "flex", 

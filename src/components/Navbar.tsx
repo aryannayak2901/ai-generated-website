@@ -483,7 +483,7 @@ export function Navbar({ headerData }: NavbarProps) {
   if (headerStyle === "island") {
     return (
       <header
-        className={`${isSticky ? "sticky top-0 z-40" : "absolute top-0"} w-full pt-4 md:pt-6 px-4 md:px-6 pointer-events-none`}
+        className={`${isSticky ? "fixed top-0 z-50" : "absolute top-0 z-50"} w-full pt-4 md:pt-6 px-4 md:px-6 pointer-events-none`}
       >
         <div className="mx-auto max-w-[800px] bg-primary/95 backdrop-blur-xl border border-accent/30 rounded-full px-6 md:px-8 py-3 shadow-[0_20px_40px_rgba(0,0,0,0.5)] flex items-center justify-between pointer-events-auto">
           <Link href="/" className="flex items-center shrink-0 group">
