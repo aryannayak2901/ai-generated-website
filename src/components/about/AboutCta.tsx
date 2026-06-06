@@ -25,20 +25,22 @@ export function AboutCta({
   secondaryCtaLink,
 }: AboutCtaProps) {
   return (
-    <section className={`relative py-16 md:py-24 px-6 bg-primary overflow-hidden ${className || ""}`}>
+    <section
+      className={`relative py-16 md:py-24 px-6 bg-primary overflow-hidden ${className || ""}`}
+    >
       {/* Gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80" />
-      
+
       {/* Decorative element */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" 
+        className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none"
       />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -46,15 +48,24 @@ export function AboutCta({
         className="max-w-[1280px] mx-auto text-center relative z-10"
       >
         <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-          {title ? title : (
-            <>Ready to Secure Your <span className="text-accent italic font-medium">Legal Future</span>?</>
+          {title ? (
+            title
+          ) : (
+            <>
+              Ready to Secure Your{" "}
+              <span className="text-accent italic font-medium">
+                Legal Future
+              </span>
+              ?
+            </>
           )}
         </h2>
-        
+
         <div className="w-24 h-0.5 bg-accent/50 mx-auto mb-6" />
-        
+
         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-2xl mx-auto font-sans">
-          {subtitle || "Our team of dedicated advocates is prepared to provide the strategic representation and expert counsel you deserve."}
+          {subtitle ||
+            "Our team of dedicated advocates is prepared to provide the strategic representation and expert counsel you deserve."}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
