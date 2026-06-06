@@ -152,7 +152,11 @@ export const HeaderPreview: React.FC = () => {
           <div style={{ display: "flex", gap: "4px", background: "#060911", padding: "4px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
             <button
               type="button"
-              onClick={() => setViewport("desktop")}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setViewport("desktop");
+              }}
               style={{
                 background: viewport === "desktop" ? "linear-gradient(135deg, #1e293b, #0f172a)" : "transparent",
                 color: viewport === "desktop" ? "#ffffff" : "#64748b",
@@ -172,7 +176,11 @@ export const HeaderPreview: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => setViewport("mobile")}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setViewport("mobile");
+              }}
               style={{
                 background: viewport === "mobile" ? "linear-gradient(135deg, #1e293b, #0f172a)" : "transparent",
                 color: viewport === "mobile" ? "#ffffff" : "#64748b",
@@ -736,7 +744,11 @@ export const HeaderPreview: React.FC = () => {
                   
                   <button 
                     type="button"
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setMobileMenuOpen(!mobileMenuOpen);
+                    }}
                     style={{ 
                       background: headerStyle === "island" ? "transparent" : "rgba(255, 255, 255, 0.05)", 
                       border: headerStyle === "island" ? "none" : "1px solid rgba(212, 175, 55, 0.2)", 
@@ -756,92 +768,183 @@ export const HeaderPreview: React.FC = () => {
                 </div>
               </div>
 
+              {/* Drawer Overlay */}
+              <div 
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: "rgba(0,0,0,0.4)",
+                  backdropFilter: "blur(2px)",
+                  opacity: mobileMenuOpen ? 1 : 0,
+                  pointerEvents: mobileMenuOpen ? "auto" : "none",
+                  transition: "opacity 0.3s ease",
+                  zIndex: 90,
+                  borderRadius: viewport === "mobile" ? "36px" : "8px",
+                }}
+              />
+
               {/* Dynamic Simulated Mobile Drawer Body */}
               <div 
                 style={{
                   position: "absolute",
-                  top: "47px",
-                  left: 0,
-                  right: 0,
+                  top: 0,
                   bottom: 0,
-                  background: "linear-gradient(to bottom, #0f1729, #060911)",
-                  padding: "24px",
+                  left: drawerPosition === "left" ? 0 : "auto",
+                  right: drawerPosition === "right" ? 0 : "auto",
+                  width: "300px",
+                  background: headerStyle === "minimal" ? "#020617" : "#0f1729",
+                  borderLeft: drawerPosition === "right" ? (headerStyle === "minimal" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(212, 175, 55, 0.1)") : "none",
+                  borderRight: drawerPosition === "left" ? (headerStyle === "minimal" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(212, 175, 55, 0.1)") : "none",
                   transform: mobileMenuOpen ? "translateX(0)" : (drawerPosition === "left" ? "translateX(-100%)" : "translateX(100%)"),
                   transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-                  zIndex: 10,
+                  zIndex: 100,
                   display: "flex",
                   flexDirection: "column",
-                  gap: "18px"
+                  boxShadow: mobileMenuOpen ? "0 0 40px rgba(0,0,0,0.5)" : "none",
                 }}
               >
-                <div style={{ borderBottom: "1px solid rgba(212, 175, 55, 0.15)", paddingBottom: "12px", marginBottom: "8px" }}>
-                  <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#d4af37", fontWeight: "700", letterSpacing: "0.15em" }}>NAVIGATION DIRECTORY</span>
-                </div>
-
-                {mobileDrawerNavItems.map((item: any, i: number) => (
-                  <div key={i} style={{ display: "flex", flexDirection: "column" }}>
-                    <div 
-                      onClick={() => {
-                        if (headerStyle === "mega" && item.dropdownColumns?.length > 0) {
-                          setMobileExpandedItem(mobileExpandedItem === item.label ? null : item.label);
-                        }
-                      }}
-                      style={{ 
-                        fontSize: "14px", 
-                        fontFamily: "Playfair Display, serif", 
-                        color: "rgba(255, 255, 255, 0.9)",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "8px 0",
-                        cursor: "pointer",
-                        borderBottom: "1px solid rgba(255, 255, 255, 0.03)"
-                      }}
-                    >
-                      <span>{item.label}</span>
-                      {headerStyle === "mega" && item.dropdownColumns?.length > 0 ? (
-                        <ChevronDown size={12} style={{ color: "#d4af37", transform: mobileExpandedItem === item.label ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }} />
-                      ) : (
-                        <ArrowRight size={12} style={{ color: "#d4af37" }} />
-                      )}
-                    </div>
-                    {headerStyle === "mega" && mobileExpandedItem === item.label && item.dropdownColumns?.length > 0 && (
-                      <div style={{ display: "flex", flexDirection: "column", gap: "16px", paddingLeft: "16px", borderLeft: "1px solid rgba(212, 175, 55, 0.2)", marginTop: "8px", marginBottom: "8px" }}>
-                        {item.dropdownColumns.map((col: any, cIdx: number) => (
-                          <div key={cIdx} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                            {col.columnTitle && (
-                              <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#d4af37", fontWeight: "bold" }}>{col.columnTitle}</span>
-                            )}
-                            {col.subLinks?.map((sub: any, sIdx: number) => (
-                              <span key={sIdx} style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{sub.label}</span>
-                            ))}
-                          </div>
-                        ))}
+                {/* Drawer Header (Logo & Close Button) */}
+                <div style={{ 
+                  padding: "32px", 
+                  borderBottom: headerStyle === "minimal" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(212, 175, 55, 0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    {logoUrl ? (
+                      <div style={{ padding: "2px", borderRadius: "4px", width: "40px", height: "40px", overflow: "hidden", flexShrink: 0 }}>
+                        <img src={logoUrl} alt={logoAlt} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        background: headerStyle === "minimal" ? "rgba(212, 175, 55, 0.15)" : "rgba(255, 255, 255, 0.1)", 
+                        padding: "6px", 
+                        borderRadius: "4px", 
+                        width: "40px", 
+                        height: "40px", 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center",
+                        flexShrink: 0
+                      }}>
+                        <span style={{ color: headerStyle === "minimal" ? "#d4af37" : "#ffffff", fontWeight: "bold", fontSize: "18px" }}>JJB</span>
                       </div>
                     )}
+                    <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "24px", fontWeight: "bold", margin: 0, color: headerStyle === "minimal" ? "#ffffff" : "#ffffff" }}>
+                      Chambers
+                    </h2>
                   </div>
-                ))}
-
-                {showCTA && (
-                  <div 
-                    style={{ 
-                      background: "linear-gradient(135deg, #d4af37, #c5a059)", 
-                      color: "#0f1729", 
-                      textAlign: "center", 
-                      padding: "12px", 
-                      fontSize: "12px", 
-                      fontWeight: "700", 
+                  
+                  {/* Close button mimicking Shadcn Sheet close */}
+                  <button 
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setMobileMenuOpen(false);
+                    }}
+                    style={{
+                      background: "transparent",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
                       borderRadius: "4px",
-                      marginTop: "16px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.1em",
-                      boxShadow: "0 6px 15px rgba(212, 175, 55, 0.15)",
-                      cursor: "pointer"
+                      width: "24px",
+                      height: "24px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      cursor: "pointer",
+                      padding: 0
                     }}
                   >
-                    {ctaLabel}
-                  </div>
-                )}
+                    <span style={{ fontSize: "14px", lineHeight: 1 }}>✕</span>
+                  </button>
+                </div>
+
+                {/* Drawer Nav Links */}
+                <div style={{ flex: 1, overflowY: "auto", padding: "40px 32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+                  {mobileDrawerNavItems.map((item: any, i: number) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span 
+                          className="hover-gold-text"
+                          onClick={() => {
+                            if (headerStyle === "mega" && item.dropdownColumns?.length > 0) {
+                              setMobileExpandedItem(mobileExpandedItem === item.label ? null : item.label);
+                            } else {
+                              setMobileMenuOpen(false);
+                            }
+                          }}
+                          style={{ 
+                            fontSize: "20px", 
+                            fontFamily: "Playfair Display, serif", 
+                            fontWeight: "bold",
+                            color: headerStyle === "minimal" ? "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.8)",
+                            cursor: "pointer",
+                            transition: "color 0.2s"
+                          }}
+                        >
+                          {item.label}
+                        </span>
+                        
+                        {headerStyle === "mega" && item.dropdownColumns?.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setMobileExpandedItem(mobileExpandedItem === item.label ? null : item.label);
+                            }}
+                            style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", padding: "4px" }}
+                          >
+                            <ChevronDown size={20} style={{ color: mobileExpandedItem === item.label ? "#d4af37" : "inherit", transform: mobileExpandedItem === item.label ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }} />
+                          </button>
+                        )}
+                      </div>
+
+                      {headerStyle === "mega" && mobileExpandedItem === item.label && item.dropdownColumns?.length > 0 && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "24px", paddingLeft: "16px", borderLeft: "1px solid rgba(212, 175, 55, 0.2)", marginTop: "8px" }}>
+                          {item.dropdownColumns.map((col: any, cIdx: number) => (
+                            <div key={cIdx} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                              {col.columnTitle && (
+                                <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#d4af37", fontWeight: "bold" }}>{col.columnTitle}</span>
+                              )}
+                              {col.subLinks?.map((sub: any, sIdx: number) => (
+                                <span key={sIdx} style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", fontWeight: "500", cursor: "pointer" }} className="hover-white-text">{sub.label}</span>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {showCTA && (
+                    <div 
+                      style={{ 
+                        background: "linear-gradient(135deg, #d4af37, #c5a059)", 
+                        color: "#0f1729", 
+                        textAlign: "center", 
+                        padding: "12px", 
+                        fontSize: "12px", 
+                        fontWeight: "700", 
+                        borderRadius: "4px",
+                        marginTop: "16px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                        boxShadow: "0 6px 15px rgba(212, 175, 55, 0.15)",
+                        cursor: "pointer"
+                      }}
+                    >
+                      {ctaLabel}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Mobile Sandbox Home Mock Content */}

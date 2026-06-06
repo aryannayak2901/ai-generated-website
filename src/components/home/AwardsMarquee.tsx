@@ -67,21 +67,22 @@ export interface AwardsMarqueeProps {
 const AwardCard = ({ award }: { award: AwardItem }) => {
   return (
     <ScrollReveal
-      className="w-[320px] bg-card border border-border shadow-sm overflow-hidden group hover:shadow-lg hover:border-accent transition-all duration-300 shrink-0 mx-3"
-    direction="up"
+      className="w-[340px] h-full flex flex-col bg-card border border-border shadow-sm overflow-hidden group hover:shadow-lg hover:border-accent transition-all duration-300 shrink-0 mx-3"
+      direction="up"
     >
       {/* Top Half (Image) */}
-      <div className="relative h-48 w-full overflow-hidden bg-secondary">
+      <div className="relative h-52 w-full overflow-hidden bg-secondary shrink-0">
         <Image
           src={award.image}
           alt={award.title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="320px"
+          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="340px"
         />
-        {/* Teal Floating Badge */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
+        {/* Teal/Gold Floating Badge */}
         {award.yearBadge && (
-          <div className="absolute bottom-3 right-3 bg-accent px-3 py-1 rounded shadow-md z-10">
+          <div className="absolute bottom-4 right-4 bg-accent/90 backdrop-blur-sm px-3 py-1.5 rounded shadow-lg z-10 border border-accent/20">
             <span className="text-accent-foreground text-[10px] uppercase tracking-widest font-bold">
               {award.yearBadge}
             </span>
@@ -90,20 +91,33 @@ const AwardCard = ({ award }: { award: AwardItem }) => {
       </div>
 
       {/* Bottom Half (Content) */}
-      <div className="p-6">
-        <h3 className="font-serif text-xl text-foreground mb-2 leading-tight">
+      <div className="p-6 flex flex-col flex-1 bg-card relative z-20">
+        <h3 
+          className="font-serif text-lg md:text-xl text-foreground mb-1.5 leading-snug line-clamp-2 group-hover:text-accent transition-colors duration-300" 
+          title={award.title}
+        >
           {award.title}
         </h3>
-        <p className="font-sans font-medium text-muted-foreground text-sm mb-1">
-          {award.subtitle}
-        </p>
-        <p className="font-sans text-muted-foreground text-xs leading-relaxed min-h-[40px]">
+        
+        {award.subtitle && (
+          <p 
+            className="font-sans font-semibold text-accent/80 text-xs md:text-sm mb-3 line-clamp-2"
+            title={award.subtitle}
+          >
+            {award.subtitle}
+          </p>
+        )}
+        
+        <p 
+          className="font-sans text-muted-foreground text-xs md:text-sm leading-relaxed line-clamp-3"
+          title={award.description}
+        >
           {award.description}
         </p>
 
-        <div className="mt-6 pt-4 border-t border-border/50 flex justify-between items-center group-hover:border-accent/30 transition-colors">
-          <span className="text-accent text-xs font-bold flex items-center gap-1 cursor-pointer group-hover:translate-x-1 transition-transform">
-            VIEW DETAILS <ArrowRight className="w-3 h-3" />
+        <div className="mt-auto pt-5 border-t border-border/50 flex justify-between items-center group-hover:border-accent/30 transition-colors">
+          <span className="text-accent text-[11px] tracking-wider font-bold flex items-center gap-1.5 cursor-pointer group-hover:translate-x-1 transition-transform duration-300">
+            VIEW DETAILS <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
       </div>
@@ -143,7 +157,7 @@ export const AwardsMarquee = ({ awards: payloadAwards }: AwardsMarqueeProps) => 
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-linear-to-l from-secondary to-transparent z-10 pointer-events-none"></div>
 
         {/* Marquee Track using CSS Animation for pause-on-hover support */}
-        <div className="flex py-4 items-center animate-marquee">
+        <div className="flex py-4 items-stretch animate-marquee">
           {/* Render 2 sets for seamless loop */}
           {[...activeAwards, ...activeAwards].map((award, index) => (
             <AwardCard key={`${award.id}-${index}`} award={award} />

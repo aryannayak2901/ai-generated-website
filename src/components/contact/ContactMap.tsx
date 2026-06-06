@@ -73,7 +73,7 @@ export default function ContactMap({ mapUrl, locationTitle, locationAddress }: C
             
             <div className="pt-4 border-t border-border">
               <a 
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeAddress)}`}
+                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(activeAddress)}`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-accent hover:text-accent/85 transition-colors font-semibold text-sm uppercase tracking-wider"

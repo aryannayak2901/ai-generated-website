@@ -22,7 +22,8 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { GA4Dashboard as GA4Dashboard_2f69165967948fca0b1ad7615040911c } from '@/components/payload/GA4Dashboard'
+import { HeaderPreview as HeaderPreview_2fb1c89c9a673d6ad17d1f90d24e34a3 } from '@/components/payload/HeaderPreview'
+import { FooterPreview as FooterPreview_b0a020b240a06a051397ecb0b1e34217 } from '@/components/payload/FooterPreview'
 import { ThemePlayground as ThemePlayground_2e39d33a991e4ebd7f5650dfb764480d } from '@/components/Theme/ThemePlayground'
 import { ColorPickerField as ColorPickerField_e2125401031640e0009e2d9c60c91d20 } from '@/components/Theme/ColorPickerField'
 import { Nav as Nav_6a3490dcdf999345f7d9ebf36f3d3644 } from '@/components/payload/Nav'
@@ -55,7 +56,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@/components/payload/GA4Dashboard#GA4Dashboard": GA4Dashboard_2f69165967948fca0b1ad7615040911c,
+  "@/components/payload/HeaderPreview#HeaderPreview": HeaderPreview_2fb1c89c9a673d6ad17d1f90d24e34a3,
+  "@/components/payload/FooterPreview#FooterPreview": FooterPreview_b0a020b240a06a051397ecb0b1e34217,
   "@/components/Theme/ThemePlayground#ThemePlayground": ThemePlayground_2e39d33a991e4ebd7f5650dfb764480d,
   "@/components/Theme/ColorPickerField#ColorPickerField": ColorPickerField_e2125401031640e0009e2d9c60c91d20,
   "@/components/payload/Nav#Nav": Nav_6a3490dcdf999345f7d9ebf36f3d3644,

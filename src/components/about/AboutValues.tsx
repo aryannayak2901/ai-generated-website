@@ -85,16 +85,16 @@ export function AboutValues({ className, tag, title, subtitle, values: payloadVa
           {activeValues.map((value, index) => {
             const Icon = iconMap[value.icon] || ShieldCheck;
             return (
-              <StaggerItem key={index}>
-                <Card className="bg-card border-border h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group">
-                  <CardContent className="p-6 md:p-8 text-center">
-                    <div className="w-16 h-16 rounded-lg bg-accent/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-accent/20 transition-colors">
+              <StaggerItem key={index} className="row-span-3 grid grid-rows-subgrid">
+                <Card className="bg-card border-border row-span-3 grid grid-rows-subgrid hover:border-accent/30 hover:shadow-lg transition-all duration-300 group">
+                  <CardContent className="p-6 md:p-8 text-center row-span-3 grid grid-rows-subgrid gap-y-4">
+                    <div className="w-16 h-16 rounded-lg bg-accent/10 flex items-center justify-center mx-auto group-hover:bg-accent/20 transition-colors row-span-1">
                       <Icon className="w-8 h-8 text-accent" />
                     </div>
-                    <h3 className="font-serif text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors">
+                    <h3 className="font-serif text-xl font-bold text-foreground group-hover:text-accent transition-colors row-span-1">
                       {value.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed font-sans">
+                    <p className="text-muted-foreground text-sm leading-relaxed font-sans row-span-1">
                       {value.description}
                     </p>
                   </CardContent>

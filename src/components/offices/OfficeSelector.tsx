@@ -127,7 +127,7 @@ export const OfficeSelector = ({
                 onClick={() => setSelectedTabId(office.id)}
                 className={`relative flex-1 py-3 px-6 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 cursor-pointer ${
                   isActive
-                    ? "text-[#0f1729] dark:text-[#0f1729]" // strictly dark navy text for AA gold background contrast
+                    ? "text-accent-foreground" // dynamic text color based on accent color for AA contrast
                     : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
                 }`}
               >

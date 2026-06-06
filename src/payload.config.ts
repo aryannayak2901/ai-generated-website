@@ -10,6 +10,7 @@ import { Posts } from "./collections/Posts";
 import { Pages } from "./collections/Pages";
 import { Team } from "./collections/Team";
 import { Header } from "./globals/Header";
+import { Footer } from "./globals/Footer";
 import { GA4Settings } from "./globals/GA4Settings";
 import { ThemeSettings } from "./globals/ThemeSettings/config";
 
@@ -33,7 +34,7 @@ export default buildConfig({
   },
 
   collections: [Pages, Team, Users, Media, Posts],
-  globals: [Header, GA4Settings, ThemeSettings],
+  globals: [Header, Footer, GA4Settings, ThemeSettings],
 
   editor: lexicalEditor({}),
 

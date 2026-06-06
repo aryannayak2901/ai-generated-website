@@ -31,14 +31,14 @@ const defaultTeamMembers = [
     designation: "Senior Advocate, High Court of Gujarat",
     experience: "40+ years experience",
     image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80&w=500",
-    profileUrl: "/team/jayant-bhatt",
+    profileUrl: "/team/jayant-p-bhatt",
   },
   {
     name: "Chetan P. Pandya",
     designation: "Advocate, Gujarat High Court",
     experience: "26+ years experience",
     image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=500",
-    profileUrl: "/team/chetan-pandya",
+    profileUrl: "/team/chetan-p-pandya",
   },
 ];
 
@@ -109,17 +109,17 @@ export function AboutTeam({
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {activeMembers.map((member, index) => (
-            <StaggerItem key={index}>
-              <Card className="bg-card border-border h-full hover:border-accent/30 hover:shadow-lg transition-all duration-300 group overflow-hidden">
-                <CardContent className="p-0">
+            <StaggerItem key={index} className="row-span-4 grid grid-rows-subgrid">
+              <Card className="bg-card border-border row-span-4 grid grid-rows-subgrid hover:border-accent/30 hover:shadow-lg transition-all duration-300 group overflow-hidden">
+                <CardContent className="p-0 row-span-4 grid grid-rows-subgrid">
                   {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative aspect-[4/5] w-full overflow-hidden row-span-1">
                     {member.image ? (
                       <Image
                         src={member.image}
                         alt={member.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     ) : (
@@ -154,16 +154,18 @@ export function AboutTeam({
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
-                    <h3 className="font-serif text-xl font-bold text-foreground mb-1 group-hover:text-accent transition-colors">
+                  <div className="p-6 row-span-3 grid grid-rows-subgrid gap-y-2">
+                    <h3 className="font-serif text-xl font-bold text-foreground group-hover:text-accent transition-colors row-span-1">
                       {member.name}
                     </h3>
-                    <p className="text-muted-foreground text-sm mb-2">
+                    <p className="text-muted-foreground text-sm row-span-1">
                       {member.designation}
                     </p>
-                    <span className="inline-block text-xs font-semibold text-accent bg-accent/10 px-3 py-1 rounded-full">
-                      {member.experience}
-                    </span>
+                    <div className="row-span-1 flex items-end">
+                      <span className="inline-block text-xs font-semibold text-accent bg-accent/10 px-3 py-1 rounded-full">
+                        {member.experience}
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

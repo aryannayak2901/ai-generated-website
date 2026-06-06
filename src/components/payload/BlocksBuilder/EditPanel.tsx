@@ -264,6 +264,50 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
         (m) => m.id === currentMediaVal || m.url === currentMediaVal
       );
 
+      const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const inputEl = e.target;
+        const labelEl = inputEl.previousElementSibling;
+        const originalText = labelEl?.textContent || 'or upload new image:';
+        
+        try {
+          inputEl.disabled = true;
+          if (labelEl) {
+            labelEl.textContent = 'Uploading... Please wait.';
+          }
+          
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('_payload', JSON.stringify({ alt: file.name || 'Uploaded image' }));
+          
+          const res = await fetch('/api/media', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!res.ok) {
+            throw new Error('Upload failed');
+          }
+
+          const data = await res.json();
+          if (data.doc) {
+            setMediaList((prev) => [...prev, { id: data.doc.id, filename: data.doc.filename, url: data.doc.url }]);
+            onChange({ id: data.doc.id, url: data.doc.url, filename: data.doc.filename });
+          }
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          alert('Failed to upload file. Please try again.');
+        } finally {
+          inputEl.disabled = false;
+          inputEl.value = '';
+          if (labelEl) {
+            labelEl.textContent = originalText;
+          }
+        }
+      };
+
       return (
         <div className="bb-edit__upload-container">
           <select
@@ -277,7 +321,7 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
               }
             }}
             className="bb-edit__input bb-edit__select"
-            style={{ width: '100%' }}
+            style={{ width: '100%', marginBottom: '8px' }}
           >
             <option value="">[ Choose from Library ]</option>
             {mediaList.map((media) => (
@@ -286,15 +330,16 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
               </option>
             ))}
           </select>
-          <div className="bb-edit__upload-row-or">or enter direct image URL:</div>
+          
+          <div className="bb-edit__upload-row-or">or upload new image:</div>
           <input
-            type="text"
-            placeholder="https://images.unsplash.com/..."
-            value={typeof value === 'object' && value ? value.url || '' : value || ''}
-            onChange={(e) => onChange(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
             className="bb-edit__input"
-            style={{ width: '100%' }}
+            style={{ width: '100%', padding: '6px', cursor: 'pointer', marginBottom: '8px' }}
           />
+
           {((typeof value === 'object' && value?.url) ||
             (typeof value === 'string' && value.startsWith('http'))) && (
             <div className="bb-edit__media-preview">

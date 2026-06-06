@@ -542,28 +542,33 @@ body:has(a[href*="globals/theme-settings"].bb-nav-item--active) .template-defaul
   background: rgba(197, 160, 89, 0.4);
 }
 
-/* Premium targeted vertical scroll override for the Header global view */
-body:has(a[href*="globals/header"].bb-nav-item--active) {
+/* Premium targeted vertical scroll override for the Header & Footer global views */
+body:has(a[href*="globals/header"].bb-nav-item--active),
+body:has(a[href*="globals/footer"].bb-nav-item--active) {
   overflow: hidden !important;
 }
 
-body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap {
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap,
+body:has(a[href*="globals/footer"].bb-nav-item--active) .template-default__wrap {
   max-height: 100vh !important;
   overflow-y: auto !important;
   padding-bottom: 6rem !important;
   scrollbar-width: thin;
 }
 
-body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar {
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar,
+body:has(a[href*="globals/footer"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar {
   width: 6px;
 }
 
-body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb {
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb,
+body:has(a[href*="globals/footer"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb {
   background: rgba(197, 160, 89, 0.2);
   border-radius: 10px;
 }
 
-body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb:hover {
+body:has(a[href*="globals/header"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb:hover,
+body:has(a[href*="globals/footer"].bb-nav-item--active) .template-default__wrap::-webkit-scrollbar-thumb:hover {
   background: rgba(197, 160, 89, 0.4);
 }
 

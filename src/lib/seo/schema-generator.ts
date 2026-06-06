@@ -228,7 +228,17 @@ export function generatePersonSchema(member: Team): Record<string, any> {
     "@id": personId,
     "name": member.name,
     "jobTitle": member.designation,
-    "description": member.subtitle || (member.bio && member.bio[0]?.paragraph) || undefined,
+    "description": member.subtitle || (() => {
+      const bio: any = member.bio;
+      if (!bio) return undefined;
+      if (Array.isArray(bio)) {
+        return bio[0]?.paragraph || undefined;
+      }
+      if (bio?.root?.children?.[0]?.children?.[0]?.text) {
+        return bio.root.children[0].children[0].text;
+      }
+      return undefined;
+    })() || undefined,
     "image": imageUrl,
     "url": `${SITE_URL}/team/${member.slug}`,
     "worksFor": {
