@@ -22,6 +22,20 @@ export const Team: CollectionConfig = {
       },
     },
     {
+      name: 'phone',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'email',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'designation',
       type: 'text',
       required: true,
@@ -63,13 +77,7 @@ export const Team: CollectionConfig = {
     },
     {
       name: 'bio',
-      type: 'array',
-      fields: [
-        {
-          name: 'paragraph',
-          type: 'textarea',
-        }
-      ]
+      type: 'richText',
     },
     {
       name: 'overview',

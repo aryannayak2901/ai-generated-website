@@ -1,0 +1,99 @@
+<h2>Select Header Layout Styles</h2>
+<p class="subtitle">We will add a selection dropdown in the Payload CMS Header settings. Which premium layout styles should we implement?</p>
+
+<div class="options" data-multiselect>
+  <!-- Style A: Chambers Classic -->
+  <div class="option" data-choice="classic" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Chambers Classic (Traditional & Authoritative)</h3>
+      <p>Left-aligned logo & title, centered navigation links with gold hover borders, and a right-aligned primary Call-To-Action (CTA) button. Deep Navy background with Gold borders.</p>
+      
+      <!-- Visual Miniature Mockup -->
+      <div style="margin-top: 12px; padding: 10px; background: #0f1729; border: 1px solid rgba(212,175,55,0.2); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-family: sans-serif;">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="color: #d4af37; font-size: 12px;">⚖️</span>
+          <span style="color: white; font-weight: bold; font-size: 10px; font-family: serif;">Chambers of JJB</span>
+        </div>
+        <div style="display: flex; gap: 8px; color: rgba(255,255,255,0.7); font-size: 9px;">
+          <span>Home</span><span>About</span><span>Practice</span><span>Contact</span>
+        </div>
+        <div style="background: #d4af37; color: #0f1729; font-size: 8px; font-weight: bold; padding: 3px 6px; border-radius: 2px;">GET IN TOUCH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Style B: Centered Luxury -->
+  <div class="option" data-choice="centered" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Centered Luxury (Symmetric & Prestigious)</h3>
+      <p>Double-decker layout. Top deck houses the centered firm logo and branding; bottom deck presents a beautifully centered navigation list, flanked by subtle golden dividers.</p>
+      
+      <!-- Visual Miniature Mockup -->
+      <div style="margin-top: 12px; padding: 8px; background: #0f1729; border: 1px solid rgba(212,175,55,0.2); border-radius: 4px; font-family: sans-serif; text-align: center;">
+        <div style="color: white; font-weight: bold; font-size: 11px; font-family: serif; margin-bottom: 4px;">
+          <span style="color: #d4af37;">⚖️</span> CHAMBERS OF JEET BHATT
+        </div>
+        <div style="border-top: 1px solid rgba(212,175,55,0.2); padding-top: 4px; display: flex; justify-content: center; gap: 12px; color: rgba(255,255,255,0.7); font-size: 9px;">
+          <span>Home</span><span>About</span><span>Practice Areas</span><span>Blog</span><span>Contact</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Style C: Glassmorphic Float -->
+  <div class="option" data-choice="glassmorphic" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Glassmorphic Float (Modern & Progressive)</h3>
+      <p>A floating header layout with a semi-transparent background, deep backdrop-blur, gold accents, and subtle borders. Slides down elegantly on scroll, giving a highly premium floating look.</p>
+      
+      <!-- Visual Miniature Mockup -->
+      <div style="margin-top: 12px; padding: 12px 10px; background: linear-gradient(to bottom, #111827, #030712); border-radius: 4px; position: relative;">
+        <!-- Simulated content behind -->
+        <div style="font-size: 8px; color: rgba(255,255,255,0.2); margin-bottom: 6px;">Commercial Litigation Partners since 1998...</div>
+        <!-- Floating Header -->
+        <div style="padding: 6px; background: rgba(255,255,255,0.06); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; font-family: sans-serif;">
+          <span style="color: white; font-weight: bold; font-size: 9px; margin-left: 6px;">⚖️ JJB</span>
+          <div style="display: flex; gap: 8px; color: rgba(255,255,255,0.8); font-size: 8px;">
+            <span>Home</span><span>About</span><span>Practice</span>
+          </div>
+          <div style="background: rgba(212,175,55,0.15); border: 1px solid #d4af37; color: #d4af37; font-size: 7px; font-weight: bold; padding: 2px 6px; border-radius: 12px;">Contact</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Style D: Minimal Drawer -->
+  <div class="option" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Minimal Drawer (Clean & Ultra-Modern)</h3>
+      <p>Clean background with minimum distractions. Logo on the left, primary navigation on the right. Elegant burger icon trigger for secondary links, offering a highly polished, distraction-free aesthetic.</p>
+      
+      <!-- Visual Miniature Mockup -->
+      <div style="margin-top: 12px; padding: 10px; background: #0f1729; border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-family: sans-serif;">
+        <span style="color: white; font-weight: bold; font-size: 10px;">⚖️ CJB</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="display: flex; gap: 8px; color: rgba(255,255,255,0.6); font-size: 9px;">
+            <span>Home</span><span>Practice</span>
+          </div>
+          <div style="color: white; font-size: 10px;">☰</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top: 24px;">
+  <div class="pros">
+    <h4>Key Features to Support</h4>
+    <ul>
+      <li><strong>Fully Responsive:</strong> Mobile layouts adapt elegantly with standard menu drawers.</li>
+      <li><strong>Sticky Toggle:</strong> Option to lock the header to the top during scroll.</li>
+      <li><strong>CTA Flexibility:</strong> Turn CTA button on/off and configure text/links.</li>
+      <li><strong>Live Sync:</strong> Immediate reflection in storefront Navbar.</li>
+    </ul>
+  </div>
+</div>

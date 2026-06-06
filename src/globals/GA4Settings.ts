@@ -11,15 +11,15 @@ export const GA4Settings: GlobalConfig = {
     update: ({ req }) => req.user ? true : false, // Updates allowed only by logged-in admin users
   },
   fields: [
-    {
-      name: "dashboard",
-      type: "ui",
-      admin: {
-        components: {
-          Field: "@/components/payload/GA4Dashboard#GA4Dashboard",
-        },
-      },
-    },
+    // {
+    //   name: "dashboard",
+    //   type: "ui",
+    //   admin: {
+    //     components: {
+    //       Field: "@/components/payload/GA4Dashboard#GA4Dashboard",
+    //     },
+    //   },
+    // },
     {
       type: "row",
       fields: [

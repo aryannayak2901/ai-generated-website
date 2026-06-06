@@ -91,11 +91,13 @@ export interface Config {
   };
   globals: {
     header: Header;
+    footer: Footer;
     ga4: Ga4;
     'theme-settings': ThemeSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
     ga4: Ga4Select<false> | Ga4Select<true>;
     'theme-settings': ThemeSettingsSelect<false> | ThemeSettingsSelect<true>;
   };
@@ -476,6 +478,8 @@ export interface Team {
   id: string;
   name: string;
   slug: string;
+  phone?: string | null;
+  email?: string | null;
   designation: string;
   subtitle?: string | null;
   image?: (string | null) | Media;
@@ -485,12 +489,21 @@ export interface Team {
     publications?: string | null;
     clients?: string | null;
   };
-  bio?:
-    | {
-        paragraph?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   overview?: {
     expertise?:
       | {
@@ -565,7 +578,7 @@ export interface Post {
   category: 'General Legal' | 'Criminal Defense' | 'Corporate Law' | 'Family Law';
   author?: string | null;
   readTime?: string | null;
-  content: {
+  content?: {
     root: {
       type: string;
       children: {
@@ -579,7 +592,7 @@ export interface Post {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   excerpt?: string | null;
   featuredImage?: (string | null) | Media;
   status?: ('draft' | 'published') | null;
@@ -1009,6 +1022,8 @@ export interface PagesSelect<T extends boolean = true> {
 export interface TeamSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  phone?: T;
+  email?: T;
   designation?: T;
   subtitle?: T;
   image?: T;
@@ -1020,12 +1035,7 @@ export interface TeamSelect<T extends boolean = true> {
         publications?: T;
         clients?: T;
       };
-  bio?:
-    | T
-    | {
-        paragraph?: T;
-        id?: T;
-      };
+  bio?: T;
   overview?:
     | T
     | {
@@ -1181,6 +1191,13 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: string;
+  headerStyle?:
+    | ('classic' | 'centered' | 'glassmorphic' | 'minimal' | 'split' | 'sidebar' | 'corporate' | 'island' | 'mega')
+    | null;
+  sticky?: boolean | null;
+  showCTA?: boolean | null;
+  ctaLabel?: string | null;
+  ctaLink?: string | null;
   logo?: (string | null) | Media;
   navItems?:
     | {
@@ -1189,6 +1206,117 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
+  splitSettings?: {
+    leftNavItems?:
+      | {
+          label: string;
+          link: string;
+          id?: string | null;
+        }[]
+      | null;
+    rightNavItems?:
+      | {
+          label: string;
+          link: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  corporateSettings?: {
+    contactEmail?: string | null;
+    contactPhone?: string | null;
+  };
+  sidebarSettings?: {
+    drawerPosition?: ('right' | 'left') | null;
+    menuLabel?: string | null;
+    navItems?:
+      | {
+          label: string;
+          link: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  megaNavSettings?: {
+    megaNavItems?:
+      | {
+          label: string;
+          link: string;
+          dropdownColumns?:
+            | {
+                columnTitle?: string | null;
+                subLinks?:
+                  | {
+                      label: string;
+                      link: string;
+                      id?: string | null;
+                    }[]
+                  | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: string;
+  footerStyle?:
+    | ('classic' | 'minimal' | 'newsletter' | 'split' | 'grand' | 'corporate' | 'asymmetric' | 'location' | 'stacked')
+    | null;
+  newsletter?: {
+    heading?: string | null;
+    description?: string | null;
+    placeholder?: string | null;
+    buttonText?: string | null;
+  };
+  companyInfo?: {
+    logoText?: string | null;
+    description?: string | null;
+  };
+  navColumns?:
+    | {
+        title: string;
+        links?:
+          | {
+              label: string;
+              link: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  contactInfo?: {
+    title?: string | null;
+    address?: string | null;
+    phone?: string | null;
+    email?: string | null;
+  };
+  socialLinks?:
+    | {
+        platform: 'linkedin' | 'twitter' | 'facebook' | 'instagram';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  bottomSection?: {
+    copyrightText?: string | null;
+    legalLinks?:
+      | {
+          label: string;
+          link: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1300,6 +1428,11 @@ export interface ThemeSetting {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  headerStyle?: T;
+  sticky?: T;
+  showCTA?: T;
+  ctaLabel?: T;
+  ctaLink?: T;
   logo?: T;
   navItems?:
     | T
@@ -1307,6 +1440,131 @@ export interface HeaderSelect<T extends boolean = true> {
         label?: T;
         link?: T;
         id?: T;
+      };
+  splitSettings?:
+    | T
+    | {
+        leftNavItems?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
+        rightNavItems?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
+      };
+  corporateSettings?:
+    | T
+    | {
+        contactEmail?: T;
+        contactPhone?: T;
+      };
+  sidebarSettings?:
+    | T
+    | {
+        drawerPosition?: T;
+        menuLabel?: T;
+        navItems?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
+      };
+  megaNavSettings?:
+    | T
+    | {
+        megaNavItems?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              dropdownColumns?:
+                | T
+                | {
+                    columnTitle?: T;
+                    subLinks?:
+                      | T
+                      | {
+                          label?: T;
+                          link?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  footerStyle?: T;
+  newsletter?:
+    | T
+    | {
+        heading?: T;
+        description?: T;
+        placeholder?: T;
+        buttonText?: T;
+      };
+  companyInfo?:
+    | T
+    | {
+        logoText?: T;
+        description?: T;
+      };
+  navColumns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  contactInfo?:
+    | T
+    | {
+        title?: T;
+        address?: T;
+        phone?: T;
+        email?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  bottomSection?:
+    | T
+    | {
+        copyrightText?: T;
+        legalLinks?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

@@ -89,7 +89,9 @@ export default async function TeamMemberPage({
       clients: memberData.stats?.clients || "20+",
     },
     image: (memberData.image as Media)?.url || "",
-    bio: memberData.bio?.map((b) => b.paragraph).filter((p): p is string => !!p) || [],
+    phone: memberData.phone || "",
+    email: memberData.email || "",
+    bio: memberData.bio || null,
     overview: {
       expertise: memberData.overview?.expertise?.map((i) => i.item).filter((p): p is string => !!p) || [],
       clients: memberData.overview?.clients?.map((i) => i.item).filter((p): p is string => !!p) || [],

@@ -46,11 +46,12 @@ export default async function FrontendLayout({
   // "system" | "light" | "dark"
   let themeMode: "system" | "light" | "dark" = "system";
   let headerData = null;
+  let footerData = null;
   let themeDoc: any = null;
 
   try {
     const payload = await getPayload({ config });
-    const [ga4, theme, header] = await Promise.all([
+    const [ga4, theme, header, footer] = await Promise.all([
       payload.findGlobal({
         slug: "ga4",
         depth: 0,
@@ -61,6 +62,10 @@ export default async function FrontendLayout({
       }),
       payload.findGlobal({
         slug: "header",
+        depth: 1,
+      }),
+      payload.findGlobal({
+        slug: "footer",
         depth: 1,
       }),
     ]);
@@ -82,6 +87,9 @@ export default async function FrontendLayout({
     }
     if (header) {
       headerData = header;
+    }
+    if (footer) {
+      footerData = footer;
     }
   } catch (error) {
     console.error("Failed to load settings from DB:", error);
@@ -161,7 +169,7 @@ export default async function FrontendLayout({
           <DisclaimerModal />
           <Navbar headerData={headerData} />
           <main className="flex-1">{children}</main>
-          <Footer />
+          <Footer footerData={footerData} />
         </ThemeProvider>
       </body>
     </html>

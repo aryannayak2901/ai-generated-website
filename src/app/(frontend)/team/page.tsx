@@ -56,12 +56,12 @@ export default async function TeamPage() {
                 <Link href={`/team/${member.slug}`} className="group block">
                   <div className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-accent transition-all duration-300 hover:scale-[1.02]">
                     {/* Profile Image */}
-                    <div className="relative h-64 bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                    <div className="relative aspect-[4/5] w-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center overflow-hidden">
                       {member.image ? (
                         <img
                           src={(member.image as any)?.url || ""}
                           alt={member.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="w-24 h-24 rounded-full bg-accent/20 flex items-center justify-center">
@@ -75,7 +75,21 @@ export default async function TeamPage() {
                       <div className="absolute inset-0 bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6">
                         <div className="text-center">
                           <p className="text-white text-sm mb-4 line-clamp-4">
-                            {member.bio?.map((b: any) => b.paragraph).join(' ') || "Experienced legal professional."}
+                            {(() => {
+                              if (Array.isArray(member.bio)) {
+                                return member.bio.map((b: any) => b.paragraph || b).join(' ') || "Experienced legal professional.";
+                              }
+                              if (member.bio?.root?.children) {
+                                let text = '';
+                                const extractText = (node: any) => {
+                                  if (node.type === 'text') text += node.text;
+                                  if (node.children) node.children.forEach(extractText);
+                                };
+                                extractText(member.bio.root);
+                                return text.replace(/\n+/g, ' ') || "Experienced legal professional.";
+                              }
+                              return "Experienced legal professional.";
+                            })()}
                           </p>
                           <span className="inline-flex items-center text-accent text-sm font-semibold uppercase tracking-wider">
                             View Profile <Users className="ml-2 w-4 h-4" />

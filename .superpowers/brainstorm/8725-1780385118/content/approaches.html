@@ -1,0 +1,70 @@
+<h2>Proposed Technical Architecture</h2>
+<p class="subtitle">Here are the two architectural approaches for adding multiple headers and live preview in Payload CMS.</p>
+
+<div class="options">
+  <!-- Option 1: Integrated Custom UI Component in Header Global (Recommended) -->
+  <div class="option selected" data-choice="integrated" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>(Recommended) Integrated Global Header Preview</h3>
+      <p>We extend the existing <strong>Header</strong> global config with custom controls (style dropdown, toggles, text fields) and mount a custom <strong>HeaderPreview</strong> React component at the top of the form.</p>
+      <div style="margin-top: 10px; padding: 10px; background: rgba(212,175,55,0.1); border: 1px dashed #d4af37; border-radius: 6px; font-size: 11px;">
+        <strong>How it works:</strong> The custom preview uses <code>useForm()</code> from Payload UI to watch form state in real time. As logo, links, or styles are updated, the preview re-renders instantly before saving.
+      </div>
+      <div class="pros-cons" style="margin-top: 8px;">
+        <div class="pros" style="font-size: 11px; padding: 4px;">
+          <strong>Pros:</strong> Zero database complexity, extremely intuitive, fast performance, inherits existing global data.
+        </div>
+        <div class="cons" style="font-size: 11px; padding: 4px;">
+          <strong>Cons:</strong> None. It perfectly aligns with the current codebase structure.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 2: Multi-Header Collection -->
+  <div class="option" data-choice="collection" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>Multi-Header Collection</h3>
+      <p>Convert the Header config from a single Global into a collection of multiple header styles. The user creates separate header documents (e.g., "Classic Layout", "Modern Glass Layout") and chooses an active one in a global setting.</p>
+      <div class="pros-cons" style="margin-top: 8px;">
+        <div class="pros" style="font-size: 11px; padding: 4px;">
+          <strong>Pros:</strong> Allows maintaining multiple independent headers and scheduling/switching them instantly.
+        </div>
+        <div class="cons" style="font-size: 11px; padding: 4px;">
+          <strong>Cons:</strong> Over-complicates the CMS setup. Increases DB reads, database relationships, and makes live updates across layouts more disjointed.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 20px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px;">
+  <h3>How the Live Preview Component will look:</h3>
+  <p style="font-size: 12px; color: #94a3b8;">Mounted at the very top of the Global edit form, it simulates both <strong>Desktop</strong> and <strong>Mobile</strong> viewports. It will look like a premium legal navbar frame:</p>
+  
+  <div style="margin-top: 12px; border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; overflow: hidden; background: #090d16;">
+    <div style="padding: 6px 12px; background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+      <span style="font-size: 9px; color: #94a3b8; font-family: monospace;">🖥️ Header Live Preview (Desktop Viewport)</span>
+      <div style="display: flex; gap: 4px;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #ef4444;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #eab308;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></span>
+      </div>
+    </div>
+    <div style="padding: 16px; background: #0f1729; text-align: left; font-family: 'Public Sans', sans-serif;">
+      <!-- Chambers Classic layout mock -->
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; items: center; gap: 6px;">
+          <span style="font-size: 14px;">⚖️</span>
+          <span style="color: white; font-weight: bold; font-family: 'Playfair Display', serif; font-size: 12px;">Chambers of Jeet Bhatt</span>
+        </div>
+        <div style="display: flex; gap: 12px; font-size: 10px; color: rgba(255,255,255,0.8);">
+          <span>Home</span><span>About CJB</span><span>Practice Areas</span><span>Blog</span>
+        </div>
+        <div style="background: #d4af37; color: #0f1729; font-weight: bold; font-size: 9px; padding: 4px 10px; border-radius: 2px; text-transform: uppercase;">Get In Touch</div>
+      </div>
+    </div>
+  </div>
+</div>

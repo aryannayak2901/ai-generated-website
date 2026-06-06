@@ -4,15 +4,22 @@ import React from "react";
 import { TeamMember } from "@/data/team";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, Building2, TrendingUp, CheckCircle2 } from "lucide-react";
+import { RichText } from "@payloadcms/richtext-lexical/react";
 
 export default function OverviewTab({ member }: { member: TeamMember }) {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Bio Section */}
-      <div className="mb-12 space-y-4 text-muted-foreground font-serif text-lg leading-relaxed">
-        {member.bio.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
+      <div className="mb-12 text-muted-foreground font-serif text-lg leading-relaxed [&_p]:mb-6 last:[&_p]:mb-0 [&_p]:whitespace-pre-wrap [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-foreground [&_h3]:mt-8 [&_h3]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-6 [&_li]:mb-2 [&_a]:text-accent [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-accent/80">
+        {Array.isArray(member.bio) ? (
+          <div className="space-y-6">
+            {member.bio.map((paragraph: string, index: number) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
+        ) : member.bio ? (
+          <RichText data={member.bio} />
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

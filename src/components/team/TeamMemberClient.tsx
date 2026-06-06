@@ -245,57 +245,120 @@ export default function TeamMemberClient({ member }: Props) {
                 </Button>
 
                 <div className="mt-6 space-y-4">
-                  <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
-                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                      <svg
-                        className="w-5 h-5 text-accent"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
-                        Direct Line
-                      </div>
-                      <div className="text-sm font-medium text-foreground">
-                        +91 94082 82982
-                      </div>
-                    </div>
-                  </div>
+                  {(member.phone || member.email) ? (
+                    <>
+                      {member.phone && (
+                        <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
+                          <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                            <svg
+                              className="w-5 h-5 text-accent"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
+                              Direct Line
+                            </div>
+                            <a href={`tel:${member.phone}`} className="text-sm font-medium text-foreground hover:text-accent transition-colors">
+                              {member.phone}
+                            </a>
+                          </div>
+                        </div>
+                      )}
 
-                  <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
-                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                      <svg
-                        className="w-5 h-5 text-accent"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
-                        Email
+                      {member.email && (
+                        <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
+                          <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                            <svg
+                              className="w-5 h-5 text-accent"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
+                              Email
+                            </div>
+                            <a href={`mailto:${member.email}`} className="text-sm font-medium text-foreground hover:text-accent transition-colors break-all">
+                              {member.email}
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {/* Fallback chamber info */}
+                      <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
+                        <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                          <svg
+                            className="w-5 h-5 text-accent"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
+                            Direct Line
+                          </div>
+                          <a href="tel:+919408282982" className="text-sm font-medium text-foreground hover:text-accent transition-colors">
+                            +91 94082 82982
+                          </a>
+                        </div>
                       </div>
-                      <div className="text-sm font-medium text-foreground">
-                        info@jeetbhatt.com
+
+                      <div className="flex items-start gap-4 p-4 rounded-lg bg-secondary">
+                        <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                          <svg
+                            className="w-5 h-5 text-accent"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
+                            Email
+                          </div>
+                          <a href="mailto:info@jeetbhatt.com" className="text-sm font-medium text-foreground hover:text-accent transition-colors">
+                            info@jeetbhatt.com
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>

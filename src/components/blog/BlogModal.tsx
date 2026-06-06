@@ -6,6 +6,7 @@ import { X, Clock, User, Calendar, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { BlogPost } from "@/lib/blog-data";
 import { Badge } from "@/components/ui/badge";
+import { LexicalRenderer } from "./LexicalRenderer";
 
 interface BlogModalProps {
   post: BlogPost | null;
@@ -99,9 +100,15 @@ export function BlogModal({ post, isOpen, onClose }: BlogModalProps) {
                   {post.title}
                 </h2>
 
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  {post.summary}
-                </p>
+                {post.summary && (
+                  <p className="text-muted-foreground leading-relaxed mb-6 italic border-l-2 border-accent pl-4 font-serif text-lg bg-secondary/50 py-3 pr-4 rounded-r">
+                    {post.summary}
+                  </p>
+                )}
+
+                <div className="mb-8 text-foreground/90 font-sans">
+                  <LexicalRenderer content={content} />
+                </div>
 
                 <div className="flex items-center justify-between pt-6 border-t border-border">
                   <div className="flex items-center gap-3">

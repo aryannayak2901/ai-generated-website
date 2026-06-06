@@ -9,19 +9,21 @@ import { Page, Post, Media } from "@/payload-types";
 
 // Helper to normalize Payload Post to BlogPost interface
 const normalizePayloadPost = (post: Post): BlogPost => {
+  const generatedSlug = post.slug || post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'blog-post';
   return {
     id: post.id,
-    slug: post.slug || "",
+    slug: generatedSlug,
     title: post.title,
     summary: (post as any).excerpt || "",
     content: post.content as any, // BlogModal handles Lexical or string
     category: (post as any).category || "General Legal",
     date: (post as any).publishedAt 
       ? new Date((post as any).publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-      : "Recent Update",
-    image: ((post as any).featuredImage as Media)?.url || "/placeholder-blog.jpg",
+      : new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    image: ((post as any).featuredImage as Media)?.url || "/blog/cji-legacy.jpg",
     author: (post as any).author || "Jeet Bhatt",
     readTime: (post as any).readTime || "5 min read",
+    externalLink: (post as any).externalLink || undefined,
   };
 };
 
@@ -41,11 +43,10 @@ export default async function BlogPage() {
     });
     pageData = pageRes.docs[0] as unknown as Page | undefined;
 
-    // Fetch published posts
+    // Fetch posts (both published and drafts)
     const postsRes = await payload.find({
       collection: 'posts',
-      where: { status: { equals: 'published' } },
-      sort: '-publishedAt',
+      sort: '-createdAt',
       depth: 1,
       limit: 100,
     });
