@@ -87,7 +87,9 @@ async function patchBlockMeta(block: GeneratedBlock): Promise<void> {
   // We need to ensure a comma exists before the new entry
   const secondLastBraceIdx = beforeInsert.lastIndexOf('}', lastBraceIdx - 1)
   if (secondLastBraceIdx !== -1) {
-    content = content.slice(0, secondLastBraceIdx + 1) + ',' + content.slice(secondLastBraceIdx + 1, lastBraceIdx) + newEntry + content.slice(lastBraceIdx)
+    const afterBrace = beforeInsert.slice(secondLastBraceIdx + 1, lastBraceIdx)
+    const needsComma = !afterBrace.trim().startsWith(',')
+    content = content.slice(0, secondLastBraceIdx + 1) + (needsComma ? ',' : '') + content.slice(secondLastBraceIdx + 1, lastBraceIdx) + newEntry + content.slice(lastBraceIdx)
   } else {
     // Fallback if there's only one brace (unlikely)
     content = content.slice(0, lastBraceIdx) + newEntry + content.slice(lastBraceIdx)
