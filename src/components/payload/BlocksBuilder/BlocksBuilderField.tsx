@@ -56,6 +56,32 @@ export function BlocksBuilderField({
   const [isBlockDirty, setIsBlockDirty] = React.useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = React.useState(false);
   const [pendingBlockAction, setPendingBlockAction] = React.useState<{ type: 'close' | 'switch'; targetBlockId?: string } | null>(null);
+  const [isDeploying, setIsDeploying] = React.useState(false);
+
+  const handleDeploy = async () => {
+    const secret = window.prompt('Enter Deploy Secret to trigger Vercel build:');
+    if (!secret) return;
+
+    setIsDeploying(true);
+    try {
+      const res = await fetch('/api/deploy', { 
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${secret}`
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Deployment triggered successfully! Check Vercel for status.');
+      } else {
+        alert(`Deployment failed: ${data.error}`);
+      }
+    } catch (err) {
+      alert('Deployment request failed.');
+    } finally {
+      setIsDeploying(false);
+    }
+  };
 
   // Propagate block-level dirty state to parent
   useEffect(() => {
@@ -231,6 +257,16 @@ export function BlocksBuilderField({
           <div className="bb-titlebar__breadcrumb">
             {blocks.length} block{blocks.length !== 1 ? 's' : ''} in layout
           </div>
+          <button
+            type="button"
+            onClick={handleDeploy}
+            disabled={isDeploying}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-white/10 rounded-lg text-sm font-medium transition-all"
+            style={{ marginLeft: '16px' }}
+          >
+            <span className="text-[var(--bb-gold)]">▲</span>
+            {isDeploying ? 'Deploying...' : 'Deploy Changes'}
+          </button>
           <button 
             type="button"
             className="bb-titlebar__fullscreen-btn"
