@@ -122,8 +122,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
             exit={{ scale: 0.95, y: 24, opacity: 0 }}
             transition={{ type: 'spring', duration: 0.45, bounce: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-[560px] bg-card border border-accent/20 rounded-2xl p-9 shadow-2xl flex flex-col gap-6"
-            style={{ boxShadow: '0 32px 64px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.04)' }}
+            className="w-full max-w-[560px] bg-card border border-accent/20 rounded-2xl p-9 shadow-[0_32px_64px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.04)] flex flex-col gap-6"
           >
             {/* Header */}
             <div className="flex items-center justify-between">
