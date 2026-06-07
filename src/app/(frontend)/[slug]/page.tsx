@@ -62,6 +62,7 @@ export default async function DynamicPage({ params }: PageProps) {
     const { docs } = await payload.find({
       collection: 'pages',
       draft: isDraft,
+      depth: 2,
       where: {
         slug: {
           equals: slug,

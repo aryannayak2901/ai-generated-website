@@ -15,6 +15,7 @@ export default async function Home() {
   const payload = await getPayload({ config: configPromise });
   const { docs } = await payload.find({
     collection: "pages",
+    depth: 2,
     where: {
       slug: {
         equals: "home",

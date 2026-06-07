@@ -47,7 +47,12 @@ export function HeroSection({
         return { url, alt };
       })
       .filter(
-        (item): item is { url: string; alt: string } => !!item && !!item.url,
+        (item): item is { url: string; alt: string } =>
+          !!item &&
+          !!item.url &&
+          (item.url.startsWith("/") ||
+            item.url.startsWith("http://") ||
+            item.url.startsWith("https://")),
       );
   }, [images]);
 

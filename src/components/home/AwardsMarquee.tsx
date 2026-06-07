@@ -133,9 +133,9 @@ export const AwardsMarquee = ({ awards: payloadAwards }: AwardsMarqueeProps) => 
         title: a.title,
         subtitle: a.organization || "",
         description: a.description || "",
-        image: (a.image && typeof a.image === 'object' && 'url' in a.image && typeof a.image.url === 'string') 
+        image: (a.image && typeof a.image === 'object' && 'url' in a.image && typeof a.image.url === 'string' && (a.image.url.startsWith("/") || a.image.url.startsWith("http"))) 
           ? a.image.url 
-          : (typeof a.image === 'string' ? a.image : awards[i % awards.length].image),
+          : (typeof a.image === 'string' && (a.image.startsWith("/") || a.image.startsWith("http")) ? a.image : awards[i % awards.length].image),
         yearBadge: a.year || "",
       }))
     : awards;
