@@ -77,6 +77,7 @@ export function BlocksBuilderField({
         alert(`Deployment failed: ${data.error}`);
       }
     } catch (err) {
+      console.error('Deployment error:', err);
       alert('Deployment request failed.');
     } finally {
       setIsDeploying(false);
@@ -261,8 +262,7 @@ export function BlocksBuilderField({
             type="button"
             onClick={handleDeploy}
             disabled={isDeploying}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-white/10 rounded-lg text-sm font-medium transition-all"
-            style={{ marginLeft: '16px' }}
+            className="flex items-center gap-2 px-4 py-2 ml-4 bg-[var(--bb-navy)] hover:bg-[var(--bb-navy-light)] text-white border border-white/10 rounded-lg text-sm font-medium transition-all"
           >
             <span className="text-[var(--bb-gold)]">▲</span>
             {isDeploying ? 'Deploying...' : 'Deploy Changes'}
