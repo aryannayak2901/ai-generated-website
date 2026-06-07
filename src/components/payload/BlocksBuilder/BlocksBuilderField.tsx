@@ -40,6 +40,7 @@ export function BlocksBuilderField({
     viewport,
     search,
     addBlock,
+    addBlocks,
     removeBlock,
     moveBlock,
     updateBlock,
@@ -478,9 +479,10 @@ export function BlocksBuilderField({
         isOpen={isAiModalOpen}
         onClose={() => setIsAiModalOpen(false)}
         onBlocksGenerated={(generatedBlocks) => {
-          generatedBlocks.forEach(block => {
-            addBlock(block.blockType, block.defaultValues || {});
-          });
+          addBlocks(generatedBlocks.map(block => ({
+            blockType: block.blockType,
+            defaultValues: block.defaultValues || {}
+          })));
         }}
       />
     </motion.div>

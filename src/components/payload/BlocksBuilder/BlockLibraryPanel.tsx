@@ -194,8 +194,18 @@ export function BlockLibraryPanel({ search, onSearchChange, onAiGenerateClick }:
         <div style={{ padding: '0 12px', marginTop: '12px' }}>
           <button
             onClick={onAiGenerateClick}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl p-4 hover:bg-yellow-500/20 transition-all"
-            style={{ marginBottom: '16px' }}
+            className="w-full flex items-center justify-center gap-2 mb-4 rounded-xl p-4 transition-all"
+            style={{ 
+              background: 'linear-gradient(to right, rgba(201, 168, 76, 0.1), rgba(226, 200, 122, 0.1))',
+              border: '1px solid rgba(201, 168, 76, 0.2)',
+              color: 'var(--bb-gold)'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = 'rgba(201, 168, 76, 0.2)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(to right, rgba(201, 168, 76, 0.1), rgba(226, 200, 122, 0.1))';
+            }}
           >
             <SparklesIcon className="w-5 h-5" />
             <span className="font-semibold">Generate new block with AI</span>

@@ -71,6 +71,22 @@ export function useBlocksBuilder(fieldPath: string) {
     return newBlock.id;
   }, [blocks, generateBlockId, setValue, form]);
 
+  const addBlocks = useCallback((newBlocksData: { blockType: string; defaultValues: any }[]) => {
+    const newInstances = newBlocksData.map(data => ({
+      id: generateBlockId(),
+      blockType: data.blockType,
+      ...data.defaultValues,
+    }));
+
+    const newBlocks = [...blocks, ...newInstances];
+    setBlocks(newBlocks);
+    setValue(newBlocks);
+    if (form && typeof form.setModified === 'function') {
+      form.setModified(true);
+    }
+    return newInstances.map(b => b.id);
+  }, [blocks, generateBlockId, setValue, form]);
+
   const removeBlock = useCallback((blockId: string) => {
     const newBlocks = blocks.filter(b => b.id !== blockId);
     setBlocks(newBlocks);
@@ -119,6 +135,7 @@ export function useBlocksBuilder(fieldPath: string) {
     viewport,
     search,
     addBlock,
+    addBlocks,
     removeBlock,
     moveBlock,
     updateBlock,
