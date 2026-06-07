@@ -85,6 +85,8 @@ async function patchBlockMeta(block: GeneratedBlock): Promise<void> {
   if (lastBraceIdx === -1) throw new Error('blockMeta.ts: could not find closing brace')
 
   // We need to ensure a comma exists before the new entry
+  // TODO: This brace-matching logic is brittle and assumes the previous block ends with '}'.
+  // If a block ends with an array or primitive, this will find the wrong block and cause predictable errors.
   const secondLastBraceIdx = beforeInsert.lastIndexOf('}', lastBraceIdx - 1)
   if (secondLastBraceIdx !== -1) {
     const afterBrace = beforeInsert.slice(secondLastBraceIdx + 1, lastBraceIdx)
@@ -113,8 +115,11 @@ async function patchRenderBlocks(block: GeneratedBlock): Promise<void> {
 
   // Add to blockComponents map — find closing } of the map object
   const mapEntry = `  ${block.blockType}: ${block.componentName},`
-  const mapClosingIdx = content.indexOf('\n}\n', content.indexOf('blockComponents'))
-  if (mapClosingIdx === -1) throw new Error('RenderBlocks.tsx: could not find blockComponents closing brace')
+  const blockComponentsIdx = content.indexOf('blockComponents')
+  if (blockComponentsIdx === -1) throw new Error('RenderBlocks.tsx: could not find blockComponents')
+  const mapClosingMatch = content.slice(blockComponentsIdx).match(/(\s*)\}/)
+  if (!mapClosingMatch || mapClosingMatch.index === undefined) throw new Error('RenderBlocks.tsx: could not find blockComponents closing brace')
+  const mapClosingIdx = blockComponentsIdx + mapClosingMatch.index
   content = content.slice(0, mapClosingIdx) + '\n' + mapEntry + content.slice(mapClosingIdx)
 
   await fs.writeFile(filePath, content, 'utf-8')
@@ -127,18 +132,23 @@ async function patchPages(block: GeneratedBlock): Promise<void> {
   // Idempotency check
   if (content.includes(`{ ${block.componentName} }`)) return
 
-  // Add import after HeroBlock import
+  // Add import after the last import line
   const importLine = `import { ${block.componentName} } from '../blocks/${block.componentName}'\n`
-  const heroImportLine = "import { HeroBlock } from '../blocks/HeroBlock'"
-  const heroImportIdx = content.indexOf(heroImportLine)
-  if (heroImportIdx === -1) throw new Error('Pages.ts: could not find HeroBlock import line')
-  const afterHeroImport = content.indexOf('\n', heroImportIdx) + 1
-  content = content.slice(0, afterHeroImport) + importLine + content.slice(afterHeroImport)
+  const lastImportIdx = content.lastIndexOf('import ')
+  if (lastImportIdx === -1) {
+    content = importLine + '\n' + content
+  } else {
+    const afterLastImport = content.indexOf('\n', lastImportIdx) + 1
+    content = content.slice(0, afterLastImport) + importLine + content.slice(afterLastImport)
+  }
 
-  // Add to blocks array — find closing ], of the blocks array
+  // Add to blocks array — find closing ] of the blocks array
   const blockEntry = `        ${block.componentName},`
-  const blocksArrayCloseIdx = content.indexOf('\n      ],\n', content.indexOf('blocks: ['))
-  if (blocksArrayCloseIdx === -1) throw new Error('Pages.ts: could not find blocks array closing bracket')
+  const blocksIdx = content.indexOf('blocks: [')
+  if (blocksIdx === -1) throw new Error('Pages.ts: could not find blocks array')
+  const blocksArrayCloseMatch = content.slice(blocksIdx).match(/(\s*)\]/)
+  if (!blocksArrayCloseMatch || blocksArrayCloseMatch.index === undefined) throw new Error('Pages.ts: could not find blocks array closing bracket')
+  const blocksArrayCloseIdx = blocksIdx + blocksArrayCloseMatch.index
   content = content.slice(0, blocksArrayCloseIdx) + '\n' + blockEntry + content.slice(blocksArrayCloseIdx)
 
   await fs.writeFile(filePath, content, 'utf-8')
