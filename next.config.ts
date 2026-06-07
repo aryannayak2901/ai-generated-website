@@ -7,6 +7,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ['sharp', 'mongoose'],
   devIndicators: {
     position: 'bottom-right',
   },
