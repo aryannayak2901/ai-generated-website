@@ -1,0 +1,143 @@
+// src/lib/ai/fileWriter.ts
+import fs from 'fs/promises'
+import path from 'path'
+import { GeneratedBlock } from './types'
+
+const PROJECT_ROOT = process.cwd()
+const SRC = path.join(PROJECT_ROOT, 'src')
+
+function validateBlockType(blockType: string): void {
+  if (!/^[a-z][a-zA-Z0-9]*$/.test(blockType)) {
+    throw new Error(`Invalid blockType "${blockType}". Must be camelCase alphanumeric.`)
+  }
+}
+
+function safeResolvePath(base: string, ...parts: string[]): string {
+  const resolved = path.resolve(base, ...parts)
+  if (!resolved.startsWith(base)) {
+    throw new Error(`Path traversal attempt detected: ${resolved}`)
+  }
+  return resolved
+}
+
+export interface WrittenBlockInfo {
+  blockType: string
+  defaultValues: Record<string, unknown>
+  componentPath: string
+  configPath: string
+}
+
+export async function writeGeneratedBlock(block: GeneratedBlock): Promise<WrittenBlockInfo> {
+  validateBlockType(block.blockType)
+
+  const componentPath = safeResolvePath(SRC, 'components', 'blocks', `${block.componentName}.tsx`)
+  const configPath = safeResolvePath(SRC, 'blocks', `${block.componentName}.ts`)
+
+  // 1. Write component TSX file
+  await fs.mkdir(path.dirname(componentPath), { recursive: true })
+  await fs.writeFile(componentPath, block.componentCode, 'utf-8')
+
+  // 2. Write Payload block config
+  await fs.mkdir(path.dirname(configPath), { recursive: true })
+  await fs.writeFile(configPath, block.payloadConfigCode, 'utf-8')
+
+  // 3. Patch blockMeta.ts
+  await patchBlockMeta(block)
+
+  // 4. Patch RenderBlocks.tsx
+  await patchRenderBlocks(block)
+
+  // 5. Patch Pages.ts
+  await patchPages(block)
+
+  return {
+    blockType: block.blockType,
+    defaultValues: block.defaultValues,
+    componentPath: path.relative(PROJECT_ROOT, componentPath),
+    configPath: path.relative(PROJECT_ROOT, configPath),
+  }
+}
+
+async function patchBlockMeta(block: GeneratedBlock): Promise<void> {
+  const filePath = safeResolvePath(
+    SRC, 'components', 'payload', 'BlocksBuilder', 'constants', 'blockMeta.ts'
+  )
+  let content = await fs.readFile(filePath, 'utf-8')
+
+  // Idempotency check
+  if (content.includes(`  ${block.blockType}:`)) return
+
+  const entryJson = JSON.stringify(
+    { ...block.blockMetaEntry, defaultValues: block.defaultValues },
+    null,
+    2
+  )
+  const indented = entryJson.split('\n').join('\n  ')
+  const newEntry = `  ${block.blockType}: ${indented},\n`
+
+  // Insert before "export type BlockCategory" line
+  const insertionPoint = '\nexport type BlockCategory'
+  const idx = content.indexOf(insertionPoint)
+  if (idx === -1) throw new Error('blockMeta.ts: could not find insertion point (export type BlockCategory)')
+
+  const beforeInsert = content.slice(0, idx)
+  const lastBraceIdx = beforeInsert.lastIndexOf('}')
+  if (lastBraceIdx === -1) throw new Error('blockMeta.ts: could not find closing brace')
+
+  // We need to ensure a comma exists before the new entry
+  const secondLastBraceIdx = beforeInsert.lastIndexOf('}', lastBraceIdx - 1)
+  if (secondLastBraceIdx !== -1) {
+    content = content.slice(0, secondLastBraceIdx + 1) + ',' + content.slice(secondLastBraceIdx + 1, lastBraceIdx) + newEntry + content.slice(lastBraceIdx)
+  } else {
+    // Fallback if there's only one brace (unlikely)
+    content = content.slice(0, lastBraceIdx) + newEntry + content.slice(lastBraceIdx)
+  }
+
+  await fs.writeFile(filePath, content, 'utf-8')
+}
+
+async function patchRenderBlocks(block: GeneratedBlock): Promise<void> {
+  const filePath = safeResolvePath(SRC, 'components', 'RenderBlocks.tsx')
+  let content = await fs.readFile(filePath, 'utf-8')
+
+  // Idempotency check
+  if (content.includes(`${block.blockType}:`)) return
+
+  // Add import after the last import line
+  const importLine = `import { ${block.componentName} } from '@/components/blocks/${block.componentName}'\n`
+  const lastImportIdx = content.lastIndexOf('import ')
+  const afterLastImport = content.indexOf('\n', lastImportIdx) + 1
+  content = content.slice(0, afterLastImport) + importLine + content.slice(afterLastImport)
+
+  // Add to blockComponents map — find closing } of the map object
+  const mapEntry = `  ${block.blockType}: ${block.componentName},`
+  const mapClosingIdx = content.indexOf('\n}\n', content.indexOf('blockComponents'))
+  if (mapClosingIdx === -1) throw new Error('RenderBlocks.tsx: could not find blockComponents closing brace')
+  content = content.slice(0, mapClosingIdx) + '\n' + mapEntry + content.slice(mapClosingIdx)
+
+  await fs.writeFile(filePath, content, 'utf-8')
+}
+
+async function patchPages(block: GeneratedBlock): Promise<void> {
+  const filePath = safeResolvePath(SRC, 'collections', 'Pages.ts')
+  let content = await fs.readFile(filePath, 'utf-8')
+
+  // Idempotency check
+  if (content.includes(`{ ${block.componentName} }`)) return
+
+  // Add import after HeroBlock import
+  const importLine = `import { ${block.componentName} } from '../blocks/${block.componentName}'\n`
+  const heroImportLine = "import { HeroBlock } from '../blocks/HeroBlock'"
+  const heroImportIdx = content.indexOf(heroImportLine)
+  if (heroImportIdx === -1) throw new Error('Pages.ts: could not find HeroBlock import line')
+  const afterHeroImport = content.indexOf('\n', heroImportIdx) + 1
+  content = content.slice(0, afterHeroImport) + importLine + content.slice(afterHeroImport)
+
+  // Add to blocks array — find closing ], of the blocks array
+  const blockEntry = `        ${block.componentName},`
+  const blocksArrayCloseIdx = content.indexOf('\n      ],\n', content.indexOf('blocks: ['))
+  if (blocksArrayCloseIdx === -1) throw new Error('Pages.ts: could not find blocks array closing bracket')
+  content = content.slice(0, blocksArrayCloseIdx) + '\n' + blockEntry + content.slice(blocksArrayCloseIdx)
+
+  await fs.writeFile(filePath, content, 'utf-8')
+}
