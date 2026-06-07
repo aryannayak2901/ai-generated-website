@@ -12,7 +12,12 @@ export async function POST(
   request: NextRequest
 ): Promise<NextResponse<GenerateResponse | GenerateErrorResponse>> {
   try {
-    const body: GenerateRequest = await request.json()
+    let body: GenerateRequest
+    try {
+      body = await request.json()
+    } catch (e) {
+      return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
+    }
     const { prompt, mode, provider, model, apiKey } = body
 
     if (!prompt?.trim()) return NextResponse.json({ success: false, error: 'Prompt is required' }, { status: 400 })
@@ -25,15 +30,15 @@ export async function POST(
       return NextResponse.json({ success: false, error: `Invalid provider: ${provider}` }, { status: 400 })
     }
 
-    const systemPrompt = await buildSystemPrompt(prompt, mode ?? 'block') // Returns { system: string, user: string }
+    const promptPayload = await buildSystemPrompt(prompt, mode ?? 'block') // Returns { system: string, user: string }
 
     let generatedBlocks: GeneratedBlock[]
     if (provider === 'gemini') {
-      generatedBlocks = await callGemini(systemPrompt, model, apiKey)
+      generatedBlocks = await callGemini(promptPayload, model, apiKey)
     } else if (provider === 'openai') {
-      generatedBlocks = await callOpenAI(systemPrompt, model, apiKey)
+      generatedBlocks = await callOpenAI(promptPayload, model, apiKey)
     } else {
-      generatedBlocks = await callAnthropic(systemPrompt, model, apiKey)
+      generatedBlocks = await callAnthropic(promptPayload, model, apiKey)
     }
 
     const writtenBlocks = await Promise.all(
