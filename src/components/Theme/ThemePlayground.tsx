@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useForm } from "@payloadcms/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { 
   Globe, 
   Settings, 
@@ -127,7 +127,6 @@ export const ThemePlayground: React.FC = () => {
   const webCard = getThemeValue("card", resolvedDarkMode);
   const webCardForeground = getThemeValue("cardForeground", resolvedDarkMode);
   const webAccent = getThemeValue("accent", resolvedDarkMode);
-  const webAccentForeground = getThemeValue("accentForeground", resolvedDarkMode);
   const webBorder = getThemeValue("border", resolvedDarkMode);
 
   // Extract variables for Admin mockup
@@ -136,11 +135,8 @@ export const ThemePlayground: React.FC = () => {
   const admPrimary = getThemeValue("adminPrimary", resolvedDarkMode);
   const admPrimaryFg = getThemeValue("adminPrimaryFg", resolvedDarkMode);
   const admSecondary = getThemeValue("adminSecondary", resolvedDarkMode);
-  const admSecondaryFg = getThemeValue("adminSecondaryFg", resolvedDarkMode);
   const admSurface = getThemeValue("adminSurface", resolvedDarkMode);
   const admSurfaceFg = getThemeValue("adminSurfaceFg", resolvedDarkMode);
-  const admAccent = getThemeValue("adminAccent", resolvedDarkMode);
-  const admAccentFg = getThemeValue("adminAccentFg", resolvedDarkMode);
   const admBorder = getThemeValue("adminBorder", resolvedDarkMode);
   const admMuted = getThemeValue("adminMuted", resolvedDarkMode);
 

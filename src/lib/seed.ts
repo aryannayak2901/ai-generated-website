@@ -1068,7 +1068,7 @@ Haresh’s hard-working approach, combined with his ability to adapt to the comp
     }
     
     // Prepare the final payload team member data
-    const { imagePath, ...teamDataToSave } = member
+    const { imagePath: _imagePath, ...teamDataToSave } = member
     if (imageId) {
       (teamDataToSave as any).image = imageId
     }

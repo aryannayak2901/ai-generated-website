@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export const HeroSplit: React.FC<any> = ({ heading, subheading, ctas, media }) => (
   <section className="flex flex-col md:flex-row min-h-[80vh] items-center bg-navy-primary text-white overflow-hidden">
@@ -32,7 +33,7 @@ export const HeroSplit: React.FC<any> = ({ heading, subheading, ctas, media }) =
       className="flex-1 h-full min-h-[50vh] md:min-h-[80vh] relative"
     >
       {media?.url ? (
-        <img src={media.url} alt={media.alt || 'Hero Image'} className="absolute inset-0 w-full h-full object-cover" />
+        <Image src={media.url} alt={media.alt || 'Hero Image'} fill className="absolute inset-0 w-full h-full object-cover" />
       ) : (
         <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-navy-secondary to-navy-primary" />
       )}

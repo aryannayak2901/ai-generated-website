@@ -25,7 +25,7 @@ interface BlocksBuilderFieldProps {
 
 export function BlocksBuilderField({ 
   path, 
-  label, 
+  label: _label, 
   customHeader, 
   id: propId, 
   collectionSlug: propCollectionSlug,

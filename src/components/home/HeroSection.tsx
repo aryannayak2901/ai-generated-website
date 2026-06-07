@@ -57,7 +57,7 @@ export function HeroSection({
   }, [images]);
 
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [direction, setDirection] = React.useState(0); // -1 for left, 1 for right
+  const [_direction, setDirection] = React.useState(0); // -1 for left, 1 for right
 
   const nextSlide = React.useCallback(() => {
     if (resolvedImages.length <= 1) return;

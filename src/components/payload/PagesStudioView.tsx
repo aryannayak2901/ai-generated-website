@@ -225,12 +225,12 @@ const FormModifiedReporter = ({
 
   const currentTitle = titleField?.value || '';
   const currentSlug = slugField?.value || '';
-  const currentLayout = layoutField?.value || [];
+  const currentLayout = layoutField?.value;
 
   const isModified = useMemo(() => {
     const titleChanged = currentTitle !== initialTitle;
     const slugChanged = currentSlug !== initialSlug;
-    const layoutChanged = !isDeepEqual(initialLayout, currentLayout);
+    const layoutChanged = !isDeepEqual(initialLayout, currentLayout || []);
     return titleChanged || slugChanged || layoutChanged;
   }, [currentTitle, initialTitle, currentSlug, initialSlug, currentLayout, initialLayout]);
 

@@ -2,12 +2,13 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export const HeroCentered: React.FC<any> = ({ heading, subheading, ctas, media }) => (
   <section className="relative flex flex-col items-center justify-center text-center min-h-[80vh] bg-navy-primary text-white p-8 md:p-16 overflow-hidden">
     {media?.url && (
       <div className="absolute inset-0 z-0 opacity-20">
-        <img src={media.url} alt={media.alt || 'Background'} className="w-full h-full object-cover" />
+        <Image src={media.url} alt={media.alt || 'Background'} fill className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-navy-primary/60 backdrop-blur-sm" />
       </div>
     )}

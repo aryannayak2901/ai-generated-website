@@ -2,7 +2,6 @@
 
 import React, { useCallback } from "react";
 import { useField } from "@payloadcms/ui";
-import { motion } from "framer-motion";
 
 interface RadiusSliderFieldProps {
   path: string;

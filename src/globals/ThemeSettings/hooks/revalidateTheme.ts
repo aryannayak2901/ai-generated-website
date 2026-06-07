@@ -7,7 +7,7 @@ import type { GlobalAfterChangeHook } from "payload";
  */
 export const revalidateTheme: GlobalAfterChangeHook = async ({ doc, req: { payload } }) => {
   try {
-    const { revalidatePath, revalidateTag } = await import("next/cache");
+    const { revalidatePath } = await import("next/cache");
 
     // Revalidate the entire layout tree — this propagates to all pages
     // since theme is applied in the root (frontend) layout

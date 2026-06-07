@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import Image from 'next/image';
 import { BlockInstance } from './hooks/useBlocksBuilder';
 import { blockMeta, FieldSchema } from './constants/blockMeta';
 import { isDeepEqual } from './utils/comparison';
@@ -343,9 +344,11 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
           {((typeof value === 'object' && value?.url) ||
             (typeof value === 'string' && value.startsWith('http'))) && (
             <div className="bb-edit__media-preview">
-              <img
+              <Image
                 src={typeof value === 'object' ? value.url : value}
                 alt="Preview"
+                width={120}
+                height={90}
                 className="bb-edit__media-thumb"
               />
             </div>

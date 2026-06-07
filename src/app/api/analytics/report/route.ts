@@ -143,7 +143,6 @@ function processGAData(raw: any) {
 
     // Aggregate daily
     if (dateVal) {
-      const year = dateVal.substring(0, 4);
       const month = dateVal.substring(4, 6);
       const day = dateVal.substring(6, 8);
       const formattedDate = `${day}/${month}`;

@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo } from "react";
 import { useForm } from "@payloadcms/ui";
-import { Laptop, Smartphone, Menu, ArrowRight, Eye, Check, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { Laptop, Smartphone, Menu, Eye, Check, ChevronDown } from "lucide-react";
 
 // Default navigation links to display when no navItems are set
 const defaultNavLinks = [
@@ -87,6 +88,7 @@ export const HeaderPreview: React.FC = () => {
       }}
     >
       {/* Dynamic Fonts Injection for High-End Typography */}
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link 
         rel="stylesheet" 
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Public+Sans:wght@300;400;500;600;700&display=swap" 
@@ -278,7 +280,7 @@ export const HeaderPreview: React.FC = () => {
                   {/* Branding Group */}
                   <div style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
                     {logoUrl ? (
-                      <img src={logoUrl} alt={logoAlt} style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+                      <Image src={logoUrl} alt={logoAlt} width={32} height={32} style={{ objectFit: 'contain' }} />
                     ) : (
                       <div style={{ background: "linear-gradient(135deg, #d4af37, #aa841c)", color: "#0f1729", width: "32px", height: "32px", borderRadius: "4px", fontWeight: "bold", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Playfair Display, serif shadow-md" }}>
                         JB
@@ -338,7 +340,7 @@ export const HeaderPreview: React.FC = () => {
                   {/* Posh Logo Block */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", cursor: "pointer" }}>
                     {logoUrl ? (
-                      <img src={logoUrl} alt={logoAlt} style={{ width: "38px", height: "38px", objectFit: "contain", marginBottom: "2px" }} />
+                      <Image src={logoUrl} alt={logoAlt} width={38} height={38} style={{ objectFit: 'contain', marginBottom: '2px' }} />
                     ) : (
                       <span style={{ color: "#d4af37", fontSize: "20px", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }}>🏛️</span>
                     )}
@@ -528,7 +530,7 @@ export const HeaderPreview: React.FC = () => {
 
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer" }}>
                     {logoUrl ? (
-                      <img src={logoUrl} alt={logoAlt} style={{ height: "40px", objectFit: "contain", marginBottom: "4px" }} />
+                      <Image src={logoUrl} alt={logoAlt} height={40} width={120} style={{ objectFit: 'contain', marginBottom: '4px' }} />
                     ) : (
                       <span style={{ color: "#d4af37", fontSize: "20px" }}>⚖️</span>
                     )}
@@ -585,7 +587,7 @@ export const HeaderPreview: React.FC = () => {
                   {/* Main bar */}
                   <div style={{ background: "#0f1729", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
-                      {logoUrl ? <img src={logoUrl} alt={logoAlt} style={{ height: "30px", objectFit: "contain" }} /> : <span style={{ color: "#d4af37", fontSize: "16px" }}>⚖️</span>}
+                      {logoUrl ? <Image src={logoUrl} alt={logoAlt} height={30} width={90} style={{ objectFit: 'contain' }} /> : <span style={{ color: "#d4af37", fontSize: "16px" }}>⚖️</span>}
                       <div style={{ display: "flex", flexDirection: "column" }}>
                         <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.05em" }}>Chambers of Jeet Bhatt</span>
                         <span style={{ fontSize: "8px", color: "#d4af37", letterSpacing: "0.1em", textTransform: "uppercase" }}>Advocates & Legal Strategists</span>
@@ -623,7 +625,7 @@ export const HeaderPreview: React.FC = () => {
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                      {logoUrl ? <img src={logoUrl} alt={logoAlt} style={{ height: "24px", objectFit: "contain" }} /> : <span style={{ fontWeight: "800", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.1em" }}>CJB</span>}
+                      {logoUrl ? <Image src={logoUrl} alt={logoAlt} height={24} width={72} style={{ objectFit: 'contain' }} /> : <span style={{ fontWeight: "800", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.1em" }}>CJB</span>}
                     </div>
                     <div style={{ display: "flex", gap: "16px", fontSize: "10px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255, 255, 255, 0.8)", alignItems: "center" }}>
                       {navItems.map((item: any, i: number) => (
@@ -651,7 +653,7 @@ export const HeaderPreview: React.FC = () => {
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
-                    {logoUrl ? <img src={logoUrl} alt={logoAlt} style={{ height: "30px", objectFit: "contain" }} /> : <span style={{ color: "#d4af37", fontSize: "18px" }}>⚖️</span>}
+                    {logoUrl ? <Image src={logoUrl} alt={logoAlt} height={30} width={90} style={{ objectFit: 'contain' }} /> : <span style={{ color: "#d4af37", fontSize: "18px" }}>⚖️</span>}
                     <span style={{ fontWeight: "700", fontFamily: "Playfair Display, serif", fontSize: "14px", color: "#ffffff", letterSpacing: "0.05em", textTransform: "uppercase" }}>JEET BHATT</span>
                   </div>
 
@@ -733,7 +735,7 @@ export const HeaderPreview: React.FC = () => {
                 }>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     {logoUrl ? (
-                      <img src={logoUrl} alt={logoAlt} style={{ width: headerStyle === "island" ? "20px" : "24px", height: headerStyle === "island" ? "20px" : "24px", objectFit: "contain" }} />
+                      <Image src={logoUrl} alt={logoAlt} width={headerStyle === "island" ? 20 : 24} height={headerStyle === "island" ? 20 : 24} style={{ objectFit: 'contain' }} />
                     ) : (
                       <span style={{ color: "#d4af37", fontSize: headerStyle === "island" ? "12px" : "14px" }}>⚖️</span>
                     )}
@@ -818,7 +820,7 @@ export const HeaderPreview: React.FC = () => {
                   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     {logoUrl ? (
                       <div style={{ padding: "2px", borderRadius: "4px", width: "40px", height: "40px", overflow: "hidden", flexShrink: 0 }}>
-                        <img src={logoUrl} alt={logoAlt} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                        <Image src={logoUrl} alt={logoAlt} width={40} height={40} style={{ objectFit: "contain" }} />
                       </div>
                     ) : (
                       <div style={{ 

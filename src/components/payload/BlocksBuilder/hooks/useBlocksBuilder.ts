@@ -44,6 +44,7 @@ export function useBlocksBuilder(fieldPath: string) {
         hasInitialized.current = true;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, doc, fieldPath]); // Removed 'blocks' to fix the revert bug
 
   // Local UI state (non-persisted)

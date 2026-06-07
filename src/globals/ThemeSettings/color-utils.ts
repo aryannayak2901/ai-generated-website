@@ -178,7 +178,7 @@ export function parseCssOverrides(cssCode: string): Record<string, any> {
       if (WEBSITE_COLOR_KEYS.includes(camelKey)) {
         try {
           result[camelKey] = normalizeToHex(val);
-        } catch (e) {
+        } catch {
           // Ignore parse errors
         }
       } else if (key === "radius") {
@@ -199,7 +199,7 @@ export function parseCssOverrides(cssCode: string): Record<string, any> {
       if (WEBSITE_COLOR_KEYS.includes(camelKey)) {
         try {
           result[`${camelKey}Dark`] = normalizeToHex(val);
-        } catch (e) {
+        } catch {
           // Ignore parse errors
         }
       }
@@ -260,7 +260,7 @@ export function formatColor(hexValue: string, useOklch: boolean): string {
   if (useOklch) {
     try {
       return hexToOklch(hexValue);
-    } catch (e) {
+    } catch {
       return hexValue;
     }
   }
