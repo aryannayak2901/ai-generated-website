@@ -1,7 +1,7 @@
 import { GeneratedBlock } from '../types'
 
 export async function callAnthropic(
-  systemPrompt: string,
+  prompt: { system: string; user: string },
   model: string,
   apiKey: string
 ): Promise<GeneratedBlock[]> {
@@ -14,8 +14,9 @@ export async function callAnthropic(
     },
     body: JSON.stringify({
       model,
-      max_tokens: 16384,
-      messages: [{ role: 'user', content: systemPrompt }],
+      max_tokens: 8192,
+      system: prompt.system,
+      messages: [{ role: 'user', content: prompt.user }],
     }),
   })
 

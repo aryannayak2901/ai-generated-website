@@ -1,7 +1,7 @@
 import { GeneratedBlock } from '../types'
 
 export async function callGemini(
-  systemPrompt: string,
+  prompt: { system: string; user: string },
   model: string,
   apiKey: string
 ): Promise<GeneratedBlock[]> {
@@ -11,10 +11,13 @@ export async function callGemini(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: systemPrompt }] }],
+      systemInstruction: {
+        parts: [{ text: prompt.system }]
+      },
+      contents: [{ parts: [{ text: prompt.user }] }],
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 16384,
+        maxOutputTokens: 8192,
         responseMimeType: 'application/json',
       },
     }),
@@ -29,7 +32,10 @@ export async function callGemini(
   const text: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
   if (!text) throw new Error('Gemini returned empty response')
 
-  const parsed = JSON.parse(text)
+  const jsonMatch = text.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) throw new Error('Could not find JSON in Gemini response')
+
+  const parsed = JSON.parse(jsonMatch[0])
   if (!parsed.blocks || !Array.isArray(parsed.blocks)) {
     throw new Error('Gemini response missing "blocks" array')
   }

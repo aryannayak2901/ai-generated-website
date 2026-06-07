@@ -1,7 +1,7 @@
 import { GeneratedBlock } from '../types'
 
 export async function callOpenAI(
-  systemPrompt: string,
+  prompt: { system: string; user: string },
   model: string,
   apiKey: string
 ): Promise<GeneratedBlock[]> {
@@ -13,10 +13,13 @@ export async function callOpenAI(
     },
     body: JSON.stringify({
       model,
-      messages: [{ role: 'user', content: systemPrompt }],
+      messages: [
+        { role: 'system', content: prompt.system },
+        { role: 'user', content: prompt.user }
+      ],
       response_format: { type: 'json_object' },
       temperature: 0.4,
-      max_tokens: 16384,
+      max_tokens: 8192,
     }),
   })
 
@@ -29,7 +32,10 @@ export async function callOpenAI(
   const text: string = data?.choices?.[0]?.message?.content ?? ''
   if (!text) throw new Error('OpenAI returned empty response')
 
-  const parsed = JSON.parse(text)
+  const jsonMatch = text.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) throw new Error('Could not find JSON in OpenAI response')
+
+  const parsed = JSON.parse(jsonMatch[0])
   if (!parsed.blocks || !Array.isArray(parsed.blocks)) {
     throw new Error('OpenAI response missing "blocks" array')
   }

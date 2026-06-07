@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-export async function buildSystemPrompt(userPrompt: string, mode: 'block' | 'page'): Promise<string> {
+export async function buildSystemPrompt(userPrompt: string, mode: 'block' | 'page'): Promise<{ system: string, user: string }> {
   const projectRoot = process.cwd()
 
   const designMd = await fs.readFile(path.join(projectRoot, 'DESIGN.md'), 'utf-8').catch(() => '')
@@ -40,7 +40,7 @@ interface BlockMetaEntry {
     ? 'Generate MULTIPLE blocks that together form a complete page layout. Return an array in the "blocks" field.'
     : 'Generate a SINGLE block component. Return a single object in the "blocks" field (array of one).'
 
-  return `You are an expert Next.js 15 + TypeScript developer generating production-quality UI components for a premium legal firm website called "Chambers of Jeet Bhatt".
+  const systemPrompt = `You are an expert Next.js 15 + TypeScript developer generating production-quality UI components for a premium legal firm website called "Chambers of Jeet Bhatt".
 
 ## Design System
 ${designMd}
@@ -65,7 +65,7 @@ ${modeInstruction}
 
 **CRITICAL RULES:**
 1. componentCode MUST be valid TSX. Use 'use client' only if it uses hooks.
-2. Use inline styles consistent with the design system (Deep Navy #0f1729, Gold #d4af37, White #ffffff).
+2. Use Tailwind CSS v4 utility classes exclusively. Strictly adhere to the project's design tokens for colors (e.g., text-gold-accent, bg-navy-primary). NEVER use inline styles or hardcoded hex values.
 3. blockType MUST be camelCase (e.g. "testimonialsBlock").
 4. componentName MUST be PascalCase (e.g. "TestimonialsBlock").
 5. payloadConfigCode MUST export a named const following the reference pattern.
@@ -91,8 +91,7 @@ ${modeInstruction}
     }
   ]
 }
-
-## User Request
-${userPrompt}
 `
+
+  return { system: systemPrompt, user: userPrompt }
 }
