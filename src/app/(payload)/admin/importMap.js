@@ -30,6 +30,7 @@ import { Nav as Nav_6a3490dcdf999345f7d9ebf36f3d3644 } from '@/components/payloa
 import { Icon as Icon_6f14b747d7d9d385f91171711bbf7132 } from '@/components/payload/Icon'
 import { Logo as Logo_e34c28bdc97e3fecf976b23b26d64cc9 } from '@/components/payload/Logo'
 import { BeforeLogin as BeforeLogin_be7cf7eb3883beb9807d8789bb1dd363 } from '@/components/payload/BeforeLogin'
+import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
 export const importMap = {
   "@/components/payload#BlocksBuilderField": BlocksBuilderField_0286592052b98f5f0055fad3b77f9419,
@@ -63,5 +64,6 @@ export const importMap = {
   "@/components/payload/Nav#Nav": Nav_6a3490dcdf999345f7d9ebf36f3d3644,
   "@/components/payload/Icon#Icon": Icon_6f14b747d7d9d385f91171711bbf7132,
   "@/components/payload/Logo#Logo": Logo_e34c28bdc97e3fecf976b23b26d64cc9,
-  "@/components/payload/BeforeLogin#BeforeLogin": BeforeLogin_be7cf7eb3883beb9807d8789bb1dd363
+  "@/components/payload/BeforeLogin#BeforeLogin": BeforeLogin_be7cf7eb3883beb9807d8789bb1dd363,
+  "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }
