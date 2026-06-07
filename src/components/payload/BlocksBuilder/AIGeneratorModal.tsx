@@ -47,9 +47,12 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
   }, [])
 
   useEffect(() => {
-    try {
-      localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(settings))
-    } catch { /* ignore */ }
+    const timeout = setTimeout(() => {
+      try {
+        localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(settings))
+      } catch { /* ignore */ }
+    }, 500)
+    return () => clearTimeout(timeout)
   }, [settings])
 
   const handleProviderChange = (provider: AIProvider) => {
@@ -93,7 +96,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
         setStatus('idle')
         setStatusMessage('')
         setPrompt('')
-      }, 1200)
+      }, 600)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'An error occurred'
       setStatus('error')
@@ -111,14 +114,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={isLoading ? undefined : onClose}
-          style={{
-            position: 'fixed', inset: 0,
-            backgroundColor: 'rgba(5, 10, 24, 0.88)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            zIndex: 99999, padding: '20px',
-          }}
+          className="fixed inset-0 bg-primary/90 backdrop-blur-md flex items-center justify-center z-[99999] p-5"
         >
           <motion.div
             initial={{ scale: 0.95, y: 24, opacity: 0 }}
@@ -126,156 +122,127 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
             exit={{ scale: 0.95, y: 24, opacity: 0 }}
             transition={{ type: 'spring', duration: 0.45, bounce: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            style={{
-              width: '100%', maxWidth: '560px',
-              backgroundColor: '#0d1b2e',
-              border: '1px solid rgba(212, 175, 55, 0.22)',
-              borderRadius: '16px', padding: '36px',
-              boxShadow: '0 32px 64px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.04)',
-              display: 'flex', flexDirection: 'column', gap: '24px',
-            }}
+            className="w-full max-w-[560px] bg-card border border-accent/20 rounded-2xl p-9 shadow-2xl flex flex-col gap-6"
+            style={{ boxShadow: '0 32px 64px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.04)' }}
           >
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  width: '36px', height: '36px', borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #d4af37 0%, #b8972d 100%)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#050a18', fontWeight: 'bold', fontSize: '18px'
-                }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center text-primary font-bold text-lg">
                   ✨
                 </div>
-                <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#fff', fontFamily: 'Playfair Display, serif' }}>
+                <h2 className="m-0 text-xl font-semibold text-card-foreground font-serif">
                   AI Block Generator
                 </h2>
               </div>
               <button
                 onClick={onClose}
                 disabled={isLoading}
-                style={{
-                  background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer',
-                  padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  opacity: isLoading ? 0.5 : 1
-                }}
+                aria-label="Close modal"
+                className="bg-transparent border-none text-muted-foreground hover:text-foreground cursor-pointer p-1 flex items-center justify-center transition-colors disabled:opacity-50"
               >
                 ✕
               </button>
             </div>
 
             {/* Provider Settings */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Provider</label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Provider</label>
                 <select
                   value={settings.provider}
                   onChange={(e) => handleProviderChange(e.target.value as AIProvider)}
                   disabled={isLoading}
-                  style={{
-                    backgroundColor: '#050a18', color: '#fff', border: '1px solid #1e293b',
-                    borderRadius: '8px', padding: '10px 12px', fontSize: '14px', outline: 'none'
-                  }}
+                  className="bg-background text-foreground border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
                 >
                   <option value="gemini">Google Gemini</option>
                   <option value="openai">OpenAI</option>
                   <option value="anthropic">Anthropic</option>
                 </select>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Model</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Model</label>
                 <input
                   type="text"
                   value={settings.model}
                   onChange={(e) => setSettings(s => ({ ...s, model: e.target.value }))}
                   disabled={isLoading}
-                  style={{
-                    backgroundColor: '#050a18', color: '#fff', border: '1px solid #1e293b',
-                    borderRadius: '8px', padding: '10px 12px', fontSize: '14px', outline: 'none'
-                  }}
+                  className="bg-background text-foreground border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
                 />
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>API Key (Stored Locally)</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">API Key (Stored Locally)</label>
               <input
                 type="password"
                 value={settings.apiKey}
                 onChange={(e) => setSettings(s => ({ ...s, apiKey: e.target.value }))}
                 disabled={isLoading}
                 placeholder={`Enter ${settings.provider} API key...`}
-                style={{
-                  backgroundColor: '#050a18', color: '#fff', border: '1px solid #1e293b',
-                  borderRadius: '8px', padding: '10px 12px', fontSize: '14px', outline: 'none'
-                }}
+                className="bg-background text-foreground border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
               />
             </div>
 
-            <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.06)', margin: '8px 0' }} />
+            <hr className="border-0 border-t border-border/50 my-2" />
 
             {/* Mode & Prompt */}
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-              <label style={{ fontSize: '14px', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+            <div className="flex gap-4 items-center">
+              <label className="text-sm text-foreground/80 flex items-center gap-2 cursor-pointer hover:text-foreground transition-colors">
                 <input
                   type="radio"
                   name="ai_mode"
                   checked={mode === 'block'}
                   onChange={() => setMode('block')}
                   disabled={isLoading}
+                  className="text-accent focus:ring-accent"
                 />
                 Single Block
               </label>
-              <label style={{ fontSize: '14px', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <label className="text-sm text-foreground/80 flex items-center gap-2 cursor-pointer hover:text-foreground transition-colors">
                 <input
                   type="radio"
                   name="ai_mode"
                   checked={mode === 'page'}
                   onChange={() => setMode('page')}
                   disabled={isLoading}
+                  className="text-accent focus:ring-accent"
                 />
                 Full Page Layout
               </label>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Prompt</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Prompt</label>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 disabled={isLoading}
                 placeholder={mode === 'block' ? "Describe the UI component (e.g., 'A split-screen hero with a trust badge and gold CTA')..." : "Describe the page (e.g., 'A complete about us page with hero, team grid, and contact CTA')..."}
-                style={{
-                  backgroundColor: '#050a18', color: '#fff', border: '1px solid #1e293b',
-                  borderRadius: '8px', padding: '14px', fontSize: '15px', outline: 'none',
-                  minHeight: '120px', resize: 'vertical', lineHeight: '1.5',
-                  fontFamily: 'inherit'
-                }}
+                className="bg-background text-foreground border border-border rounded-lg p-3.5 text-[15px] outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all min-h-[120px] resize-y leading-relaxed font-inherit"
               />
             </div>
 
             {error && (
-              <div style={{ padding: '12px', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', color: '#ef4444', fontSize: '14px' }}>
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
                 {error}
               </div>
             )}
 
             {/* Actions */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
-              <div style={{ fontSize: '14px', color: status === 'error' ? '#ef4444' : '#d4af37' }}>
+            <div className="flex items-center justify-between mt-2">
+              <div className={`text-sm ${status === 'error' ? 'text-destructive' : 'text-accent'}`}>
                 {statusMessage}
               </div>
               
               <button
                 onClick={handleGenerate}
                 disabled={isLoading || !prompt.trim() || !settings.apiKey.trim()}
-                style={{
-                  background: isLoading ? '#334155' : 'linear-gradient(135deg, #d4af37 0%, #b8972d 100%)',
-                  color: isLoading ? '#94a3b8' : '#050a18',
-                  border: 'none', borderRadius: '8px', padding: '12px 24px',
-                  fontSize: '15px', fontWeight: '600', cursor: isLoading ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: isLoading ? 'none' : '0 4px 14px rgba(212, 175, 55, 0.2)'
-                }}
+                className={`border-none rounded-lg px-6 py-3 text-[15px] font-semibold transition-all duration-200 ${
+                  isLoading 
+                    ? 'bg-muted text-muted-foreground cursor-not-allowed' 
+                    : 'bg-gradient-to-br from-accent to-[#b8972d] text-primary cursor-pointer hover:shadow-[0_4px_14px_rgba(212,175,55,0.3)] hover:scale-[1.02] active:scale-[0.98]'
+                }`}
               >
                 {isLoading ? 'Generating...' : 'Generate ✨'}
               </button>
