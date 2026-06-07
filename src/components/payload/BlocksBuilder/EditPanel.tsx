@@ -18,6 +18,9 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
+  const [activeTab, setActiveTab] = useState<'settings' | 'code'>('settings');
+  const [code, setCode] = useState<string | null>(null);
+  const [isLoadingCode, setIsLoadingCode] = useState(false);
   // Dynamic collections states
   const [mediaList, setMediaList] = useState<{ id: string; filename: string; url: string }[]>([]);
   const [teamList, setTeamList] = useState<{
@@ -43,6 +46,26 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
       onChangeDirty(isDirty);
     }
   }, [isDirty, onChangeDirty]);
+
+  useEffect(() => {
+    if (activeTab === 'code' && !code && block.blockType) {
+      setIsLoadingCode(true);
+      const componentName = block.blockType.charAt(0).toUpperCase() + block.blockType.slice(1);
+      fetch(`/api/ai-block-code?name=${componentName}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code) setCode(data.code);
+          else setCode('// Code not found or error loading.');
+        })
+        .catch(() => setCode('// Error loading code.'))
+        .finally(() => setIsLoadingCode(false));
+    }
+  }, [activeTab, block.blockType, code]);
+
+  useEffect(() => {
+    setCode(null);
+    setActiveTab('settings');
+  }, [block.id]);
 
   const meta = blockMeta[block.blockType];
   const fields = useMemo(() => meta?.fields || [], [meta]);
@@ -630,25 +653,48 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
           }
         }}
       >
-        {fields.length === 0 ? (
-          <div style={{ color: '#8899aa', fontSize: '12px', fontStyle: 'italic', padding: '12px' }}>
-            No editable fields defined for this block.
-          </div>
+        <div className="flex border-b border-white/10 mb-4">
+          <button 
+            type="button"
+            onClick={() => setActiveTab('settings')}
+            className={`flex-1 pb-2 font-medium transition-colors ${activeTab === 'settings' ? 'text-white border-b-2 border-[var(--bb-gold)]' : 'text-slate-400 hover:text-slate-300'}`}
+          >
+            Settings
+          </button>
+          <button 
+            type="button"
+            onClick={() => setActiveTab('code')}
+            className={`flex-1 pb-2 font-medium transition-colors ${activeTab === 'code' ? 'text-white border-b-2 border-[var(--bb-gold)]' : 'text-slate-400 hover:text-slate-300'}`}
+          >
+            Code
+          </button>
+        </div>
+
+        {activeTab === 'settings' ? (
+          fields.length === 0 ? (
+            <div style={{ color: '#8899aa', fontSize: '12px', fontStyle: 'italic', padding: '12px' }}>
+              No editable fields defined for this block.
+            </div>
+          ) : (
+            fields.map((field) => {
+              const error = errors[field.name];
+              return (
+                <div key={field.name} className="bb-edit__field">
+                  {field.type !== 'array' && field.type !== 'boolean' && (
+                    <label className="bb-edit__label" htmlFor={field.name}>
+                      {field.label}
+                    </label>
+                  )}
+                  {renderFieldInput(field, formData[field.name], [field.name])}
+                  {error && <span style={{ color: 'var(--bb-danger)', fontSize: '10px' }}>{error}</span>}
+                </div>
+              );
+            })
+          )
         ) : (
-          fields.map((field) => {
-            const error = errors[field.name];
-            return (
-              <div key={field.name} className="bb-edit__field">
-                {field.type !== 'array' && field.type !== 'boolean' && (
-                  <label className="bb-edit__label" htmlFor={field.name}>
-                    {field.label}
-                  </label>
-                )}
-                {renderFieldInput(field, formData[field.name], [field.name])}
-                {error && <span style={{ color: 'var(--bb-danger)', fontSize: '10px' }}>{error}</span>}
-              </div>
-            );
-          })
+          <div className="bg-[#050a18] p-4 rounded-xl border border-white/5 overflow-x-auto text-xs font-mono text-slate-300">
+            {isLoadingCode ? 'Loading code...' : <pre><code>{code}</code></pre>}
+          </div>
         )}
       </div>
 
