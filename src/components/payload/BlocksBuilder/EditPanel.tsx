@@ -48,18 +48,28 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
   }, [isDirty, onChangeDirty]);
 
   useEffect(() => {
+    let isActive = true;
     if (activeTab === 'code' && !code && block.blockType) {
       setIsLoadingCode(true);
       const componentName = block.blockType.charAt(0).toUpperCase() + block.blockType.slice(1);
       fetch(`/api/ai-block-code?name=${componentName}`)
         .then((res) => res.json())
         .then((data) => {
-          if (data.code) setCode(data.code);
-          else setCode('// Code not found or error loading.');
+          if (isActive) {
+            if (data.code) setCode(data.code);
+            else setCode('// Code not found or error loading.');
+          }
         })
-        .catch(() => setCode('// Error loading code.'))
-        .finally(() => setIsLoadingCode(false));
+        .catch(() => {
+          if (isActive) setCode('// Error loading code.');
+        })
+        .finally(() => {
+          if (isActive) setIsLoadingCode(false);
+        });
     }
+    return () => {
+      isActive = false;
+    };
   }, [activeTab, block.blockType, code]);
 
   useEffect(() => {
@@ -692,7 +702,7 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
             })
           )
         ) : (
-          <div className="bg-[#050a18] p-4 rounded-xl border border-white/5 overflow-x-auto text-xs font-mono text-slate-300">
+          <div className="bg-[var(--bb-navy)] p-4 rounded-xl border border-white/5 overflow-x-auto text-xs font-mono text-slate-300">
             {isLoadingCode ? 'Loading code...' : <pre><code>{code}</code></pre>}
           </div>
         )}
