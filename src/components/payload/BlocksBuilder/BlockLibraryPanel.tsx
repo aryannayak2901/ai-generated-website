@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { blockMeta, blockCategoryOrder, BlockCategory } from './constants/blockMeta';
+import { SparklesIcon } from 'lucide-react';
 
 import { useField, useForm } from '@payloadcms/ui';
 import { useHasMounted } from './hooks/useHasMounted';
@@ -10,6 +11,7 @@ import { useHasMounted } from './hooks/useHasMounted';
 interface BlockLibraryPanelProps {
   search: string;
   onSearchChange: (search: string) => void;
+  onAiGenerateClick?: () => void;
 }
 
 function PageSettings() {
@@ -136,7 +138,7 @@ function BlockChip({ blockType, label, icon, category }: {
   );
 }
 
-export function BlockLibraryPanel({ search, onSearchChange }: BlockLibraryPanelProps) {
+export function BlockLibraryPanel({ search, onSearchChange, onAiGenerateClick }: BlockLibraryPanelProps) {
   const filteredBlocks = useMemo(() => {
     const blocks = Object.entries(blockMeta).map(([slug, meta]) => ({
       slug,
@@ -187,6 +189,19 @@ export function BlockLibraryPanel({ search, onSearchChange }: BlockLibraryPanelP
           <button className="bb-library__clear" onClick={() => onSearchChange('')}>✕</button>
         )}
       </div>
+
+      {onAiGenerateClick && (
+        <div style={{ padding: '0 12px', marginTop: '12px' }}>
+          <button
+            onClick={onAiGenerateClick}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl p-4 hover:bg-yellow-500/20 transition-all"
+            style={{ marginBottom: '16px' }}
+          >
+            <SparklesIcon className="w-5 h-5" />
+            <span className="font-semibold">Generate new block with AI</span>
+          </button>
+        </div>
+      )}
 
       <div className="bb-library__list">
         {blockCategoryOrder.map((category) => {

@@ -9,6 +9,7 @@ import { BlockLibraryPanel } from './BlockLibraryPanel';
 import { CanvasPanel } from './CanvasPanel';
 import { EditPanel } from './EditPanel';
 import { PreviewPanel } from './PreviewPanel';
+import { AIGeneratorModal } from './AIGeneratorModal';
 import { blockMeta } from './constants/blockMeta';
 import './styles.css';
 
@@ -52,6 +53,7 @@ export function BlocksBuilderField({
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const [internalIsFullscreen, setInternalIsFullscreen] = React.useState(false);
   const [isBlockDirty, setIsBlockDirty] = React.useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = React.useState(false);
   const [pendingBlockAction, setPendingBlockAction] = React.useState<{ type: 'close' | 'switch'; targetBlockId?: string } | null>(null);
 
   // Propagate block-level dirty state to parent
@@ -251,6 +253,7 @@ export function BlocksBuilderField({
             <BlockLibraryPanel
               search={search}
               onSearchChange={setSearch}
+              onAiGenerateClick={() => setIsAiModalOpen(true)}
             />
           </div>
 
@@ -470,6 +473,16 @@ export function BlocksBuilderField({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AIGeneratorModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        onBlocksGenerated={(generatedBlocks) => {
+          generatedBlocks.forEach(block => {
+            addBlock(block.blockType, block.defaultValues || {});
+          });
+        }}
+      />
     </motion.div>
   );
 }
