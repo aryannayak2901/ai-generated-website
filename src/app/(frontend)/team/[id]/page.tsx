@@ -18,6 +18,7 @@ export async function generateMetadata({
   
   const { docs } = await payload.find({
     collection: "team",
+    depth: 1,
     where: {
       slug: {
         equals: p.id,
@@ -63,6 +64,7 @@ export default async function TeamMemberPage({
   
   const { docs } = await payload.find({
     collection: "team",
+    depth: 1,
     where: {
       slug: {
         equals: p.id,

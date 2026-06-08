@@ -20,6 +20,7 @@ export default async function TeamPage() {
   const payload = await getPayload({ config: configPromise });
   const { docs } = await payload.find({
     collection: "team",
+    depth: 1,
     limit: 100,
   });
 

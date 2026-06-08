@@ -22,6 +22,7 @@ export default async function AboutPage() {
   const payload = await getPayload({ config: configPromise });
   const { docs } = await payload.find({
     collection: "pages",
+    depth: 2,
     where: {
       slug: {
         equals: "about",
