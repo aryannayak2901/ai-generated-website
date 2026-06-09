@@ -23,6 +23,7 @@ import { MapSection } from '@/components/offices/MapSection'
 import { OfficeCTA } from '@/components/offices/OfficeCTA'
 
 import type { Page } from '@/payload-types'
+import { ProductList } from '@/components/blocks/ProductList'
 
 const blockComponents: Record<string, React.ComponentType<any>> = {
   dynamicHero: HeroBlockRenderer,
@@ -47,6 +48,7 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   officeSelector: OfficeSelector,
   mapSection: MapSection,
   officeCta: OfficeCTA,
+  productList: ProductList,
 }
 
 export const RenderBlocks: React.FC<{ blocks: NonNullable<Page['layout']> }> = ({ blocks }) => {

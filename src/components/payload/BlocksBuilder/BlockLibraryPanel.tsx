@@ -193,6 +193,7 @@ export function BlockLibraryPanel({ search, onSearchChange, onAiGenerateClick }:
       {onAiGenerateClick && (
         <div style={{ padding: '0 12px', marginTop: '12px' }}>
           <button
+            type="button"
             onClick={onAiGenerateClick}
             className="w-full flex items-center justify-center gap-2 mb-4 rounded-xl p-4 transition-all"
             style={{ 

@@ -446,6 +446,22 @@ export interface Page {
             blockName?: string | null;
             blockType: 'officeCta';
           }
+        | {
+            title: string;
+            subtitle: string;
+            products?:
+              | {
+                  name: string;
+                  description: string;
+                  image?: (string | null) | Media;
+                  link?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'productList';
+          }
       )[]
     | null;
   updatedAt: string;
@@ -1008,6 +1024,23 @@ export interface PagesSelect<T extends boolean = true> {
               ctaText2?: T;
               ctaLink2?: T;
               disclaimer?: T;
+              id?: T;
+              blockName?: T;
+            };
+        productList?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              products?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    image?: T;
+                    link?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };

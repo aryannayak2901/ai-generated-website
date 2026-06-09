@@ -3,6 +3,10 @@ import { buildSystemPrompt } from '@/lib/ai/buildSystemPrompt'
 import { callGemini } from '@/lib/ai/providers/gemini'
 import { callOpenAI } from '@/lib/ai/providers/openai'
 import { callAnthropic } from '@/lib/ai/providers/anthropic'
+import { callOpenRouter } from '@/lib/ai/providers/openrouter'
+import { callGroq } from '@/lib/ai/providers/groq'
+import { callMistral } from '@/lib/ai/providers/mistral'
+import { callTogether } from '@/lib/ai/providers/together'
 import { writeGeneratedBlock } from '@/lib/ai/fileWriter'
 import type { GenerateRequest, GenerateResponse, GenerateErrorResponse, AIProvider, GeneratedBlock } from '@/lib/ai/types'
 
@@ -25,7 +29,7 @@ export async function POST(
     if (!model?.trim()) return NextResponse.json({ success: false, error: 'Model is required' }, { status: 400 })
     if (!apiKey?.trim()) return NextResponse.json({ success: false, error: 'API key is required' }, { status: 400 })
 
-    const validProviders: AIProvider[] = ['gemini', 'openai', 'anthropic']
+    const validProviders: AIProvider[] = ['gemini', 'openai', 'anthropic', 'openrouter', 'groq', 'mistral', 'together']
     if (!validProviders.includes(provider)) {
       return NextResponse.json({ success: false, error: `Invalid provider: ${provider}` }, { status: 400 })
     }
@@ -33,12 +37,30 @@ export async function POST(
     const promptPayload = await buildSystemPrompt(prompt, mode ?? 'block') // Returns { system: string, user: string }
 
     let generatedBlocks: GeneratedBlock[]
-    if (provider === 'gemini') {
-      generatedBlocks = await callGemini(promptPayload, model, apiKey)
-    } else if (provider === 'openai') {
-      generatedBlocks = await callOpenAI(promptPayload, model, apiKey)
-    } else {
-      generatedBlocks = await callAnthropic(promptPayload, model, apiKey)
+    switch (provider) {
+      case 'gemini':
+        generatedBlocks = await callGemini(promptPayload, model, apiKey)
+        break
+      case 'openai':
+        generatedBlocks = await callOpenAI(promptPayload, model, apiKey)
+        break
+      case 'anthropic':
+        generatedBlocks = await callAnthropic(promptPayload, model, apiKey)
+        break
+      case 'openrouter':
+        generatedBlocks = await callOpenRouter(promptPayload, model, apiKey)
+        break
+      case 'groq':
+        generatedBlocks = await callGroq(promptPayload, model, apiKey)
+        break
+      case 'mistral':
+        generatedBlocks = await callMistral(promptPayload, model, apiKey)
+        break
+      case 'together':
+        generatedBlocks = await callTogether(promptPayload, model, apiKey)
+        break
+      default:
+        return NextResponse.json({ success: false, error: `Unsupported provider: ${provider}` }, { status: 400 })
     }
 
     const writtenBlocks = await Promise.all(

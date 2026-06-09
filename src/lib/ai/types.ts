@@ -1,6 +1,6 @@
 // src/lib/ai/types.ts
 
-export type AIProvider = 'gemini' | 'openai' | 'anthropic'
+export type AIProvider = 'gemini' | 'openai' | 'anthropic' | 'openrouter' | 'groq' | 'mistral' | 'together'
 
 export type GenerationMode = 'block' | 'page'
 

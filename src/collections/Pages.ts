@@ -11,6 +11,7 @@ import { ContactHero, ContactInfo, ContactFormBlock, ContactMap } from '../block
 import { BlogHero, BlogFiltersBlock, Newsletter } from '../blocks/BlogBlocks'
 import { OfficeHero, OfficeSelector, MapSection, OfficeCTA } from '../blocks/OfficeBlocks'
 import { HeroBlock } from '../blocks/HeroBlock'
+import { ProductList } from '../blocks/ProductList'
 
 const formatSlug = (val: string): string =>
   val
@@ -88,6 +89,7 @@ export const Pages: CollectionConfig = {
         OfficeSelector,
         MapSection,
         OfficeCTA,
+        ProductList,
       ],
       admin: {
         components: {

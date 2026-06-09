@@ -630,7 +630,60 @@ export const blockMeta: Record<string, BlockMeta> = {
       { name: 'buttonText', label: 'Button Text', type: 'text' },
       { name: 'disclaimer', label: 'Privacy Disclaimer Text', type: 'text' }
     ]
-  }
+  },
+  productList: {
+    "label": "Product List",
+    "category": "Content",
+    "icon": "📋",
+    "badgeLabel": "Grid",
+    "defaultValues": {
+      "blockType": "productList",
+      "title": "Our Legal Services",
+      "subtitle": "Comprehensive legal solutions tailored to your unique needs and objectives.",
+      "products": []
+    },
+    "fields": [
+      {
+        "name": "title",
+        "label": "Title",
+        "type": "text",
+        "defaultValue": "Our Legal Services"
+      },
+      {
+        "name": "subtitle",
+        "label": "Subtitle",
+        "type": "textarea",
+        "defaultValue": "Comprehensive legal solutions tailored to your unique needs and objectives."
+      },
+      {
+        "name": "products",
+        "label": "Products",
+        "type": "array",
+        "fields": [
+          {
+            "name": "name",
+            "label": "Name",
+            "type": "text"
+          },
+          {
+            "name": "description",
+            "label": "Description",
+            "type": "textarea"
+          },
+          {
+            "name": "image",
+            "label": "Image",
+            "type": "upload"
+          },
+          {
+            "name": "link",
+            "label": "Link",
+            "type": "text"
+          }
+        ]
+      }
+    ]
+  },
 };
 
 export type BlockCategory = 'Hero' | 'Content' | 'CTA / Forms';
