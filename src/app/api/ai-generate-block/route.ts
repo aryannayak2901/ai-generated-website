@@ -19,7 +19,7 @@ export async function POST(
     let body: GenerateRequest
     try {
       body = await request.json()
-    } catch (e) {
+    } catch {
       return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
     }
     const { prompt, mode, provider, model, apiKey } = body

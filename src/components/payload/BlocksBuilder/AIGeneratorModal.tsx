@@ -159,6 +159,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
       if (saved) {
         const parsed = JSON.parse(saved) as AISettings
         if (parsed.provider && PROVIDERS[parsed.provider]) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setSettings(parsed)
         }
       }

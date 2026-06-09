@@ -51,6 +51,7 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
   useEffect(() => {
     let isActive = true;
     if (activeTab === 'code' && !code && block.blockType) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoadingCode(true);
       const componentName = block.blockType.charAt(0).toUpperCase() + block.blockType.slice(1);
       fetch(`/api/ai-block-code?name=${componentName}`)
@@ -74,6 +75,7 @@ export function EditPanel({ block, onSave, onCancel, onChangeDirty }: EditPanelP
   }, [activeTab, block.blockType, code]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCode(null);
     setActiveTab('settings');
   }, [block.id]);
