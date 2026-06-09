@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 
@@ -29,7 +30,7 @@ export const HeroAsymmetric: React.FC<any> = ({ heading, subheading, ctas, media
       {media?.url ? (
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div ref={bgRef} className="absolute -inset-[20%] w-[140%] h-[140%]">
-            <img src={media.url} alt={media.alt || 'Background'} className="w-full h-full object-cover" />
+            <Image src={media.url} alt={media.alt || 'Background'} fill className="w-full h-full object-cover" />
           </div>
         </div>
       ) : (

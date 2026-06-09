@@ -4,7 +4,7 @@ import { getPayload } from "payload";
 import configPromise from "@/payload.config";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, User, Calendar, ArrowLeft, ChevronRight, Share2, BookOpen } from "lucide-react";
+import { Clock, User, Calendar, ArrowLeft, ChevronRight, BookOpen } from "lucide-react";
 import type { Post, Media } from "@/payload-types";
 import { LexicalRenderer } from "@/components/blog/LexicalRenderer";
 import { generateSeoMetadata } from "@/lib/seo/metadata-generator";

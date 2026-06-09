@@ -47,12 +47,17 @@ export function HeroSection({
         return { url, alt };
       })
       .filter(
-        (item): item is { url: string; alt: string } => !!item && !!item.url,
+        (item): item is { url: string; alt: string } =>
+          !!item &&
+          !!item.url &&
+          (item.url.startsWith("/") ||
+            item.url.startsWith("http://") ||
+            item.url.startsWith("https://")),
       );
   }, [images]);
 
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [direction, setDirection] = React.useState(0); // -1 for left, 1 for right
+  const [_direction, setDirection] = React.useState(0); // -1 for left, 1 for right
 
   const nextSlide = React.useCallback(() => {
     if (resolvedImages.length <= 1) return;

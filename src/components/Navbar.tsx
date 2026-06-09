@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Mail, MapPin, Menu, X, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -198,11 +199,7 @@ export function Navbar({ headerData }: NavbarProps) {
           <div className="flex items-center justify-between w-full lg:justify-center">
             <Link href="/" className="flex flex-col items-center gap-1 group">
               {logoUrl && (
-                <img
-                  src={logoUrl}
-                  alt={logoAlt}
-                  className="w-12 h-12 object-contain mb-1 transition-transform group-hover:scale-105"
-                />
+                <Image src={logoUrl} alt={logoAlt} width={48} height={48} className="object-contain mb-1 transition-transform group-hover:scale-105" />
               )}
               <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-[0.05em] uppercase text-center group-hover:text-accent transition-colors">
                 Chambers of Jeet Bhatt
@@ -488,11 +485,7 @@ export function Navbar({ headerData }: NavbarProps) {
         <div className="mx-auto max-w-[800px] bg-primary/95 backdrop-blur-xl border border-accent/30 rounded-full px-6 md:px-8 py-3 shadow-[0_20px_40px_rgba(0,0,0,0.5)] flex items-center justify-between pointer-events-auto">
           <Link href="/" className="flex items-center shrink-0 group">
             {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt={logoAlt}
-                className="h-8 object-contain transition-transform duration-300 group-hover:scale-105"
-              />
+              <Image src={logoUrl} alt={logoAlt} width={32} height={32} className="h-8 object-contain transition-transform duration-300 group-hover:scale-105" />
             ) : (
               <span className="font-serif text-lg font-bold text-white tracking-widest uppercase group-hover:text-accent transition-colors duration-300">
                 CJB
@@ -735,11 +728,7 @@ function MobileMenuTrigger({
           <div className="flex items-center gap-3">
             {logoUrl ? (
               <div className="p-0.5 rounded-sm shrink-0 w-10 h-10 overflow-hidden">
-                <img
-                  src={logoUrl}
-                  alt={logoAlt}
-                  className="w-full h-full object-contain"
-                />
+                <Image src={logoUrl} alt={logoAlt} width={40} height={40} className="w-full h-full object-contain" />
               </div>
             ) : (
               <div
@@ -883,11 +872,7 @@ function LogoBranding({
     <Link href="/" className="flex items-center gap-3 group shrink-0">
       {logoUrl ? (
         <div className="flex items-center justify-center p-0.5 rounded-sm shrink-0 w-10 h-10 shadow-xl transition-all duration-300 group-hover:scale-105 overflow-hidden">
-          <img
-            src={logoUrl}
-            alt={logoAlt}
-            className="w-full h-full object-contain"
-          />
+          <Image src={logoUrl} alt={logoAlt} width={40} height={40} className="w-full h-full object-contain" />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center bg-white/10 p-2 rounded-sm shrink-0 w-10 h-10 shadow-xl transition-all duration-300 group-hover:scale-105">

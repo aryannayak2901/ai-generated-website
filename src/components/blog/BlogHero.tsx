@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Calendar, Bookmark } from "lucide-react";
+import { ArrowRight, Calendar } from "lucide-react";
 import type { Post, Media } from "@/payload-types";
 import { BlogPost } from "@/lib/blog-data";
 

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
-import { ArrowRight, Linkedin } from "lucide-react";
+import { motion as _motion, useInView as _useInView } from "framer-motion";
+import { ArrowRight as _ArrowRight, Linkedin as _Linkedin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { StaggerContainer, StaggerItem } from "@/components/animations";
 import type { Team } from "@/payload-types";

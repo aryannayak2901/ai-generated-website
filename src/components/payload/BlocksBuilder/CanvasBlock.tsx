@@ -53,7 +53,7 @@ export function CanvasBlock({
     zIndex: isDragging ? 10 : 1,
   };
 
-  const badgeClass = `bb-canvas-block__badge bb-canvas-block__badge--${meta.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+  const _badgeClass = `bb-canvas-block__badge bb-canvas-block__badge--${meta.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
   return (
     <div

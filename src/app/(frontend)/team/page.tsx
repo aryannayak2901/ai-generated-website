@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getPayload } from "payload";
 import configPromise from "@/payload.config";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/animations";
+import Image from "next/image";
+import { StaggerContainer, StaggerItem } from "@/components/animations";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
@@ -19,6 +20,7 @@ export default async function TeamPage() {
   const payload = await getPayload({ config: configPromise });
   const { docs } = await payload.find({
     collection: "team",
+    depth: 1,
     limit: 100,
   });
 
@@ -51,17 +53,18 @@ export default async function TeamPage() {
             staggerDelay={0.1}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
-            {teamMembers.map((member, index) => (
+            {teamMembers.map((member) => (
               <StaggerItem key={member.id}>
                 <Link href={`/team/${member.slug}`} className="group block">
                   <div className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg hover:border-accent transition-all duration-300 hover:scale-[1.02]">
                     {/* Profile Image */}
                     <div className="relative aspect-[4/5] w-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center overflow-hidden">
                       {member.image ? (
-                        <img
+                        <Image
                           src={(member.image as any)?.url || ""}
                           alt={member.name}
-                          className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                          fill
+                          className="absolute inset-0 object-cover object-top group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="w-24 h-24 rounded-full bg-accent/20 flex items-center justify-center">

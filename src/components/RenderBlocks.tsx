@@ -24,7 +24,6 @@ import { OfficeCTA } from '@/components/offices/OfficeCTA'
 
 import type { Page } from '@/payload-types'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const blockComponents: Record<string, React.ComponentType<any>> = {
   dynamicHero: HeroBlockRenderer,
   homeHero: HeroSection,

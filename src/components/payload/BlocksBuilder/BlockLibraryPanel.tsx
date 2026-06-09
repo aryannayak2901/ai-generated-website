@@ -109,7 +109,7 @@ function PageSettings() {
   );
 }
 
-function BlockChip({ blockType, label, icon, category }: { 
+function BlockChip({ blockType, label, icon, category: _category }: { 
   blockType: string; 
   label: string; 
   icon: string;

@@ -39,7 +39,7 @@ const getSavedUserTier = (): UserTier => {
     if (saved === "passive" || saved === "active" || saved === "highly_engaged") {
       return saved;
     }
-  } catch (e) {
+  } catch {
     // Session storage may be unavailable (e.g. private browsing or security block)
   }
   return "passive";
@@ -56,7 +56,7 @@ const getSavedClickCount = (): number => {
       const parsed = parseInt(saved, 10);
       return isNaN(parsed) ? 0 : parsed;
     }
-  } catch (e) {
+  } catch {
     // Ignore
   }
   return 0;
@@ -77,7 +77,7 @@ const updateUserTier = (newTier: UserTier) => {
   if (tierWeights[newTier] > tierWeights[current]) {
     try {
       sessionStorage.setItem(TIER_KEY, newTier);
-    } catch (e) {
+    } catch {
       // Ignore
     }
 
@@ -129,7 +129,7 @@ export function EnhancedTracker() {
       const clicks = getSavedClickCount() + 1;
       try {
         sessionStorage.setItem(CLICK_KEY, clicks.toString());
-      } catch (e) {
+      } catch {
         // Ignore
       }
 
