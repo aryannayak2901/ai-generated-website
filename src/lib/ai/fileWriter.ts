@@ -2,6 +2,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 import { GeneratedBlock } from './types'
+import { patchRenderBlocksString, patchPagesString } from './githubPatcher'
 
 const PROJECT_ROOT = process.cwd()
 const SRC = path.join(PROJECT_ROOT, 'src')
@@ -102,54 +103,18 @@ async function patchBlockMeta(block: GeneratedBlock): Promise<void> {
 
 async function patchRenderBlocks(block: GeneratedBlock): Promise<void> {
   const filePath = safeResolvePath(SRC, 'components', 'RenderBlocks.tsx')
-  let content = await fs.readFile(filePath, 'utf-8')
-
-  // Idempotency check
-  if (content.includes(`${block.blockType}:`)) return
-
-  // Add import after the last import line
-  const importLine = `import { ${block.componentName} } from '@/components/blocks/${block.componentName}'\n`
-  const lastImportIdx = content.lastIndexOf('import ')
-  const afterLastImport = content.indexOf('\n', lastImportIdx) + 1
-  content = content.slice(0, afterLastImport) + importLine + content.slice(afterLastImport)
-
-  // Add to blockComponents map — find closing } of the map object
-  const mapEntry = `  ${block.blockType}: ${block.componentName},`
-  const blockComponentsIdx = content.indexOf('blockComponents')
-  if (blockComponentsIdx === -1) throw new Error('RenderBlocks.tsx: could not find blockComponents')
-  const mapClosingMatch = content.slice(blockComponentsIdx).match(/(\s*)\}/)
-  if (!mapClosingMatch || mapClosingMatch.index === undefined) throw new Error('RenderBlocks.tsx: could not find blockComponents closing brace')
-  const mapClosingIdx = blockComponentsIdx + mapClosingMatch.index
-  content = content.slice(0, mapClosingIdx) + '\n' + mapEntry + content.slice(mapClosingIdx)
-
-  await fs.writeFile(filePath, content, 'utf-8')
+  const content = await fs.readFile(filePath, 'utf-8')
+  const patched = patchRenderBlocksString(content, block)
+  if (patched !== content) {
+    await fs.writeFile(filePath, patched, 'utf-8')
+  }
 }
 
 async function patchPages(block: GeneratedBlock): Promise<void> {
   const filePath = safeResolvePath(SRC, 'collections', 'Pages.ts')
-  let content = await fs.readFile(filePath, 'utf-8')
-
-  // Idempotency check
-  if (content.includes(`{ ${block.componentName} }`)) return
-
-  // Add import after the last import line
-  const importLine = `import { ${block.componentName} } from '../blocks/${block.componentName}'\n`
-  const lastImportIdx = content.lastIndexOf('import ')
-  if (lastImportIdx === -1) {
-    content = importLine + '\n' + content
-  } else {
-    const afterLastImport = content.indexOf('\n', lastImportIdx) + 1
-    content = content.slice(0, afterLastImport) + importLine + content.slice(afterLastImport)
+  const content = await fs.readFile(filePath, 'utf-8')
+  const patched = patchPagesString(content, block)
+  if (patched !== content) {
+    await fs.writeFile(filePath, patched, 'utf-8')
   }
-
-  // Add to blocks array — find closing ] of the blocks array
-  const blockEntry = `        ${block.componentName},`
-  const blocksIdx = content.indexOf('blocks: [')
-  if (blocksIdx === -1) throw new Error('Pages.ts: could not find blocks array')
-  const blocksArrayCloseMatch = content.slice(blocksIdx).match(/(\s*)\]/)
-  if (!blocksArrayCloseMatch || blocksArrayCloseMatch.index === undefined) throw new Error('Pages.ts: could not find blocks array closing bracket')
-  const blocksArrayCloseIdx = blocksIdx + blocksArrayCloseMatch.index
-  content = content.slice(0, blocksArrayCloseIdx) + '\n' + blockEntry + content.slice(blocksArrayCloseIdx)
-
-  await fs.writeFile(filePath, content, 'utf-8')
 }
