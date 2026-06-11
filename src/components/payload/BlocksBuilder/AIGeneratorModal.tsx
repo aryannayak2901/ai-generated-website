@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { AIProvider, GenerationMode } from '@/lib/ai/types'
+import { AIPreviewPanel } from './AIPreviewPanel'
+import type { GenerateResponseWithCode } from '@/lib/ai/types'
 
 const AI_SETTINGS_KEY = 'chambers_ai_settings'
 
@@ -118,6 +120,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
   const [status, setStatus] = useState<'idle' | 'generating' | 'writing' | 'done' | 'error'>('idle')
   const [statusMessage, setStatusMessage] = useState('')
   const [error, setError] = useState('')
+  const [previewBlocks, setPreviewBlocks] = useState<GenerateResponseWithCode['blocks'] | null>(null)
   
   // Dynamic models state for providers that support unauthenticated listing (OpenRouter)
   const [dynamicModels, setDynamicModels] = useState<Record<string, { value: string; label: string }[]>>({})
@@ -205,18 +208,29 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
         }),
       })
 
-      setStatus('writing')
-      setStatusMessage('Writing files to disk…')
-
-      const data = await response.json() as { success: boolean; blocks?: Array<{ blockType: string; defaultValues: Record<string, unknown> }>; error?: string }
+      const data = await response.json() as
+        | { success: boolean; mode?: 'code'; blocks?: GenerateResponseWithCode['blocks'] & Array<{ blockType: string; defaultValues: Record<string, unknown> }>; error?: string }
 
       if (!data.success) throw new Error(data.error ?? 'Generation failed')
 
+      // Production path: show Sandpack preview panel
+      if (data.mode === 'code' && data.blocks) {
+        setStatus('done')
+        setStatusMessage(`✅ ${data.blocks.length} block${data.blocks.length !== 1 ? 's' : ''} generated!`)
+        setTimeout(() => {
+          setPreviewBlocks(data.blocks as GenerateResponseWithCode['blocks'])
+          setStatus('idle')
+          setStatusMessage('')
+        }, 400)
+        return
+      }
+
+      // Local dev path: blocks were written to disk
       setStatus('done')
       setStatusMessage(`✅ ${data.blocks!.length} block${data.blocks!.length !== 1 ? 's' : ''} generated!`)
 
       setTimeout(() => {
-        onBlocksGenerated(data.blocks!)
+        onBlocksGenerated(data.blocks as Array<{ blockType: string; defaultValues: Record<string, unknown> }>)
         onClose()
         setStatus('idle')
         setStatusMessage('')
@@ -233,9 +247,10 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
   const currentProvider = PROVIDERS[settings.provider]
 
   return (
-    <AnimatePresence>
-      {isOpen && (
+    <AnimatePresence mode="wait">
+      {isOpen && !previewBlocks && (
         <motion.div
+          key="generate-phase"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -379,6 +394,43 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
               </button>
             </div>
 
+          </motion.div>
+        </motion.div>
+      )}
+      {isOpen && previewBlocks && (
+        <motion.div
+          key="preview-phase"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="bb-modal-overlay"
+        >
+          <motion.div
+            initial={{ scale: 0.95, y: 24, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.95, y: 24, opacity: 0 }}
+            transition={{ type: 'spring', duration: 0.45, bounce: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bb-modal-card bb-modal-card--wide"
+          >
+            <AIPreviewPanel
+              blocks={previewBlocks}
+              prompt={prompt}
+              provider={settings.provider}
+              model={settings.model}
+              onBack={() => {
+                setPreviewBlocks(null)
+                setStatus('idle')
+                setStatusMessage('')
+              }}
+              onClose={() => {
+                setPreviewBlocks(null)
+                setStatus('idle')
+                setStatusMessage('')
+                setPrompt('')
+                onClose()
+              }}
+            />
           </motion.div>
         </motion.div>
       )}

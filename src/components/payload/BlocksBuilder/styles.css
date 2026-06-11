@@ -1376,3 +1376,8 @@
 .bb-preview-pr-link:hover {
   opacity: 0.8;
 }
+
+.bb-modal-card--wide {
+  max-width: 900px;
+  width: 95vw;
+}
