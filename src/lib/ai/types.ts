@@ -48,3 +48,20 @@ export interface GenerateErrorResponse {
   success: false
   error: string
 }
+
+// Response type used in production (no filesystem write — code returned to client)
+export interface GenerateResponseWithCode {
+  success: true
+  mode: 'code' // signals the client to show the preview panel
+  blocks: Array<{
+    blockType: string
+    componentName: string
+    label: string
+    category: 'Hero' | 'Content' | 'CTA / Forms'
+    icon: string
+    badgeLabel: string
+    componentCode: string
+    payloadConfigCode: string
+    defaultValues: Record<string, unknown>
+  }>
+}
