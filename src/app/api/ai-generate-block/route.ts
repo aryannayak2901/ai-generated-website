@@ -8,13 +8,20 @@ import { callGroq } from '@/lib/ai/providers/groq'
 import { callMistral } from '@/lib/ai/providers/mistral'
 import { callTogether } from '@/lib/ai/providers/together'
 import { writeGeneratedBlock } from '@/lib/ai/fileWriter'
-import type { GenerateRequest, GenerateResponse, GenerateErrorResponse, AIProvider, GeneratedBlock } from '@/lib/ai/types'
+import type {
+  GenerateRequest,
+  GenerateResponse,
+  GenerateResponseWithCode,
+  GenerateErrorResponse,
+  AIProvider,
+  GeneratedBlock,
+} from '@/lib/ai/types'
 
 export const runtime = 'nodejs'
 
 export async function POST(
   request: NextRequest
-): Promise<NextResponse<GenerateResponse | GenerateErrorResponse>> {
+): Promise<NextResponse<GenerateResponse | GenerateResponseWithCode | GenerateErrorResponse>> {
   try {
     let body: GenerateRequest
     try {
@@ -34,7 +41,7 @@ export async function POST(
       return NextResponse.json({ success: false, error: `Invalid provider: ${provider}` }, { status: 400 })
     }
 
-    const promptPayload = await buildSystemPrompt(prompt, mode ?? 'block') // Returns { system: string, user: string }
+    const promptPayload = await buildSystemPrompt(prompt, mode ?? 'block')
 
     let generatedBlocks: GeneratedBlock[]
     switch (provider) {
@@ -63,6 +70,26 @@ export async function POST(
         return NextResponse.json({ success: false, error: `Unsupported provider: ${provider}` }, { status: 400 })
     }
 
+    // PRODUCTION: Return raw code to client — no filesystem writes (Vercel is read-only)
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({
+        success: true,
+        mode: 'code',
+        blocks: generatedBlocks.map((block) => ({
+          blockType: block.blockType,
+          componentName: block.componentName,
+          label: block.label,
+          category: block.category,
+          icon: block.icon,
+          badgeLabel: block.badgeLabel,
+          componentCode: block.componentCode,
+          payloadConfigCode: block.payloadConfigCode,
+          defaultValues: block.defaultValues,
+        })),
+      } satisfies GenerateResponseWithCode)
+    }
+
+    // LOCAL DEV: Write files to disk as before
     const writtenBlocks = await Promise.all(
       generatedBlocks.map((block) => writeGeneratedBlock(block))
     )
