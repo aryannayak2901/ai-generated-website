@@ -15,7 +15,7 @@ interface AIGeneratorModalProps {
 }
 
 export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGeneratorModalProps) {
-  const { settings, updateSettings, dynamicModels, isLoadingModels } = useAISettings()
+  const { settings, updateSettings, activeModels, isLoadingModels } = useAISettings()
   const [prompt, setPrompt] = useState('')
   const [mode, setMode] = useState<GenerationMode>('block')
   const [status, setStatus] = useState<'idle' | 'generating' | 'writing' | 'done' | 'error'>('idle')
@@ -151,7 +151,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
                   disabled={isLoading || isLoadingModels}
                   className="bb-modal-select"
                 >
-                  {(dynamicModels[settings.provider] || currentProvider.models).map((m) => (
+                  {activeModels.map((m) => (
                     <option key={m.value} value={m.value}>
                       {m.label}
                     </option>

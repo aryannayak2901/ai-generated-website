@@ -20,23 +20,24 @@ export function useAISettings() {
       if (saved) {
         const parsed = JSON.parse(saved) as AISettings
         if (parsed.provider && PROVIDERS[parsed.provider]) {
-          setSettings(parsed)
+          setSettings(prev => ({ ...prev, ...parsed }))
         }
       }
     } catch { /* ignore */ }
     setIsInitialized(true)
   }, [])
 
-  // Save on change
+  // Sync state across multiple hook instances
   useEffect(() => {
-    if (!isInitialized) return
-    const timeout = setTimeout(() => {
-      try {
-        localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(settings))
-      } catch { /* ignore */ }
-    }, 500)
-    return () => clearTimeout(timeout)
-  }, [settings, isInitialized])
+    const handleStorageSync = (e: Event) => {
+      const customEvent = e as CustomEvent<AISettings>
+      if (customEvent.detail) {
+        setSettings(customEvent.detail)
+      }
+    }
+    window.addEventListener('chambers-ai-settings-changed', handleStorageSync)
+    return () => window.removeEventListener('chambers-ai-settings-changed', handleStorageSync)
+  }, [])
 
   // Fetch OpenRouter models dynamically
   useEffect(() => {
@@ -66,7 +67,7 @@ export function useAISettings() {
     if (settings.provider === 'openrouter') {
       fetchOpenRouterModels()
     }
-  }, [settings.provider, dynamicModels])
+  }, [settings.provider])
 
   const updateSettings = (newSettings: Partial<AISettings>) => {
     setSettings((prev) => {
@@ -76,14 +77,26 @@ export function useAISettings() {
         const defaultModel = PROVIDERS[newSettings.provider].models[0]?.value || ''
         updated.model = defaultModel
       }
+      
+      // Save synchronously to avoid data loss on fast unmount
+      // Security consideration: Storing API keys in plaintext client-side localStorage is generally not recommended for production applications where XSS is a risk.
+      try {
+        localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(updated))
+      } catch { /* ignore */ }
+      
+      // Notify other instances of the hook
+      window.dispatchEvent(new CustomEvent('chambers-ai-settings-changed', { detail: updated }))
+      
       return updated
     })
   }
 
+  const activeModels = dynamicModels[settings.provider] || PROVIDERS[settings.provider]?.models || PROVIDERS[DEFAULT_PROVIDER].models
+
   return {
     settings,
     updateSettings,
-    dynamicModels,
+    activeModels,
     isLoadingModels,
     isInitialized,
   }

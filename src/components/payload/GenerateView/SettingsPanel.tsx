@@ -8,14 +8,13 @@ import { useAISettings } from '@/lib/ai/useAISettings';
 
 export const SettingsPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false); // For mobile toggle
-  const { settings, updateSettings, dynamicModels, isLoadingModels } = useAISettings();
+  const { settings, updateSettings, activeModels, isLoadingModels } = useAISettings();
 
   const handleChange = (field: keyof AISettings, value: string) => {
     updateSettings({ [field]: value });
   };
 
   const currentProviderInfo = PROVIDERS[settings.provider] || PROVIDERS[DEFAULT_PROVIDER];
-  const models = dynamicModels[settings.provider] || currentProviderInfo.models;
 
   return (
     <div className={`bb-generate-panel bb-generate-settings ${isOpen ? 'open' : ''}`}>
@@ -57,7 +56,7 @@ export const SettingsPanel: React.FC = () => {
             onChange={(e) => handleChange('model', e.target.value)}
             disabled={isLoadingModels}
           >
-            {models.map((model: any) => (
+            {activeModels.map((model: any) => (
               <option key={model.value} value={model.value}>{model.label}</option>
             ))}
           </select>
