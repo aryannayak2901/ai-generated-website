@@ -449,15 +449,14 @@ export interface Page {
         | {
             title: string;
             subtitle: string;
-            products?:
-              | {
-                  name: string;
-                  description: string;
-                  image?: (string | null) | Media;
-                  link?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
+            products: {
+              image: string | Media;
+              title: string;
+              description: string;
+              ctaText?: string | null;
+              ctaLink?: string | null;
+              id?: string | null;
+            }[];
             id?: string | null;
             blockName?: string | null;
             blockType: 'productList';
@@ -1035,10 +1034,11 @@ export interface PagesSelect<T extends boolean = true> {
               products?:
                 | T
                 | {
-                    name?: T;
-                    description?: T;
                     image?: T;
-                    link?: T;
+                    title?: T;
+                    description?: T;
+                    ctaText?: T;
+                    ctaLink?: T;
                     id?: T;
                   };
               id?: T;

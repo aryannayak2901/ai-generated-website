@@ -1,8 +1,6 @@
 // src/app/api/ai-push-github/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from '@octokit/rest'
-import fs from 'fs/promises'
-import path from 'path'
 import { patchRenderBlocksString, patchPagesString, PatchableBlock } from '@/lib/ai/githubPatcher'
 
 export const runtime = 'nodejs'
@@ -15,6 +13,12 @@ interface PushRequest {
   prompt: string
   provider: string
   model: string
+  modifiedFiles?: Array<{
+    path: string
+    content: string
+    sha?: string
+    deleted?: boolean
+  }>
 }
 
 interface PushSuccess {
@@ -50,7 +54,7 @@ export async function POST(
     return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { blockType, componentName, componentCode, payloadConfigCode, prompt, provider, model } = body
+  const { blockType, componentName, componentCode, payloadConfigCode, prompt, provider, model, modifiedFiles } = body
 
   if (!blockType || !componentName || !componentCode || !payloadConfigCode) {
     return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 })
@@ -72,20 +76,24 @@ export async function POST(
     // 1. Read current RenderBlocks.tsx and Pages.ts from GitHub (not local disk — we're in production)
     const block: PatchableBlock = { blockType, componentName }
 
-    const [renderBlocksFile, pagesFile] = await Promise.all([
-      octokit.repos.getContent({ owner, repo, path: 'src/components/RenderBlocks.tsx' }),
-      octokit.repos.getContent({ owner, repo, path: 'src/collections/Pages.ts' }),
-    ])
+    let renderBlocksContent = ''
+    let pagesContent = ''
 
-    const renderBlocksContent = Buffer.from(
-      (renderBlocksFile.data as { content: string }).content,
-      'base64'
-    ).toString('utf-8')
+    const modifiedRenderBlocks = modifiedFiles?.find(f => f.path === 'src/components/RenderBlocks.tsx')
+    if (modifiedRenderBlocks && !modifiedRenderBlocks.deleted) {
+      renderBlocksContent = modifiedRenderBlocks.content
+    } else {
+      const renderBlocksFile = await octokit.repos.getContent({ owner, repo, path: 'src/components/RenderBlocks.tsx' })
+      renderBlocksContent = Buffer.from((renderBlocksFile.data as { content: string }).content, 'base64').toString('utf-8')
+    }
 
-    const pagesContent = Buffer.from(
-      (pagesFile.data as { content: string }).content,
-      'base64'
-    ).toString('utf-8')
+    const modifiedPages = modifiedFiles?.find(f => f.path === 'src/collections/Pages.ts')
+    if (modifiedPages && !modifiedPages.deleted) {
+      pagesContent = modifiedPages.content
+    } else {
+      const pagesFile = await octokit.repos.getContent({ owner, repo, path: 'src/collections/Pages.ts' })
+      pagesContent = Buffer.from((pagesFile.data as { content: string }).content, 'base64').toString('utf-8')
+    }
 
     const patchedRenderBlocks = patchRenderBlocksString(renderBlocksContent, block)
     const patchedPages = patchPagesString(pagesContent, block)
@@ -98,7 +106,31 @@ export async function POST(
     const mainCommit = await octokit.git.getCommit({ owner, repo, commit_sha: mainSha })
     const baseTreeSha = mainCommit.data.tree.sha
 
-    // 4. Create blobs for all 4 files
+    // 4. Create blobs for all 4 files + any modified files
+    const treeItems: any[] = []
+
+    if (modifiedFiles && modifiedFiles.length > 0) {
+      const blobPromises = modifiedFiles.map(async (file) => {
+        if (file.deleted) {
+          return {
+            path: file.path,
+            mode: '100644',
+            type: 'blob',
+            sha: null,
+          }
+        }
+        const blob = await octokit.git.createBlob({ owner, repo, content: file.content, encoding: 'utf-8' })
+        return {
+          path: file.path,
+          mode: '100644',
+          type: 'blob',
+          sha: blob.data.sha,
+        }
+      })
+      const manualTreeItems = await Promise.all(blobPromises)
+      treeItems.push(...manualTreeItems)
+    }
+
     const [componentBlob, schemaBlob, renderBlocksBlob, pagesBlob] = await Promise.all([
       octokit.git.createBlob({ owner, repo, content: componentCode, encoding: 'utf-8' }),
       octokit.git.createBlob({ owner, repo, content: payloadConfigCode, encoding: 'utf-8' }),
@@ -106,37 +138,50 @@ export async function POST(
       octokit.git.createBlob({ owner, repo, content: patchedPages, encoding: 'utf-8' }),
     ])
 
+    // Replace or add AI block files in the tree
+    const aiPaths = [
+      `src/components/blocks/${componentName}.tsx`,
+      `src/blocks/${componentName}.ts`,
+      'src/components/RenderBlocks.tsx',
+      'src/collections/Pages.ts',
+    ]
+
+    // Remove any manual files that overlap with AI block files
+    const filteredTreeItems = treeItems.filter(item => !aiPaths.includes(item.path))
+
+    filteredTreeItems.push(
+      {
+        path: aiPaths[0],
+        mode: '100644',
+        type: 'blob',
+        sha: componentBlob.data.sha,
+      },
+      {
+        path: aiPaths[1],
+        mode: '100644',
+        type: 'blob',
+        sha: schemaBlob.data.sha,
+      },
+      {
+        path: aiPaths[2],
+        mode: '100644',
+        type: 'blob',
+        sha: renderBlocksBlob.data.sha,
+      },
+      {
+        path: aiPaths[3],
+        mode: '100644',
+        type: 'blob',
+        sha: pagesBlob.data.sha,
+      }
+    )
+
     // 5. Create a new tree
     const newTree = await octokit.git.createTree({
       owner,
       repo,
       base_tree: baseTreeSha,
-      tree: [
-        {
-          path: `src/components/blocks/${componentName}.tsx`,
-          mode: '100644',
-          type: 'blob',
-          sha: componentBlob.data.sha,
-        },
-        {
-          path: `src/blocks/${componentName}.ts`,
-          mode: '100644',
-          type: 'blob',
-          sha: schemaBlob.data.sha,
-        },
-        {
-          path: 'src/components/RenderBlocks.tsx',
-          mode: '100644',
-          type: 'blob',
-          sha: renderBlocksBlob.data.sha,
-        },
-        {
-          path: 'src/collections/Pages.ts',
-          mode: '100644',
-          type: 'blob',
-          sha: pagesBlob.data.sha,
-        },
-      ],
+      tree: filteredTreeItems,
     })
 
     // 6. Create commit
@@ -157,11 +202,26 @@ export async function POST(
     })
 
     // 8. Open Pull Request
+    let prBody = `## AI-Generated Block: \`${componentName}\`\n\n**Block Type:** \`${blockType}\`\n**Provider:** ${provider} / ${model}\n**Generated:** ${new Date().toISOString()}\n\n### Prompt\n> ${prompt}\n\n### Files Changed\n- \`src/components/blocks/${componentName}.tsx\` — React component\n- \`src/blocks/${componentName}.ts\` — Payload CMS block schema\n- \`src/components/RenderBlocks.tsx\` — Registered in block renderer\n- \`src/collections/Pages.ts\` — Registered in Pages collection\n`
+
+    if (modifiedFiles && modifiedFiles.length > 0) {
+      const manualFilesList = modifiedFiles
+        .filter(f => !aiPaths.includes(f.path))
+        .map(f => `- \`${f.path}\` ${f.deleted ? '(deleted)' : '(modified)'}`)
+        .join('\n')
+      
+      if (manualFilesList) {
+        prBody += `\n### Additional Manual Changes\n${manualFilesList}\n`
+      }
+    }
+
+    prBody += `\n### Review Checklist\n- [ ] Component renders correctly with default props\n- [ ] Tailwind classes use design tokens (no hardcoded hex values)\n- [ ] Payload schema fields match component props\n- [ ] No disallowed imports (only: react, next/image, next/link, lucide-react, framer-motion)\n      `
+
     const pr = await octokit.pulls.create({
       owner,
       repo,
       title: `✨ AI Block: ${componentName}`,
-      body: `## AI-Generated Block: \`${componentName}\`\n\n**Block Type:** \`${blockType}\`\n**Provider:** ${provider} / ${model}\n**Generated:** ${new Date().toISOString()}\n\n### Prompt\n> ${prompt}\n\n### Files Changed\n- \`src/components/blocks/${componentName}.tsx\` — React component\n- \`src/blocks/${componentName}.ts\` — Payload CMS block schema\n- \`src/components/RenderBlocks.tsx\` — Registered in block renderer\n- \`src/collections/Pages.ts\` — Registered in Pages collection\n\n### Review Checklist\n- [ ] Component renders correctly with default props\n- [ ] Tailwind classes use design tokens (no hardcoded hex values)\n- [ ] Payload schema fields match component props\n- [ ] No disallowed imports (only: react, next/image, next/link, lucide-react, framer-motion)\n      `,
+      body: prBody,
       head: branchName,
       base: 'main',
     })

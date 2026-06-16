@@ -1,10 +1,8 @@
-// src/components/payload/BlocksBuilder/AIPreviewPanel.tsx
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import {
   SandpackProvider,
-  SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
   useSandpack,
@@ -13,55 +11,12 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import type { GenerateResponseWithCode } from '@/lib/ai/types'
 import { transformForSandpack } from '@/lib/ai/sandpackTransformer'
+import { FileTreeSidebar } from './FileTreeSidebar'
+import { EditorTabBar } from './EditorTabBar'
+import { ResizeHandle } from './ResizeHandle'
+import { PreviewToolbar } from './PreviewToolbar'
 
 type GeneratedBlockWithCode = GenerateResponseWithCode['blocks'][number]
-
-// ─── Inner: Synchronize user edits and apply transformations ────────────────
-// This component lets the user edit the ORIGINAL code in the editor tab.
-// When they type, it updates the parent state, re-runs the transformer,
-// and manually updates '/App.tsx' in Sandpack so the preview hot-reloads.
-// The original code is what gets pushed to the PR.
-
-function CodeEditorAndTransformer({
-  activeBlockIdx,
-  originalCode,
-  onCodeChange,
-}: {
-  activeBlockIdx: number
-  originalCode: string
-  onCodeChange: (blockIdx: number, field: 'componentCode', code: string) => void
-}) {
-  const { sandpack } = useSandpack()
-  const { code } = useActiveCode()
-
-  // 1. If user edits OriginalCode.tsx, sync it up to parent state
-  useEffect(() => {
-    // Only update if it actually changed (to prevent infinite loops)
-    if (code && code !== originalCode) {
-      onCodeChange(activeBlockIdx, 'componentCode', code)
-    }
-  }, [code, activeBlockIdx, originalCode, onCodeChange])
-
-  // 2. Whenever originalCode changes, re-run transformer and update /App.tsx preview
-  useEffect(() => {
-    const { transformedCode } = transformForSandpack(originalCode)
-    sandpack.updateFile('/App.tsx', transformedCode)
-  }, [originalCode, sandpack])
-
-  return (
-    <SandpackCodeEditor
-      showTabs={false}
-      showLineNumbers
-      showInlineErrors={false}
-      wrapContent
-      readOnly={false}
-      style={{ height: '100%', flex: 1 }}
-    />
-  )
-}
-
-// ─── Inner: sandbox error watcher ─────────────────────────────────────────────
-// Must live inside <SandpackProvider> to access useSandpack()
 
 interface SandboxErrorWatcherProps {
   onError: (errors: string[]) => void
@@ -73,7 +28,6 @@ function SandboxErrorWatcher({ onError, onResolved }: SandboxErrorWatcherProps) 
   const prevHadErrorRef = useRef(false)
 
   useEffect(() => {
-    // Sandpack exposes a single `error` object (not an array)
     const err = sandpack.error as null | { message: string; column?: number; line?: number; path?: string } | undefined
     const hasError = !!err
 
@@ -90,7 +44,59 @@ function SandboxErrorWatcher({ onError, onResolved }: SandboxErrorWatcherProps) 
   return null
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+function CodeEditorSync({
+  activeFile,
+  projectFiles,
+  setModifiedFiles,
+  transformedCode,
+}: {
+  activeFile: string | null;
+  projectFiles: Record<string, string>;
+  setModifiedFiles: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  transformedCode: string;
+}) {
+  const { sandpack } = useSandpack();
+  const { code } = useActiveCode();
+
+  useEffect(() => {
+    if (sandpack.files['/App.tsx']?.code !== transformedCode) {
+      sandpack.updateFile('/App.tsx', transformedCode);
+    }
+  }, [transformedCode, sandpack]);
+
+  useEffect(() => {
+    if (activeFile) {
+      const spPath = `/${activeFile}`;
+      if (sandpack.activeFile !== spPath && spPath in sandpack.files) {
+        sandpack.setActiveFile(spPath);
+      }
+    }
+  }, [activeFile, sandpack]);
+
+  useEffect(() => {
+    if (activeFile && code !== undefined) {
+      const spPath = `/${activeFile}`;
+      if (sandpack.activeFile === spPath) {
+        const orig = projectFiles[activeFile] ?? '';
+        if (code !== orig) {
+          setModifiedFiles((prev) => {
+            if (prev[activeFile] === code) return prev;
+            return { ...prev, [activeFile]: code };
+          });
+        } else {
+          setModifiedFiles((prev) => {
+            if (!(activeFile in prev)) return prev;
+            const next = { ...prev };
+            delete next[activeFile];
+            return next;
+          });
+        }
+      }
+    }
+  }, [code, activeFile, projectFiles, setModifiedFiles, sandpack.activeFile]);
+
+  return null;
+}
 
 interface AIPreviewPanelProps {
   blocks: GeneratedBlockWithCode[]
@@ -99,7 +105,6 @@ interface AIPreviewPanelProps {
   model: string
   onBack: () => void
   onClose: () => void
-  /** Called when user requests regeneration because of sandbox errors */
   onRegenerate: () => void
 }
 
@@ -115,47 +120,45 @@ export function AIPreviewPanel({
   onRegenerate,
 }: AIPreviewPanelProps) {
   const [activeBlockIdx, setActiveBlockIdx] = useState(0)
-  const [activeTab, setActiveTab] = useState<'component' | 'schema'>('component')
   const [pushStatus, setPushStatus] = useState<PushStatus>('idle')
-  const [pushError, setPushError] = useState('')
   const [prUrl, setPrUrl] = useState('')
-
-  // Sandbox error state
   const [sandboxErrors, setSandboxErrors] = useState<string[]>([])
   const [sandboxHasErrors, setSandboxHasErrors] = useState(false)
 
-  // Per-block editable code state — initialized from original generated blocks
-  const [editedCodes, setEditedCodes] = useState<
-    Record<number, { componentCode: string; payloadConfigCode: string }>
-  >(() =>
-    Object.fromEntries(
-      blocks.map((b, i) => [i, { componentCode: b.componentCode, payloadConfigCode: b.payloadConfigCode }])
-    )
-  )
+  // Initialization
+  const initialProjectFiles = useMemo(() => {
+    const files: Record<string, string> = {};
+    blocks.forEach(b => {
+      files[`src/components/blocks/${b.componentName}.tsx`] = b.componentCode;
+      files[`src/blocks/${b.componentName}.ts`] = b.payloadConfigCode;
+    });
+    return files;
+  }, [blocks]);
+
+  const defaultActiveFile = `src/components/blocks/${blocks[0].componentName}.tsx`;
+  const initialOpenFiles = useMemo(() => {
+    return Object.keys(initialProjectFiles);
+  }, [initialProjectFiles]);
+
+  const [projectFiles, setProjectFiles] = useState<Record<string, string>>(initialProjectFiles);
+  const [modifiedFiles, setModifiedFiles] = useState<Record<string, string>>({});
+  const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
+  const [openFiles, setOpenFiles] = useState<string[]>(initialOpenFiles);
+  const [activeFile, setActiveFile] = useState<string | null>(defaultActiveFile);
+
+  const [editorPanelFraction, setEditorPanelFraction] = useState(0.45);
+  const [viewport, setViewport] = useState<'desktop' | 'laptop' | 'tablet' | 'mobile'>('desktop');
+  const [zoom, setZoom] = useState(100);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const block = blocks[activeBlockIdx]
-  const currentCode = editedCodes[activeBlockIdx]
+  const componentPath = `src/components/blocks/${block.componentName}.tsx`;
+  const currentComponentCode = modifiedFiles[componentPath] ?? projectFiles[componentPath] ?? block.componentCode;
 
-  // Transform current component code for sandbox preview
-  // The ORIGINAL code in editedCodes is preserved verbatim for PR push
-  const { transformedCode, dependencies, externalResources, template } = React.useMemo(
-    () => transformForSandpack(currentCode.componentCode),
-    [currentCode.componentCode]
+  const { transformedCode, dependencies, externalResources, template } = useMemo(
+    () => transformForSandpack(currentComponentCode),
+    [currentComponentCode]
   )
-
-  const handleCodeChange = useCallback(
-    (blockIdx: number, field: 'componentCode' | 'payloadConfigCode', code: string) => {
-      setEditedCodes((prev) => ({
-        ...prev,
-        [blockIdx]: { ...prev[blockIdx], [field]: code },
-      }))
-      // Reset sandbox error state when user edits code
-      setSandboxErrors([])
-      setSandboxHasErrors(false)
-    },
-    []
-  )
-
 
   const handleSandboxError = useCallback((errors: string[]) => {
     setSandboxErrors(errors)
@@ -169,21 +172,30 @@ export function AIPreviewPanel({
 
   const handlePush = async () => {
     setPushStatus('pushing')
-    setPushError('')
 
     try {
+      const allModified = Object.entries(modifiedFiles).map(([path, content]) => ({
+        path,
+        content,
+        deleted: false,
+      })).concat(deletedFiles.map(path => ({
+        path,
+        content: '',
+        deleted: true,
+      })));
+
       const response = await fetch('/api/ai-push-github', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           blockType: block.blockType,
           componentName: block.componentName,
-          // Always push the ORIGINAL (untransformed) code to GitHub
-          componentCode: currentCode.componentCode,
-          payloadConfigCode: currentCode.payloadConfigCode,
+          componentCode: modifiedFiles[componentPath] ?? projectFiles[componentPath],
+          payloadConfigCode: modifiedFiles[`src/blocks/${block.componentName}.ts`] ?? projectFiles[`src/blocks/${block.componentName}.ts`],
           prompt,
           provider,
           model,
+          modifiedFiles: allModified,
         }),
       })
 
@@ -198,37 +210,88 @@ export function AIPreviewPanel({
       setPrUrl(data.prUrl!)
       setPushStatus('done')
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error'
-      setPushError(message)
+      console.error(err)
       setPushStatus('error')
     }
   }
 
-  // ── Sandpack virtual file system ──────────────────────────────────────────
-  // App.tsx  → TRANSFORMED code (shims inlined, ts-nocheck at top)
-  // previewDisplayFiles → ORIGINAL code shown in editor tab for user review
-  const sandpackPreviewFiles = {
-    '/App.tsx': {
-      code: transformedCode,
-      active: true,
-      hidden: true,   // hide from editor — we show original below
-    },
-    '/OriginalCode.tsx': {
-      // This file is shown in the editor tab so the user sees the real code
-      code: currentCode.componentCode,
-      active: true,
-    },
-    '/index.tsx': {
-      code: `import React from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App'
+  const handleFileSelect = async (path: string) => {
+    if (!projectFiles[path] && !modifiedFiles[path]) {
+      try {
+        const res = await fetch(`/api/github-files?path=${encodeURIComponent(path)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.type === 'file') {
+            const content = Buffer.from(data.content, 'base64').toString('utf-8');
+            setProjectFiles(prev => ({ ...prev, [path]: content }));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch file', err);
+        return;
+      }
+    }
 
-const root = createRoot(document.getElementById('root')!)
-root.render(<App />)
-`,
-      hidden: true,
-    },
-  }
+    setOpenFiles(prev => {
+      if (!prev.includes(path)) return [...prev, path];
+      return prev;
+    });
+    setActiveFile(path);
+  };
+
+  const handleNewFile = (path: string) => {
+    setProjectFiles(prev => ({ ...prev, [path]: '' }));
+    setModifiedFiles(prev => ({ ...prev, [path]: '' }));
+    setOpenFiles(prev => [...prev, path]);
+    setActiveFile(path);
+  };
+
+  const handleTabClose = (path: string) => {
+    setOpenFiles(prev => {
+      const next = prev.filter(p => p !== path);
+      if (activeFile === path) {
+        setActiveFile(next.length > 0 ? next[next.length - 1] : null);
+      }
+      return next;
+    });
+  };
+
+  const handleDeleteFile = (path: string) => {
+    setDeletedFiles(prev => [...prev, path]);
+    if (openFiles.includes(path)) {
+      handleTabClose(path);
+    }
+  };
+
+  const sandpackFiles = useMemo(() => {
+    const f: Record<string, any> = {
+      '/index.tsx': {
+        code: `import React from 'react'\nimport { createRoot } from 'react-dom/client'\nimport App from './App'\n\nconst root = createRoot(document.getElementById('root')!)\nroot.render(<App />)\n`,
+        hidden: true,
+      },
+      '/App.tsx': {
+        code: transformedCode,
+        hidden: true,
+      }
+    };
+
+    const allPaths = new Set([...Object.keys(projectFiles), ...Object.keys(modifiedFiles)]);
+    for (const path of allPaths) {
+      if (deletedFiles.includes(path)) continue;
+      f[`/${path}`] = {
+        code: modifiedFiles[path] ?? projectFiles[path],
+        active: path === activeFile,
+      };
+    }
+    return f;
+  }, [projectFiles, modifiedFiles, deletedFiles, transformedCode, activeFile]);
+
+  const viewportWidths = {
+    desktop: '1440px',
+    laptop: '1024px',
+    tablet: '768px',
+    mobile: '390px',
+  };
 
   return (
     <motion.div
@@ -236,7 +299,7 @@ root.render(<App />)
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 24 }}
       transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-      className="bb-preview-panel"
+      className="bb-modal-card bb-modal-card--wide"
     >
       {/* Header */}
       <div className="bb-modal-header">
@@ -252,274 +315,204 @@ root.render(<App />)
           </button>
           <div className="bb-modal-icon-wrap">🔍</div>
           <h2 className="bb-modal-title">Preview &amp; Push</h2>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={pushStatus === 'pushing'}
-          aria-label="Close"
-          className="bb-modal-close"
-        >
-          ✕
-        </button>
-      </div>
-
-      {/* Block tabs (if multiple blocks generated in page mode) */}
-      {blocks.length > 1 && (
-        <div className="bb-preview-block-tabs">
-          {blocks.map((b, i) => (
-            <button
-              key={b.blockType}
-              type="button"
-              onClick={() => {
-                setActiveBlockIdx(i)
-                setSandboxErrors([])
-                setSandboxHasErrors(false)
-              }}
-              className={`bb-preview-block-tab ${i === activeBlockIdx ? 'bb-preview-block-tab--active' : ''}`}
-            >
-              {b.icon} {b.label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Block meta row */}
-      <div className="bb-preview-meta">
-        <span className="bb-preview-meta-name">
-          {block.icon} {block.componentName}
-        </span>
-        <span className="bb-preview-meta-badge">{block.category}</span>
-        <span className="bb-preview-meta-badge bb-preview-meta-badge--muted">{block.badgeLabel}</span>
-
-        {/* Sandbox error indicator badge */}
-        {sandboxHasErrors && activeTab === 'component' && (
-          <span className="bb-preview-meta-badge bb-preview-meta-badge--error">
-            ⚠ Sandbox Error
-          </span>
-        )}
-        {!sandboxHasErrors && activeTab === 'component' && (
-          <span className="bb-preview-meta-badge bb-preview-meta-badge--ok">
-            ✓ Preview OK
-          </span>
-        )}
-      </div>
-
-      {/* Code tab switcher */}
-      <div className="bb-preview-code-tabs">
-        <button
-          type="button"
-          className={`bb-preview-code-tab ${activeTab === 'component' ? 'bb-preview-code-tab--active' : ''}`}
-          onClick={() => setActiveTab('component')}
-        >
-          Component TSX
-        </button>
-        <button
-          type="button"
-          className={`bb-preview-code-tab ${activeTab === 'schema' ? 'bb-preview-code-tab--active' : ''}`}
-          onClick={() => setActiveTab('schema')}
-        >
-          Block Schema
-        </button>
-      </div>
-
-      {/* Sandpack editor + preview */}
-      <div className="bb-preview-sandpack-wrap">
-        {activeTab === 'component' ? (
-          <SandpackProvider
-            key={`${activeBlockIdx}-component`}
-            template={template}
-            files={sandpackPreviewFiles}
-            theme="dark"
-            customSetup={{
-              dependencies,
-            }}
-            options={{
-              recompileDelay: 600,
-              externalResources,
-            }}
-          >
-            {/* Error watcher — must be inside SandpackProvider */}
-            <SandboxErrorWatcher
-              onError={handleSandboxError}
-              onResolved={handleSandboxResolved}
-            />
-            <SandpackLayout style={{ display: 'flex', flex: 1 }}>
-              <CodeEditorAndTransformer
-                activeBlockIdx={activeBlockIdx}
-                originalCode={currentCode.componentCode}
-                onCodeChange={handleCodeChange}
-              />
-              <SandpackPreview
-                style={{ height: '100%', flex: 1 }}
-                showNavigator={false}
-                showOpenInCodeSandbox={false}
-              />
-            </SandpackLayout>
-          </SandpackProvider>
-        ) : (
-          // Schema tab — read-only plain editor, no live preview needed
-          <SandpackProvider
-            key={`${activeBlockIdx}-schema`}
-            template="react-ts"
-            files={{
-              '/App.tsx': {
-                code: `// Payload Block Schema (server-side config — preview not available)\n// This file is read-only.\n\n${currentCode.payloadConfigCode}`,
-                active: true,
-                readOnly: true,
-              },
-            }}
-            theme="dark"
-          >
-            <SandpackLayout style={{ display: 'flex', flex: 1 }}>
-              <SandpackCodeEditor
-                showTabs={false}
-                showLineNumbers
-                wrapContent
-                style={{ height: '100%', width: '100%', flex: 1 }}
-              />
-            </SandpackLayout>
-          </SandpackProvider>
-        )}
-      </div>
-
-      {/* Sandbox error panel with Regenerate button */}
-      <AnimatePresence>
-        {sandboxHasErrors && activeTab === 'component' && (
-          <motion.div
-            key="sandbox-error"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="bb-sandbox-error-panel"
-          >
-            <div className="bb-sandbox-error-header">
-              <span className="bb-sandbox-error-icon">⚠</span>
-              <span className="bb-sandbox-error-title">
-                Something went wrong in the preview
-              </span>
-            </div>
-            <ul className="bb-sandbox-error-list">
-              {sandboxErrors.slice(0, 3).map((err, i) => (
-                <li key={i} className="bb-sandbox-error-item">
-                  {err}
-                </li>
+          
+          {blocks.length > 1 && (
+            <div className="bb-preview-block-tabs" style={{ marginLeft: 16 }}>
+              {blocks.map((b, i) => (
+                <button
+                  key={b.blockType}
+                  type="button"
+                  onClick={() => {
+                    setActiveBlockIdx(i);
+                    const cp = `src/components/blocks/${b.componentName}.tsx`;
+                    if (!openFiles.includes(cp)) setOpenFiles(prev => [...prev, cp]);
+                    setActiveFile(cp);
+                    setSandboxErrors([]);
+                    setSandboxHasErrors(false);
+                  }}
+                  className={`bb-preview-block-tab ${i === activeBlockIdx ? 'bb-preview-block-tab--active' : ''}`}
+                >
+                  {b.icon} {b.label}
+                </button>
               ))}
-              {sandboxErrors.length > 3 && (
-                <li className="bb-sandbox-error-item bb-sandbox-error-item--more">
-                  +{sandboxErrors.length - 3} more error{sandboxErrors.length - 3 > 1 ? 's' : ''}
-                </li>
-              )}
-            </ul>
-            <div className="bb-sandbox-error-actions">
-              <span className="bb-sandbox-error-hint">
-                The AI may have generated code with incompatible imports or syntax. Try regenerating.
-              </span>
-              <button
-                type="button"
-                className="bb-regenerate-btn"
-                onClick={onRegenerate}
-                disabled={pushStatus === 'pushing'}
-              >
-                🔄 Regenerate
-              </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* PR info */}
-      <div className="bb-preview-pr-info">
-        <div className="bb-preview-pr-row">
-          <span className="bb-preview-pr-label">Branch:</span>
-          <code className="bb-preview-pr-value">
-            ai/block-{block.blockType}-&lt;timestamp&gt;
-          </code>
-        </div>
-        <div className="bb-preview-pr-row">
-          <span className="bb-preview-pr-label">PR Title:</span>
-          <span className="bb-preview-pr-value">✨ AI Block: {block.componentName}</span>
-        </div>
-        <div className="bb-preview-pr-row">
-          <span className="bb-preview-pr-label">Commits:</span>
-          <span className="bb-preview-pr-value">4 files (component + schema + RenderBlocks + Pages)</span>
-        </div>
-      </div>
-
-      {/* Push error */}
-      {pushStatus === 'error' && (
-        <div className="bb-modal-error">{pushError}</div>
-      )}
-
-      {/* Success */}
-      <AnimatePresence>
-        {pushStatus === 'done' && prUrl && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bb-preview-success"
-          >
-            <span>✅ Pull Request created!</span>
-            <a
-              href={prUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bb-preview-pr-link"
-            >
-              View PR on GitHub →
-            </a>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Footer actions */}
-      <div className="bb-modal-footer">
-        <div className="bb-modal-status">
-          {pushStatus === 'pushing' && '⏳ Creating branch and opening PR…'}
-          {pushStatus === 'done' && '✅ Done! Merge the PR to deploy.'}
-          {sandboxHasErrors && pushStatus === 'idle' && (
-            <span style={{ color: 'var(--bb-danger)', fontSize: 12 }}>
-              Preview has errors — fix the code or regenerate before pushing
-            </span>
           )}
         </div>
-
-        <div style={{ display: 'flex', gap: 8 }}>
-          {sandboxHasErrors && pushStatus !== 'done' && (
-            <button
-              type="button"
-              onClick={onRegenerate}
-              disabled={pushStatus === 'pushing'}
-              className="bb-modal-btn bb-modal-btn--secondary"
-            >
-              🔄 Regenerate
-            </button>
-          )}
-
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="bb-modal-status">
+            {pushStatus === 'pushing' && '⏳ Creating branch and opening PR…'}
+            {pushStatus === 'done' && '✅ Done! Merge the PR to deploy.'}
+            {sandboxHasErrors && pushStatus === 'idle' && (
+              <span style={{ color: 'var(--bb-danger)', fontSize: 12 }}>
+                Preview has errors — fix the code before pushing
+              </span>
+            )}
+          </div>
           {pushStatus !== 'done' && (
             <button
               type="button"
               onClick={handlePush}
               disabled={pushStatus === 'pushing' || sandboxHasErrors}
               className="bb-modal-btn"
-              title={sandboxHasErrors ? 'Fix preview errors before pushing to GitHub' : undefined}
             >
-              {pushStatus === 'pushing' ? 'Opening PR…' : '🚀 Open Pull Request on GitHub'}
+              {pushStatus === 'pushing' ? 'Opening PR…' : '🚀 Open PR'}
             </button>
           )}
-
           {pushStatus === 'done' && (
-            <button
-              type="button"
-              onClick={onClose}
-              className="bb-modal-btn"
-            >
-              Close
-            </button>
+            <button type="button" onClick={onClose} className="bb-modal-btn">Close</button>
           )}
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={pushStatus === 'pushing'}
+            aria-label="Close"
+            className="bb-modal-close"
+          >
+            ✕
+          </button>
         </div>
       </div>
+
+      {/* Main Body */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <SandpackProvider
+          key={refreshKey}
+          template={template}
+          files={sandpackFiles}
+          theme="dark"
+          customSetup={{ dependencies }}
+          options={{ recompileDelay: 600, externalResources }}
+        >
+          <SandboxErrorWatcher onError={handleSandboxError} onResolved={handleSandboxResolved} />
+          <CodeEditorSync
+            activeFile={activeFile}
+            projectFiles={projectFiles}
+            setModifiedFiles={setModifiedFiles}
+            transformedCode={transformedCode}
+          />
+          
+          {/* Left Panel (Editor) */}
+          <div style={{ flexBasis: `${editorPanelFraction * 100}%`, display: 'flex', minWidth: 0, overflow: 'hidden' }}>
+            <FileTreeSidebar
+              onFileSelect={handleFileSelect}
+              modifiedFiles={modifiedFiles}
+              deletedFiles={deletedFiles}
+              onNewFile={handleNewFile}
+              onDeleteFile={handleDeleteFile}
+              activeFile={activeFile}
+            />
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, borderRight: '1px solid var(--bb-border)' }}>
+              <EditorTabBar
+                openFiles={openFiles}
+                activeFile={activeFile}
+                modifiedFiles={modifiedFiles}
+                onTabSelect={setActiveFile}
+                onTabClose={handleTabClose}
+              />
+              <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                {activeFile ? (
+                  <>
+                    <SandpackCodeEditor
+                      showTabs={false}
+                      showLineNumbers
+                      showInlineErrors={false}
+                      wrapContent
+                      readOnly={false}
+                      style={{ height: '100%', flex: 1 }}
+                    />
+                    <div className="bb-editor-status-bar">
+                      <div className="bb-editor-status-bar__pos">Ln 1, Col 1</div>
+                      <div className="bb-editor-status-bar__lang">
+                        {activeFile.endsWith('.ts') ? 'TypeScript' : 
+                         activeFile.endsWith('.tsx') ? 'TypeScript React' : 
+                         activeFile.endsWith('.css') ? 'CSS' : 
+                         activeFile.endsWith('.json') ? 'JSON' : 
+                         activeFile.endsWith('.js') ? 'JavaScript' : 
+                         activeFile.endsWith('.jsx') ? 'JavaScript React' : 
+                         'Text'}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bb-text-muted)' }}>
+                    No file open
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <ResizeHandle onResize={setEditorPanelFraction} />
+
+          {/* Right Panel (Preview) */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, backgroundColor: 'var(--bb-bg-secondary)' }}>
+            <PreviewToolbar
+              viewport={viewport}
+              setViewport={setViewport}
+              zoom={zoom}
+              setZoom={setZoom}
+              onRefresh={() => setRefreshKey(k => k + 1)}
+            />
+            
+            {sandboxHasErrors && (
+              <div className="bb-sandbox-error-panel" style={{ margin: 16 }}>
+                <div className="bb-sandbox-error-header">
+                  <span className="bb-sandbox-error-icon">⚠</span>
+                  <span className="bb-sandbox-error-title">Preview Error</span>
+                </div>
+                <ul className="bb-sandbox-error-list">
+                  {sandboxErrors.slice(0, 3).map((err, i) => <li key={i}>{err}</li>)}
+                </ul>
+                <div className="bb-sandbox-error-actions">
+                  <button type="button" className="bb-regenerate-btn" onClick={onRegenerate} disabled={pushStatus === 'pushing'}>
+                    🔄 Regenerate AI Code
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            <div style={{ flex: 1, overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+              <div 
+                style={{
+                  width: viewportWidths[viewport],
+                  height: '100%',
+                  minHeight: 500,
+                  transition: 'width 0.3s ease',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                  borderRadius: 8,
+                  overflow: 'hidden',
+                  transform: `scale(${zoom / 100})`,
+                  transformOrigin: 'center top',
+                }}
+              >
+                <SandpackPreview
+                  style={{ height: '100%', width: '100%' }}
+                  showNavigator={false}
+                  showOpenInCodeSandbox={false}
+                />
+              </div>
+            </div>
+          </div>
+        </SandpackProvider>
+      </div>
+      
+      {/* Success Notification */}
+      <AnimatePresence>
+        {pushStatus === 'done' && prUrl && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bb-preview-success"
+            style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}
+          >
+            <span>✅ Pull Request created!</span>
+            <a href={prUrl} target="_blank" rel="noopener noreferrer" className="bb-preview-pr-link">
+              View PR on GitHub →
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
