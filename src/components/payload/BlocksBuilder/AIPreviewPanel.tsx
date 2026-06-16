@@ -8,6 +8,7 @@ import {
   SandpackCodeEditor,
   SandpackPreview,
   useSandpack,
+  useActiveCode,
 } from '@codesandbox/sandpack-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { GenerateResponseWithCode } from '@/lib/ai/types'
@@ -15,21 +16,46 @@ import { transformForSandpack } from '@/lib/ai/sandpackTransformer'
 
 type GeneratedBlockWithCode = GenerateResponseWithCode['blocks'][number]
 
-// ─── Inner: read-only code display in the editor pane ───────────────────────
-// NOTE: The editor shows the ORIGINAL (untransformed) code so the user can
-// review/read exactly what will be pushed to GitHub. The preview pane runs
-// the TRANSFORMED code (with shims). We do NOT sync transformed code back
-// to prevent sandbox-only shim code from leaking into the PR.
+// ─── Inner: Synchronize user edits and apply transformations ────────────────
+// This component lets the user edit the ORIGINAL code in the editor tab.
+// When they type, it updates the parent state, re-runs the transformer,
+// and manually updates '/App.tsx' in Sandpack so the preview hot-reloads.
+// The original code is what gets pushed to the PR.
 
-function CodeDisplayEditor() {
+function CodeEditorAndTransformer({
+  activeBlockIdx,
+  originalCode,
+  onCodeChange,
+}: {
+  activeBlockIdx: number
+  originalCode: string
+  onCodeChange: (blockIdx: number, field: 'componentCode', code: string) => void
+}) {
+  const { sandpack } = useSandpack()
+  const { code } = useActiveCode()
+
+  // 1. If user edits OriginalCode.tsx, sync it up to parent state
+  useEffect(() => {
+    // Only update if it actually changed (to prevent infinite loops)
+    if (code && code !== originalCode) {
+      onCodeChange(activeBlockIdx, 'componentCode', code)
+    }
+  }, [code, activeBlockIdx, originalCode, onCodeChange])
+
+  // 2. Whenever originalCode changes, re-run transformer and update /App.tsx preview
+  useEffect(() => {
+    const { transformedCode } = transformForSandpack(originalCode)
+    sandpack.updateFile('/App.tsx', transformedCode)
+  }, [originalCode, sandpack])
+
   return (
     <SandpackCodeEditor
       showTabs={false}
       showLineNumbers
       showInlineErrors={false}
       wrapContent
-      readOnly
-      style={{ height: 260 }}
+      readOnly={false}
+      style={{ height: '100%', flex: 1 }}
     />
   )
 }
@@ -115,6 +141,19 @@ export function AIPreviewPanel({
   const { transformedCode, dependencies, externalResources, template } = React.useMemo(
     () => transformForSandpack(currentCode.componentCode),
     [currentCode.componentCode]
+  )
+
+  const handleCodeChange = useCallback(
+    (blockIdx: number, field: 'componentCode' | 'payloadConfigCode', code: string) => {
+      setEditedCodes((prev) => ({
+        ...prev,
+        [blockIdx]: { ...prev[blockIdx], [field]: code },
+      }))
+      // Reset sandbox error state when user edits code
+      setSandboxErrors([])
+      setSandboxHasErrors(false)
+    },
+    []
   )
 
 
@@ -305,10 +344,14 @@ root.render(<App />)
               onError={handleSandboxError}
               onResolved={handleSandboxResolved}
             />
-            <SandpackLayout>
-              <CodeDisplayEditor />
+            <SandpackLayout style={{ display: 'flex', flex: 1 }}>
+              <CodeEditorAndTransformer
+                activeBlockIdx={activeBlockIdx}
+                originalCode={currentCode.componentCode}
+                onCodeChange={handleCodeChange}
+              />
               <SandpackPreview
-                style={{ height: 260 }}
+                style={{ height: '100%', flex: 1 }}
                 showNavigator={false}
                 showOpenInCodeSandbox={false}
               />
@@ -328,12 +371,12 @@ root.render(<App />)
             }}
             theme="dark"
           >
-            <SandpackLayout>
+            <SandpackLayout style={{ display: 'flex', flex: 1 }}>
               <SandpackCodeEditor
                 showTabs={false}
                 showLineNumbers
                 wrapContent
-                style={{ height: 520, width: '100%' }}
+                style={{ height: '100%', width: '100%', flex: 1 }}
               />
             </SandpackLayout>
           </SandpackProvider>

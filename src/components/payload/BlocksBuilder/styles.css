@@ -1240,6 +1240,8 @@
 .bb-preview-panel {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  overflow: hidden;
   gap: 0;
 }
 
@@ -1331,6 +1333,14 @@
 .bb-preview-sandpack-wrap {
   padding: 0;
   overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.bb-preview-sandpack-wrap .sp-layout {
+  flex: 1;
+  min-height: 0;
 }
 
 .bb-preview-pr-info {
@@ -1378,8 +1388,12 @@
 }
 
 .bb-modal-card--wide {
-  max-width: 900px;
-  width: 95vw;
+  width: 90vw;
+  max-width: 90vw;
+  height: 90vh;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Sandbox Error Panel ────────────────────────────────────────────────── */
