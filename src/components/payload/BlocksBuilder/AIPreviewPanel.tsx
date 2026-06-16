@@ -112,7 +112,7 @@ export function AIPreviewPanel({
 
   // Transform current component code for sandbox preview
   // The ORIGINAL code in editedCodes is preserved verbatim for PR push
-  const { transformedCode, dependencies, externalResources } = React.useMemo(
+  const { transformedCode, dependencies, externalResources, template } = React.useMemo(
     () => transformForSandpack(currentCode.componentCode),
     [currentCode.componentCode]
   )
@@ -289,7 +289,7 @@ root.render(<App />)
         {activeTab === 'component' ? (
           <SandpackProvider
             key={`${activeBlockIdx}-component`}
-            template="react-ts"
+            template={template}
             files={sandpackPreviewFiles}
             theme="dark"
             customSetup={{

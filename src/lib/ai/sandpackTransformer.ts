@@ -1,37 +1,150 @@
 // src/lib/ai/sandpackTransformer.ts
 //
-// Transforms AI-generated Next.js component code into a Sandpack-compatible
-// version for live preview. The ORIGINAL code is NEVER mutated — it is
-// preserved verbatim for the GitHub PR push.
+// Transforms AI-generated Next.js TypeScript component code into a
+// Sandpack-compatible JAVASCRIPT version for live preview.
 //
-// Strategy: INLINE all shims directly into App.tsx as local declarations.
-// This avoids Sandpack's module resolution entirely (no separate stub files).
+// The ORIGINAL code is NEVER mutated — preserved verbatim for the GitHub PR.
 //
-// What this transformer does:
-//  1. Strips `'use client'` directive
-//  2. Rewrites `import X from 'next/image'`  → inline JSX shim const X
-//  3. Rewrites `import X from 'next/link'`   → inline <a> shim const X
-//  4. Rewrites named `next/navigation` hooks → inline no-op stubs
-//  5. Removes  `next/font`, `next/headers`, `next/cookies` imports
-//  6. Removes  any `@/` path-alias imports   (forbidden by system prompt)
-//  7. Prepends `// @ts-nocheck` to suppress TS preview noise
-//  8. Injects all shim declarations after the imports block
+// Strategy:
+//  1. Strip ALL TypeScript-specific syntax → plain JSX/JavaScript
+//  2. Inline Next.js/project shims as local declarations (no module resolution)
+//  3. Switch template to 'react' (no Babel TS mode → no parse errors)
+//
+// TypeScript removal order:
+//  a. interface declarations
+//  b. type alias declarations
+//  c. 'as X' type assertions (the main parse error trigger)
+//  d. Return type annotations ): Type {
+//  e. Variable type annotations const x: Type =
+//  f. Parameter type annotations (param: Type)
+//  g. Optional markers ?:
 
 export interface SandpackTransformResult {
-  /** The transformed code ready for Sandpack /App.tsx */
   transformedCode: string
-  /** Extra virtual files (empty — inline strategy needs none) */
   stubs: Record<string, { code: string; hidden?: boolean }>
-  /** NPM packages to add to Sandpack customSetup.dependencies */
   dependencies: Record<string, string>
-  /** External script/style URLs (e.g. Tailwind CDN) */
   externalResources: string[]
+  /** Which Sandpack template to use — always 'react' (not 'react-ts') */
+  template: 'react'
+}
+
+// ─── TypeScript stripper ──────────────────────────────────────────────────────
+
+/**
+ * Removes TypeScript-specific syntax from source code, producing valid
+ * JavaScript + JSX that Babel can compile without a TypeScript preset.
+ */
+function stripTypeScript(code: string): string {
+  let result = code
+
+  // 1. Remove interface declarations (with brace-balanced matching)
+  result = removeInterfaceBlocks(result)
+
+  // 2. Remove type alias declarations (single and multi-line)
+  //    type Foo = string | number;
+  //    export type Bar<T> = { ... }
+  result = result.replace(/^(?:export\s+)?type\s+\w+(?:<[^>]+>)?\s*=[^;{]+;?\s*\n?/gm, '')
+  // Multi-line type aliases (ending at next non-indented line)
+  result = result.replace(/^(?:export\s+)?type\s+\w+[^=\n]*=[\s\S]*?(?=\n[^\s]|\n{2,})/gm, '')
+
+  // 3. Remove ALL 'as X' type assertions — most impactful fix
+  //    Ordered from most-specific to least-specific to avoid partial matches
+  result = result
+    // as const
+    .replace(/\s+as\s+const\b/g, '')
+    // as keyof typeof X (the exact pattern that broke the preview)
+    .replace(/\s+as\s+keyof\s+typeof\s+[\w.]+/g, '')
+    // as readonly X[] or as readonly Array<X>
+    .replace(/\s+as\s+readonly\s+[\w.<>, ]+(?:\[\])?/g, '')
+    // as Record<K, V> / as Array<T> / as Map<K,V> — single nesting level
+    .replace(/\s+as\s+\w+<[^<>]{0,80}>/g, '')
+    // as X[] (simple array type)
+    .replace(/\s+as\s+\w+\[\]/g, '')
+    // as X | Y | Z (union type, up to 5 arms, no generics)
+    .replace(/\s+as\s+(?:\w+\s*\|\s*){1,5}\w+/g, '')
+    // as SomeType & OtherType (intersection)
+    .replace(/\s+as\s+\w+(?:\s*&\s*\w+)+/g, '')
+    // as PascalCaseType (named type / component type)
+    .replace(/\s+as\s+[A-Z]\w*/g, '')
+    // as primitive type
+    .replace(/\s+as\s+(?:string|number|boolean|any|unknown|never|null|undefined|void|object)\b/g, '')
+    // as lowercase simple identifier (last resort)
+    .replace(/\s+as\s+[a-z]\w*(?!\s*[(<])/g, '')
+
+  // 4. Remove function return type annotations
+  //    ): ReturnType {  →  ) {
+  //    ): Promise<X> => →  ) =>
+  result = result.replace(
+    /\)\s*:\s*(?:Promise<[^>]+>|ReactNode|ReactElement|JSX\.Element|void|never|string|number|boolean|\w+(?:<[^>]*>)?(?:\[\])?)(\s*(?:\{|=>))/g,
+    ')$1'
+  )
+
+  // 5. Remove variable type annotations (safe patterns only)
+  //    const x: string =  →  const x =
+  //    let items: string[] =  →  let items =
+  result = result.replace(
+    /\b(const|let|var)(\s+\w+)\s*:\s*[\w<>[\]|&, ?'".]+?(?=\s*=)/g,
+    '$1$2'
+  )
+
+  // 6. Remove TypeScript function parameter type annotations
+  //    (param: string) → (param)
+  //    (param: string, other: number) → (param, other)
+  //    (param?: string) → (param)
+  //    Only handles simple identifier types to avoid breaking complex expressions
+  result = result.replace(/(\w+)\s*\??\s*:\s*\w+(?:\[\])?(?=\s*[,)])/g, '$1')
+
+  // 7. Remove readonly modifier in parameter positions
+  result = result.replace(/\breadonly\s+(?=\w)/g, '')
+
+  // 8. Clean up any double spaces or blank lines created by removals
+  result = result.replace(/\n{3,}/g, '\n\n')
+
+  return result
+}
+
+/**
+ * Removes TypeScript interface blocks using brace-depth counting.
+ * Handles: interface Foo { }, export interface Foo<T> extends Bar { }
+ */
+function removeInterfaceBlocks(code: string): string {
+  const startRe = /^(?:export\s+)?interface\s+\w+(?:<[^>]+>)?\s*(?:extends\s+[^{]+)?\s*\{/gm
+  let result = code
+  let safety = 0
+
+  while (safety < 30) {
+    safety++
+    startRe.lastIndex = 0
+    const match = startRe.exec(result)
+    if (!match) break
+
+    // Find the matching closing brace
+    const openBrace = match.index + match[0].length - 1
+    let depth = 0
+    let closingIdx = openBrace
+
+    for (let i = openBrace; i < result.length; i++) {
+      if (result[i] === '{') depth++
+      else if (result[i] === '}') {
+        depth--
+        if (depth === 0) {
+          closingIdx = i
+          break
+        }
+      }
+    }
+
+    const before = result.slice(0, match.index)
+    const after = result.slice(closingIdx + 1).replace(/^[ \t]*\n/, '\n')
+    result = before + after
+  }
+
+  return result
 }
 
 // ─── Inline shim builders ─────────────────────────────────────────────────────
 
 function buildNextImageShim(varName: string): string {
-  // Renders as a plain <img>. Supports fill, width/height, className, style.
   return `const ${varName} = ({ src, alt, width, height, fill, className, style, priority, sizes, placeholder, blurDataURL, ...rest }) => {
   const resolvedSrc = src && typeof src === 'object' ? src.src : src
   const computedStyle = fill
@@ -42,8 +155,7 @@ function buildNextImageShim(varName: string): string {
 }
 
 function buildNextLinkShim(varName: string): string {
-  // Renders as a plain <a>. Handles href as string or object.
-  return `const ${varName} = ({ href, children, className, target, rel, style, onClick, prefetch, scroll, shallow, replace, ...rest }) => {
+  return `const ${varName} = ({ href, children, className, target, rel, style, onClick, prefetch, scroll, replace, ...rest }) => {
   const resolvedHref = href && typeof href === 'object' ? (href.href || href.pathname || '#') : (href || '#')
   const computedRel = rel || (target === '_blank' ? 'noopener noreferrer' : undefined)
   return <a href={resolvedHref} className={className} target={target} rel={computedRel} style={style} onClick={onClick}>{children}</a>
@@ -53,17 +165,7 @@ function buildNextLinkShim(varName: string): string {
 function buildNextNavShim(name: string): string {
   switch (name.trim()) {
     case 'useRouter':
-      return `const useRouter = () => ({
-  push: (h) => { window.location.href = h },
-  replace: (h) => { window.location.replace(h) },
-  back: () => window.history.back(),
-  forward: () => window.history.forward(),
-  refresh: () => window.location.reload(),
-  prefetch: () => {},
-  pathname: '/',
-  query: {},
-  asPath: '/',
-})`
+      return `const useRouter = () => ({ push: (h) => { window.location.href = h }, replace: (h) => { window.location.replace(h) }, back: () => window.history.back(), forward: () => window.history.forward(), refresh: () => window.location.reload(), prefetch: () => {}, pathname: '/', query: {}, asPath: '/' })`
     case 'usePathname':
       return `const usePathname = () => '/'`
     case 'useSearchParams':
@@ -75,34 +177,21 @@ function buildNextNavShim(name: string): string {
     case 'notFound':
       return `const notFound = () => { throw new Error('notFound') }`
     default:
-      // Safe fallback for unknown navigation exports
       return `const ${name.trim()} = undefined`
   }
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/**
- * Returns the character index immediately after the last import statement
- * in the code. Used to inject shims right after the imports block.
- */
+/** Returns the char index immediately after the last import statement. */
 function findLastImportEnd(code: string): number {
-  // Match both single-line and multi-line imports
-  const singleLineRe = /^import\s+[^\n]+\n/gm
-  const multiLineRe = /^import\s+[\s\S]+?from\s+['"][^'"]+['"]\s*;?\n/gm
-
+  // Match both single-line and multi-line (curly) imports
+  const re = /^import\s[\s\S]*?from\s+['"][^'"]+['"]\s*;?\n/gm
   let lastEnd = 0
   let match: RegExpExecArray | null
-
-  while ((match = singleLineRe.exec(code)) !== null) {
-    const end = match.index + match[0].length
-    if (end > lastEnd) lastEnd = end
+  while ((match = re.exec(code)) !== null) {
+    lastEnd = match.index + match[0].length
   }
-  while ((match = multiLineRe.exec(code)) !== null) {
-    const end = match.index + match[0].length
-    if (end > lastEnd) lastEnd = end
-  }
-
   return lastEnd
 }
 
@@ -112,28 +201,24 @@ export function transformForSandpack(componentCode: string): SandpackTransformRe
   let code = componentCode
   const inlineShims: string[] = []
 
-  // ── 1. Strip 'use client' / "use client" directive ─────────────────────────
+  // ── Step 1: Strip 'use client' directive ───────────────────────────────────
   code = code.replace(/^['"]use client['"]\s*;?\s*\n?/m, '')
 
-  // ── 2. next/image → inline shim ────────────────────────────────────────────
+  // ── Step 2: Rewrite Next.js imports → inline shims (remove import line) ────
+
+  // next/image
   code = code.replace(
     /^import\s+(\w+)\s+from\s+['"]next\/image['"]\s*;?\n?/gm,
-    (_, varName: string) => {
-      inlineShims.push(buildNextImageShim(varName))
-      return ''
-    }
+    (_, varName: string) => { inlineShims.push(buildNextImageShim(varName)); return '' }
   )
 
-  // ── 3. next/link → inline shim ─────────────────────────────────────────────
+  // next/link
   code = code.replace(
     /^import\s+(\w+)\s+from\s+['"]next\/link['"]\s*;?\n?/gm,
-    (_, varName: string) => {
-      inlineShims.push(buildNextLinkShim(varName))
-      return ''
-    }
+    (_, varName: string) => { inlineShims.push(buildNextLinkShim(varName)); return '' }
   )
 
-  // ── 4. next/navigation named imports → inline stubs ────────────────────────
+  // next/navigation named imports
   code = code.replace(
     /^import\s+\{([^}]+)\}\s+from\s+['"]next\/navigation['"]\s*;?\n?/gm,
     (_, importList: string) => {
@@ -143,43 +228,34 @@ export function transformForSandpack(componentCode: string): SandpackTransformRe
     }
   )
 
-  // ── 5. Remove server-only / unsupported Next.js imports entirely ────────────
-  // next/font (both /google and /local)
+  // ── Step 3: Remove server-only / unsupported Next.js imports ───────────────
   code = code.replace(/^import\s+[^\n]*from\s+['"]next\/font[^'"]*['"]\s*;?\n?/gm, '')
-  // next/headers
   code = code.replace(/^import\s+[^\n]*from\s+['"]next\/headers['"]\s*;?\n?/gm, '')
-  // next/cookies
   code = code.replace(/^import\s+[^\n]*from\s+['"]next\/cookies['"]\s*;?\n?/gm, '')
-  // next/server
   code = code.replace(/^import\s+[^\n]*from\s+['"]next\/server['"]\s*;?\n?/gm, '')
 
-  // ── 6. Remove @/ path-alias imports (forbidden by system prompt, but defensive) ──
+  // ── Step 4: Remove @/ path-alias imports (defensive guard) ─────────────────
   code = code.replace(/^import\s+[^\n]*from\s+['"]@\/[^'"]+['"]\s*;?\n?/gm, '')
 
-  // ── 7. Remove relative project-internal imports (../../) ───────────────────
-  code = code.replace(/^import\s+[^\n]*from\s+['"][./]{2,}[^'"]+['"]\s*;?\n?/gm, (match) => {
-    // Keep single relative imports like './foo' if they're simple names (not paths)
-    // Only remove if they look like project-internal paths (multiple segments)
-    if (/\.\.\//.test(match) || /\.\/[^'"]+\//.test(match)) return ''
-    return match
-  })
+  // ── Step 5: Strip TypeScript types → plain JavaScript ──────────────────────
+  //    This prevents Babel parse errors (e.g. 'as keyof typeof X', interface blocks)
+  code = stripTypeScript(code)
 
-  // ── 8. Inject inline shims after the imports block ─────────────────────────
+  // ── Step 6: Inject inline shims after imports block ────────────────────────
   if (inlineShims.length > 0) {
     const insertPos = findLastImportEnd(code)
-    const shimBlock = '\n// ─── Sandpack preview shims (not included in PR) ───\n' +
-      inlineShims.join('\n\n') + '\n// ───────────────────────────────────────────────────\n'
-
+    const shimBlock =
+      '\n// ─── Sandpack preview shims ───────────────────────────────────────\n' +
+      inlineShims.join('\n\n') +
+      '\n// ────────────────────────────────────────────────────────────────────\n'
     code = code.slice(0, insertPos) + shimBlock + code.slice(insertPos)
   }
 
-  // ── 9. Prepend // @ts-nocheck to suppress TypeScript noise in preview ──────
-  //    (the real TSC check happens during next build, not in Sandpack)
-  code = '// @ts-nocheck\n' + code.replace(/^\n+/, '')
+  // ── Step 7: Clean up and trim ──────────────────────────────────────────────
+  code = code.replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n')
 
   return {
     transformedCode: code,
-    // No separate stub files needed — all shims are inlined
     stubs: {},
     dependencies: {
       'lucide-react': 'latest',
@@ -189,5 +265,6 @@ export function transformForSandpack(componentCode: string): SandpackTransformRe
       'class-variance-authority': 'latest',
     },
     externalResources: ['https://cdn.tailwindcss.com'],
+    template: 'react',
   }
 }
