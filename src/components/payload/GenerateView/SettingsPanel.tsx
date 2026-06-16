@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { PROVIDERS, AI_SETTINGS_KEY } from '@/lib/ai/providers';
+import { PROVIDERS, AI_SETTINGS_KEY, DEFAULT_PROVIDER } from '@/lib/ai/providers';
 import type { AIProvider } from '@/lib/ai/types';
 
 export interface AISettings {
@@ -19,7 +19,6 @@ interface SettingsPanelProps {
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettingsChange }) => {
   const [isOpen, setIsOpen] = useState(false); // For mobile toggle
   const [providers, setProviders] = useState<Record<string, any>>(PROVIDERS);
-  const [isLoadingOpenRouter, setIsLoadingOpenRouter] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Load initial settings from localStorage on mount
@@ -52,7 +51,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
   useEffect(() => {
     if (settings.provider === 'openrouter') {
       const fetchOpenRouterModels = async () => {
-        setIsLoadingOpenRouter(true);
         try {
           const res = await fetch('https://openrouter.ai/api/v1/models');
           const data = await res.json();
@@ -79,8 +77,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
           }
         } catch (error) {
           console.error('Failed to fetch OpenRouter models', error);
-        } finally {
-          setIsLoadingOpenRouter(false);
         }
       };
       
@@ -89,7 +85,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
   }, [settings.provider]);
 
   const handleChange = (field: keyof AISettings, value: string) => {
-    let newSettings = { ...settings, [field]: value };
+    const newSettings = { ...settings, [field]: value };
     
     // When provider changes, select the first model of that provider automatically
     if (field === 'provider') {
@@ -102,7 +98,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
     onSettingsChange(newSettings);
   };
 
-  const currentProviderInfo = providers[settings.provider] || providers.gemini;
+  const currentProviderInfo = providers[settings.provider] || providers[DEFAULT_PROVIDER];
 
   return (
     <div className={`bb-generate-panel bb-generate-settings ${isOpen ? 'open' : ''}`}>
@@ -125,7 +121,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
           <label className="bb-generate-label">AI Provider</label>
           <select 
             className="bb-generate-select"
-            value={settings.provider || 'gemini'}
+            value={settings.provider || DEFAULT_PROVIDER}
             onChange={(e) => handleChange('provider', e.target.value)}
           >
             {Object.entries(providers).map(([key, info]) => (
