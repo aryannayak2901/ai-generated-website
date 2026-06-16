@@ -7,7 +7,6 @@ import {
   SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
-  useActiveCode,
   useSandpack,
 } from '@codesandbox/sandpack-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -16,31 +15,20 @@ import { transformForSandpack } from '@/lib/ai/sandpackTransformer'
 
 type GeneratedBlockWithCode = GenerateResponseWithCode['blocks'][number]
 
-// ─── Inner: sync active editor code back to parent ────────────────────────────
+// ─── Inner: read-only code display in the editor pane ───────────────────────
+// NOTE: The editor shows the ORIGINAL (untransformed) code so the user can
+// review/read exactly what will be pushed to GitHub. The preview pane runs
+// the TRANSFORMED code (with shims). We do NOT sync transformed code back
+// to prevent sandbox-only shim code from leaking into the PR.
 
-function EditorWithSync({
-  activeTab,
-  activeBlockIdx,
-  onCodeChange,
-}: {
-  activeTab: 'component' | 'schema'
-  activeBlockIdx: number
-  onCodeChange: (blockIdx: number, field: 'componentCode' | 'payloadConfigCode', code: string) => void
-}) {
-  const { code } = useActiveCode()
-
-  useEffect(() => {
-    if (activeTab === 'component') {
-      onCodeChange(activeBlockIdx, 'componentCode', code)
-    }
-  }, [code, activeTab, activeBlockIdx, onCodeChange])
-
+function CodeDisplayEditor() {
   return (
     <SandpackCodeEditor
       showTabs={false}
       showLineNumbers
-      showInlineErrors
+      showInlineErrors={false}
       wrapContent
+      readOnly
       style={{ height: 260 }}
     />
   )
@@ -123,24 +111,12 @@ export function AIPreviewPanel({
   const currentCode = editedCodes[activeBlockIdx]
 
   // Transform current component code for sandbox preview
-  // The ORIGINAL code in editedCodes is preserved for PR push
-  const { transformedCode, stubs, dependencies, externalResources } = React.useMemo(
+  // The ORIGINAL code in editedCodes is preserved verbatim for PR push
+  const { transformedCode, dependencies, externalResources } = React.useMemo(
     () => transformForSandpack(currentCode.componentCode),
     [currentCode.componentCode]
   )
 
-  const handleCodeChange = useCallback(
-    (blockIdx: number, field: 'componentCode' | 'payloadConfigCode', code: string) => {
-      setEditedCodes((prev) => ({
-        ...prev,
-        [blockIdx]: { ...prev[blockIdx], [field]: code },
-      }))
-      // Reset sandbox error state when user edits code
-      setSandboxErrors([])
-      setSandboxHasErrors(false)
-    },
-    []
-  )
 
   const handleSandboxError = useCallback((errors: string[]) => {
     setSandboxErrors(errors)
@@ -189,10 +165,18 @@ export function AIPreviewPanel({
     }
   }
 
-  // Build sandpack virtual file system
-  const sandpackFiles = {
+  // ── Sandpack virtual file system ──────────────────────────────────────────
+  // App.tsx  → TRANSFORMED code (shims inlined, ts-nocheck at top)
+  // previewDisplayFiles → ORIGINAL code shown in editor tab for user review
+  const sandpackPreviewFiles = {
     '/App.tsx': {
       code: transformedCode,
+      active: true,
+      hidden: true,   // hide from editor — we show original below
+    },
+    '/OriginalCode.tsx': {
+      // This file is shown in the editor tab so the user sees the real code
+      code: currentCode.componentCode,
       active: true,
     },
     '/index.tsx': {
@@ -203,9 +187,8 @@ import App from './App'
 const root = createRoot(document.getElementById('root')!)
 root.render(<App />)
 `,
+      hidden: true,
     },
-    // Inject all shim files produced by the transformer
-    ...stubs,
   }
 
   return (
@@ -307,7 +290,7 @@ root.render(<App />)
           <SandpackProvider
             key={`${activeBlockIdx}-component`}
             template="react-ts"
-            files={sandpackFiles}
+            files={sandpackPreviewFiles}
             theme="dark"
             customSetup={{
               dependencies,
@@ -323,11 +306,7 @@ root.render(<App />)
               onResolved={handleSandboxResolved}
             />
             <SandpackLayout>
-              <EditorWithSync
-                activeTab={activeTab}
-                activeBlockIdx={activeBlockIdx}
-                onCodeChange={handleCodeChange}
-              />
+              <CodeDisplayEditor />
               <SandpackPreview
                 style={{ height: 260 }}
                 showNavigator={false}
