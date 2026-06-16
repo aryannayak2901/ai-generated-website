@@ -36,11 +36,24 @@ interface BlockMetaEntry {
 }
 `
 
+  const existingBlocksDir = path.join(projectRoot, 'src/components/blocks')
+  let existingBlocksList = ''
+  try {
+    const files = await fs.readdir(existingBlocksDir)
+    existingBlocksList = files.filter(f => f.endsWith('.tsx')).map(f => f.replace('.tsx', '')).join(', ')
+  } catch {
+    existingBlocksList = 'None found'
+  }
+
   const modeInstruction = mode === 'page'
     ? 'Generate MULTIPLE blocks that together form a complete page layout. Return an array in the "blocks" field.'
     : 'Generate a SINGLE block component. Return a single object in the "blocks" field (array of one).'
 
   const systemPrompt = `You are an expert Next.js 15 + TypeScript developer generating production-quality UI components for a premium legal firm website called "Chambers of Jeet Bhatt".
+
+## Existing Blocks
+DO NOT duplicate the following existing block component names. Create uniquely named blocks that complement them:
+${existingBlocksList}
 
 ## Design System
 ${designMd}
@@ -63,16 +76,41 @@ ${blockMetaInterface}
 ## Instructions
 ${modeInstruction}
 
-**CRITICAL RULES:**
-1. componentCode MUST be valid TSX. Use 'use client' only if it uses hooks.
-2. Use Tailwind CSS v4 utility classes exclusively. Strictly adhere to the project's design tokens for colors (e.g., text-gold-accent, bg-navy-primary). NEVER use inline styles or hardcoded hex values.
-3. blockType MUST be camelCase (e.g. "testimonialsBlock").
-4. componentName MUST be PascalCase (e.g. "TestimonialsBlock").
-5. payloadConfigCode MUST export a named const following the reference pattern.
-6. blockMetaEntry.defaultValues MUST include blockType as the first key.
-7. Only import from: 'react', 'next/image', 'next/link', 'lucide-react', 'framer-motion'.
-8. Component props MUST match defaultValues keys.
-9. Return ONLY valid JSON — no markdown fences, no explanation.
+**CRITICAL RULES — READ EVERY RULE CAREFULLY:**
+
+### Code Quality Rules
+1. componentCode MUST be syntactically valid TypeScript TSX with NO compilation errors.
+2. Use \`'use client'\` at the top ONLY when the component uses React hooks (useState, useEffect, etc.). Omit it for pure presentational components.
+3. blockType MUST be camelCase (e.g. \`imageGalleryBlock\`).
+4. componentName MUST be PascalCase matching blockType (e.g. \`ImageGalleryBlock\`).
+5. payloadConfigCode MUST export a named const following the reference pattern exactly.
+6. defaultValues MUST include blockType as the first key with its camelCase value.
+7. Component props interface MUST exactly match all keys in defaultValues.
+8. Return ONLY valid JSON with NO markdown fences, NO explanation text, NO trailing commas.
+
+### Import Rules (STRICTLY ENFORCED)
+9. ONLY import from these exact packages — no exceptions, no project-internal paths:
+   - \`react\` — always import React explicitly for JSX
+   - \`next/image\` — for images (import as default: \`import Image from 'next/image'\`)
+   - \`next/link\` — for links (import as default: \`import Link from 'next/link'\`)
+   - \`lucide-react\` — for icons (named imports only: \`import { ChevronRight } from 'lucide-react'\`)
+   - \`framer-motion\` — for animations (named imports: \`import { motion } from 'framer-motion'\`)
+   - FORBIDDEN: \`next/navigation\`, \`next/font\`, \`next/headers\`, \`@/\` path aliases, \`../\` relative paths, any other package
+
+### Tailwind CSS Rules
+10. Use ONLY Tailwind CSS v4 utility classes — NO inline styles, NO CSS modules, NO hardcoded hex values.
+11. Use the project design tokens from DESIGN.md for colors (e.g., \`text-gold-accent\`, \`bg-navy-primary\`). For standard colors use Tailwind's palette.
+
+### TypeScript Rules
+12. NO \`any\` types. Define explicit interfaces for all props.
+13. All prop types must be primitives, arrays of primitives, or inline object shapes — NOT imported types from \`@/payload-types\` or any other project file.
+14. Images passed as props should be typed as \`string\` (URL), not as a Payload \`Media\` type.
+
+### Component Architecture Rules
+15. Export the component as a NAMED export: \`export function ComponentName({ ...props }: Props) { ... }\`
+16. Do NOT use default exports in componentCode.
+17. The component MUST render valid HTML with no missing required attributes (e.g., img tags need alt, buttons need type).
+18. Wrap any array .map() calls with unique \`key\` props using item index or id.
 
 ## Required Output JSON Schema
 {

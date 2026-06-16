@@ -430,6 +430,14 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
                 setPrompt('')
                 onClose()
               }}
+              onRegenerate={() => {
+                // Return user to generator form with prompt pre-filled — ready to re-generate
+                setPreviewBlocks(null)
+                setStatus('idle')
+                setStatusMessage('')
+                setError('')
+                // prompt is intentionally kept so user can regenerate immediately
+              }}
             />
           </motion.div>
         </motion.div>

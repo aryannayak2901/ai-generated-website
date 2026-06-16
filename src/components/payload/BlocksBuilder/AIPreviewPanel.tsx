@@ -1,17 +1,82 @@
 // src/components/payload/BlocksBuilder/AIPreviewPanel.tsx
 'use client'
 
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
+  useActiveCode,
+  useSandpack,
 } from '@codesandbox/sandpack-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { GenerateResponseWithCode } from '@/lib/ai/types'
+import { transformForSandpack } from '@/lib/ai/sandpackTransformer'
 
 type GeneratedBlockWithCode = GenerateResponseWithCode['blocks'][number]
+
+// ─── Inner: sync active editor code back to parent ────────────────────────────
+
+function EditorWithSync({
+  activeTab,
+  activeBlockIdx,
+  onCodeChange,
+}: {
+  activeTab: 'component' | 'schema'
+  activeBlockIdx: number
+  onCodeChange: (blockIdx: number, field: 'componentCode' | 'payloadConfigCode', code: string) => void
+}) {
+  const { code } = useActiveCode()
+
+  useEffect(() => {
+    if (activeTab === 'component') {
+      onCodeChange(activeBlockIdx, 'componentCode', code)
+    }
+  }, [code, activeTab, activeBlockIdx, onCodeChange])
+
+  return (
+    <SandpackCodeEditor
+      showTabs={false}
+      showLineNumbers
+      showInlineErrors
+      wrapContent
+      style={{ height: 260 }}
+    />
+  )
+}
+
+// ─── Inner: sandbox error watcher ─────────────────────────────────────────────
+// Must live inside <SandpackProvider> to access useSandpack()
+
+interface SandboxErrorWatcherProps {
+  onError: (errors: string[]) => void
+  onResolved: () => void
+}
+
+function SandboxErrorWatcher({ onError, onResolved }: SandboxErrorWatcherProps) {
+  const { sandpack } = useSandpack()
+  const prevHadErrorRef = useRef(false)
+
+  useEffect(() => {
+    // Sandpack exposes a single `error` object (not an array)
+    const err = sandpack.error as null | { message: string; column?: number; line?: number; path?: string } | undefined
+    const hasError = !!err
+
+    if (hasError && !prevHadErrorRef.current) {
+      prevHadErrorRef.current = true
+      const message = err?.message ?? 'Sandbox preview error'
+      onError([message])
+    } else if (!hasError && prevHadErrorRef.current) {
+      prevHadErrorRef.current = false
+      onResolved()
+    }
+  }, [sandpack.error, onError, onResolved])
+
+  return null
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 interface AIPreviewPanelProps {
   blocks: GeneratedBlockWithCode[]
@@ -20,6 +85,8 @@ interface AIPreviewPanelProps {
   model: string
   onBack: () => void
   onClose: () => void
+  /** Called when user requests regeneration because of sandbox errors */
+  onRegenerate: () => void
 }
 
 type PushStatus = 'idle' | 'pushing' | 'done' | 'error'
@@ -31,6 +98,7 @@ export function AIPreviewPanel({
   model,
   onBack,
   onClose,
+  onRegenerate,
 }: AIPreviewPanelProps) {
   const [activeBlockIdx, setActiveBlockIdx] = useState(0)
   const [activeTab, setActiveTab] = useState<'component' | 'schema'>('component')
@@ -38,13 +106,51 @@ export function AIPreviewPanel({
   const [pushError, setPushError] = useState('')
   const [prUrl, setPrUrl] = useState('')
 
-  // Per-block editable code state — initialized from generated blocks
-  const [editedCodes, setEditedCodes] = useState<Record<number, { componentCode: string; payloadConfigCode: string }>>(
-    () => Object.fromEntries(blocks.map((b, i) => [i, { componentCode: b.componentCode, payloadConfigCode: b.payloadConfigCode }]))
+  // Sandbox error state
+  const [sandboxErrors, setSandboxErrors] = useState<string[]>([])
+  const [sandboxHasErrors, setSandboxHasErrors] = useState(false)
+
+  // Per-block editable code state — initialized from original generated blocks
+  const [editedCodes, setEditedCodes] = useState<
+    Record<number, { componentCode: string; payloadConfigCode: string }>
+  >(() =>
+    Object.fromEntries(
+      blocks.map((b, i) => [i, { componentCode: b.componentCode, payloadConfigCode: b.payloadConfigCode }])
+    )
   )
 
   const block = blocks[activeBlockIdx]
   const currentCode = editedCodes[activeBlockIdx]
+
+  // Transform current component code for sandbox preview
+  // The ORIGINAL code in editedCodes is preserved for PR push
+  const { transformedCode, stubs, dependencies, externalResources } = React.useMemo(
+    () => transformForSandpack(currentCode.componentCode),
+    [currentCode.componentCode]
+  )
+
+  const handleCodeChange = useCallback(
+    (blockIdx: number, field: 'componentCode' | 'payloadConfigCode', code: string) => {
+      setEditedCodes((prev) => ({
+        ...prev,
+        [blockIdx]: { ...prev[blockIdx], [field]: code },
+      }))
+      // Reset sandbox error state when user edits code
+      setSandboxErrors([])
+      setSandboxHasErrors(false)
+    },
+    []
+  )
+
+  const handleSandboxError = useCallback((errors: string[]) => {
+    setSandboxErrors(errors)
+    setSandboxHasErrors(true)
+  }, [])
+
+  const handleSandboxResolved = useCallback(() => {
+    setSandboxErrors([])
+    setSandboxHasErrors(false)
+  }, [])
 
   const handlePush = async () => {
     setPushStatus('pushing')
@@ -57,6 +163,7 @@ export function AIPreviewPanel({
         body: JSON.stringify({
           blockType: block.blockType,
           componentName: block.componentName,
+          // Always push the ORIGINAL (untransformed) code to GitHub
           componentCode: currentCode.componentCode,
           payloadConfigCode: currentCode.payloadConfigCode,
           prompt,
@@ -65,7 +172,11 @@ export function AIPreviewPanel({
         }),
       })
 
-      const data = await response.json() as { success: boolean; prUrl?: string; error?: string }
+      const data = (await response.json()) as {
+        success: boolean
+        prUrl?: string
+        error?: string
+      }
 
       if (!data.success) throw new Error(data.error ?? 'Failed to create PR')
 
@@ -78,12 +189,10 @@ export function AIPreviewPanel({
     }
   }
 
+  // Build sandpack virtual file system
   const sandpackFiles = {
     '/App.tsx': {
-      code: currentCode.componentCode.replace(
-        /^'use client'\n?/,
-        ''
-      ),
+      code: transformedCode,
       active: true,
     },
     '/index.tsx': {
@@ -95,6 +204,8 @@ const root = createRoot(document.getElementById('root')!)
 root.render(<App />)
 `,
     },
+    // Inject all shim files produced by the transformer
+    ...stubs,
   }
 
   return (
@@ -138,7 +249,11 @@ root.render(<App />)
             <button
               key={b.blockType}
               type="button"
-              onClick={() => setActiveBlockIdx(i)}
+              onClick={() => {
+                setActiveBlockIdx(i)
+                setSandboxErrors([])
+                setSandboxHasErrors(false)
+              }}
               className={`bb-preview-block-tab ${i === activeBlockIdx ? 'bb-preview-block-tab--active' : ''}`}
             >
               {b.icon} {b.label}
@@ -149,9 +264,23 @@ root.render(<App />)
 
       {/* Block meta row */}
       <div className="bb-preview-meta">
-        <span className="bb-preview-meta-name">{block.icon} {block.componentName}</span>
+        <span className="bb-preview-meta-name">
+          {block.icon} {block.componentName}
+        </span>
         <span className="bb-preview-meta-badge">{block.category}</span>
         <span className="bb-preview-meta-badge bb-preview-meta-badge--muted">{block.badgeLabel}</span>
+
+        {/* Sandbox error indicator badge */}
+        {sandboxHasErrors && activeTab === 'component' && (
+          <span className="bb-preview-meta-badge bb-preview-meta-badge--error">
+            ⚠ Sandbox Error
+          </span>
+        )}
+        {!sandboxHasErrors && activeTab === 'component' && (
+          <span className="bb-preview-meta-badge bb-preview-meta-badge--ok">
+            ✓ Preview OK
+          </span>
+        )}
       </div>
 
       {/* Code tab switcher */}
@@ -174,50 +303,109 @@ root.render(<App />)
 
       {/* Sandpack editor + preview */}
       <div className="bb-preview-sandpack-wrap">
-        <SandpackProvider
-          key={`${activeBlockIdx}-${activeTab}`}
-          template="react-ts"
-          files={
-            activeTab === 'component'
-              ? sandpackFiles
-              : {
-                  '/App.tsx': {
-                    code: `// Payload Block Schema (server-side config — preview not available)\n// This file is read-only in the preview.\n\n${currentCode.payloadConfigCode}`,
-                    active: true,
-                    readOnly: true,
-                  },
-                }
-          }
-          theme="dark"
-          options={{ recompileDelay: 800 }}
-        >
-          <SandpackLayout>
-            <SandpackCodeEditor
-              showTabs={false}
-              showLineNumbers
-              showInlineErrors
-              wrapContent
-              style={{ height: 260 }}
-              onChange={
-                activeTab === 'component'
-                  ? (code) =>
-                      setEditedCodes((prev) => ({
-                        ...prev,
-                        [activeBlockIdx]: { ...prev[activeBlockIdx], componentCode: code },
-                      }))
-                  : undefined
-              }
+        {activeTab === 'component' ? (
+          <SandpackProvider
+            key={`${activeBlockIdx}-component`}
+            template="react-ts"
+            files={sandpackFiles}
+            theme="dark"
+            customSetup={{
+              dependencies,
+            }}
+            options={{
+              recompileDelay: 600,
+              externalResources,
+            }}
+          >
+            {/* Error watcher — must be inside SandpackProvider */}
+            <SandboxErrorWatcher
+              onError={handleSandboxError}
+              onResolved={handleSandboxResolved}
             />
-            {activeTab === 'component' && (
+            <SandpackLayout>
+              <EditorWithSync
+                activeTab={activeTab}
+                activeBlockIdx={activeBlockIdx}
+                onCodeChange={handleCodeChange}
+              />
               <SandpackPreview
                 style={{ height: 260 }}
                 showNavigator={false}
                 showOpenInCodeSandbox={false}
               />
-            )}
-          </SandpackLayout>
-        </SandpackProvider>
+            </SandpackLayout>
+          </SandpackProvider>
+        ) : (
+          // Schema tab — read-only plain editor, no live preview needed
+          <SandpackProvider
+            key={`${activeBlockIdx}-schema`}
+            template="react-ts"
+            files={{
+              '/App.tsx': {
+                code: `// Payload Block Schema (server-side config — preview not available)\n// This file is read-only.\n\n${currentCode.payloadConfigCode}`,
+                active: true,
+                readOnly: true,
+              },
+            }}
+            theme="dark"
+          >
+            <SandpackLayout>
+              <SandpackCodeEditor
+                showTabs={false}
+                showLineNumbers
+                wrapContent
+                style={{ height: 520, width: '100%' }}
+              />
+            </SandpackLayout>
+          </SandpackProvider>
+        )}
       </div>
+
+      {/* Sandbox error panel with Regenerate button */}
+      <AnimatePresence>
+        {sandboxHasErrors && activeTab === 'component' && (
+          <motion.div
+            key="sandbox-error"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="bb-sandbox-error-panel"
+          >
+            <div className="bb-sandbox-error-header">
+              <span className="bb-sandbox-error-icon">⚠</span>
+              <span className="bb-sandbox-error-title">
+                Something went wrong in the preview
+              </span>
+            </div>
+            <ul className="bb-sandbox-error-list">
+              {sandboxErrors.slice(0, 3).map((err, i) => (
+                <li key={i} className="bb-sandbox-error-item">
+                  {err}
+                </li>
+              ))}
+              {sandboxErrors.length > 3 && (
+                <li className="bb-sandbox-error-item bb-sandbox-error-item--more">
+                  +{sandboxErrors.length - 3} more error{sandboxErrors.length - 3 > 1 ? 's' : ''}
+                </li>
+              )}
+            </ul>
+            <div className="bb-sandbox-error-actions">
+              <span className="bb-sandbox-error-hint">
+                The AI may have generated code with incompatible imports or syntax. Try regenerating.
+              </span>
+              <button
+                type="button"
+                className="bb-regenerate-btn"
+                onClick={onRegenerate}
+                disabled={pushStatus === 'pushing'}
+              >
+                🔄 Regenerate
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* PR info */}
       <div className="bb-preview-pr-info">
@@ -237,7 +425,7 @@ root.render(<App />)
         </div>
       </div>
 
-      {/* Error */}
+      {/* Push error */}
       {pushStatus === 'error' && (
         <div className="bb-modal-error">{pushError}</div>
       )}
@@ -268,28 +456,47 @@ root.render(<App />)
         <div className="bb-modal-status">
           {pushStatus === 'pushing' && '⏳ Creating branch and opening PR…'}
           {pushStatus === 'done' && '✅ Done! Merge the PR to deploy.'}
+          {sandboxHasErrors && pushStatus === 'idle' && (
+            <span style={{ color: 'var(--bb-danger)', fontSize: 12 }}>
+              Preview has errors — fix the code or regenerate before pushing
+            </span>
+          )}
         </div>
 
-        {pushStatus !== 'done' && (
-          <button
-            type="button"
-            onClick={handlePush}
-            disabled={pushStatus === 'pushing'}
-            className="bb-modal-btn"
-          >
-            {pushStatus === 'pushing' ? 'Opening PR…' : '🚀 Open Pull Request on GitHub'}
-          </button>
-        )}
+        <div style={{ display: 'flex', gap: 8 }}>
+          {sandboxHasErrors && pushStatus !== 'done' && (
+            <button
+              type="button"
+              onClick={onRegenerate}
+              disabled={pushStatus === 'pushing'}
+              className="bb-modal-btn bb-modal-btn--secondary"
+            >
+              🔄 Regenerate
+            </button>
+          )}
 
-        {pushStatus === 'done' && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="bb-modal-btn"
-          >
-            Close
-          </button>
-        )}
+          {pushStatus !== 'done' && (
+            <button
+              type="button"
+              onClick={handlePush}
+              disabled={pushStatus === 'pushing' || sandboxHasErrors}
+              className="bb-modal-btn"
+              title={sandboxHasErrors ? 'Fix preview errors before pushing to GitHub' : undefined}
+            >
+              {pushStatus === 'pushing' ? 'Opening PR…' : '🚀 Open Pull Request on GitHub'}
+            </button>
+          )}
+
+          {pushStatus === 'done' && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="bb-modal-btn"
+            >
+              Close
+            </button>
+          )}
+        </div>
       </div>
     </motion.div>
   )
