@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 
 export interface PromptPanelProps {
   prompt: string;
@@ -52,28 +53,44 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 
       <textarea
         className="bb-generate-textarea"
+        aria-label="Describe what you want to build"
         placeholder="Describe what you want to build..."
         value={prompt}
         onChange={(e) => onPromptChange(e.target.value)}
         disabled={isGenerating}
       />
 
-      <div className="bb-generate-suggestions">
+      <motion.div 
+        className="bb-generate-suggestions"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+          }
+        }}
+        initial="hidden"
+        animate="show"
+      >
         {SUGGESTIONS.map((suggestion) => (
-          <button
+          <motion.button
             key={suggestion}
             type="button"
             className="bb-generate-suggestion-chip"
-            onClick={() => onPromptChange(suggestion)}
+            onClick={() => onPromptChange(prompt ? `${prompt} ${suggestion}` : suggestion)}
             disabled={isGenerating}
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 }
+            }}
           >
             {suggestion}
-          </button>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
 
       {error && (
-        <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.875rem' }}>
+        <div className="bb-generate-error" role="alert" aria-live="polite">
           {error}
         </div>
       )}

@@ -194,6 +194,12 @@
   border-color: var(--bb-gold-light);
 }
 
+.bb-generate-error {
+  color: var(--bb-danger, #ef4444);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
 /* Generate Button */
 .bb-generate-button {
   width: 100%;
