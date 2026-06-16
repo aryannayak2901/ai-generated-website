@@ -29,12 +29,17 @@ export const GenerationHistoryCard: React.FC<GenerationHistoryCardProps> = ({
 }) => {
   const block = item.response.blocks?.[0];
   const blockName = block?.label || 'Generated Block';
+  const blockIcon = block?.icon;
   
   return (
     <div className="bb-generate-history-card p-4 border rounded-xl bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow">
       <div className="bb-generate-history-card-header flex items-center justify-between mb-2">
         <div className="bb-generate-history-card-type flex items-center font-medium">
-          <Box className="w-4 h-4 mr-2 text-primary" />
+          {blockIcon ? (
+            <span className="mr-2 text-primary">{blockIcon}</span>
+          ) : (
+            <Box className="w-4 h-4 mr-2 text-primary" />
+          )}
           {blockName}
         </div>
         <div className="bb-generate-history-card-time text-xs text-muted-foreground">
