@@ -5,13 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import type { AIProvider, GenerationMode } from '@/lib/ai/types'
 import { AIPreviewPanel } from './AIPreviewPanel'
 import type { GenerateResponseWithCode } from '@/lib/ai/types'
-import { PROVIDERS, AI_SETTINGS_KEY, DEFAULT_PROVIDER } from '@/lib/ai/providers'
-
-interface AISettings {
-  provider: AIProvider
-  model: string
-  apiKey: string
-}
+import { PROVIDERS } from '@/lib/ai/providers'
+import { useAISettings } from '@/lib/ai/useAISettings'
 
 interface AIGeneratorModalProps {
   isOpen: boolean
@@ -20,81 +15,16 @@ interface AIGeneratorModalProps {
 }
 
 export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGeneratorModalProps) {
-  const [settings, setSettings] = useState<AISettings>({
-    provider: DEFAULT_PROVIDER,
-    model: PROVIDERS[DEFAULT_PROVIDER].models[0].value,
-    apiKey: '',
-  })
+  const { settings, updateSettings, dynamicModels, isLoadingModels } = useAISettings()
   const [prompt, setPrompt] = useState('')
   const [mode, setMode] = useState<GenerationMode>('block')
   const [status, setStatus] = useState<'idle' | 'generating' | 'writing' | 'done' | 'error'>('idle')
   const [statusMessage, setStatusMessage] = useState('')
   const [error, setError] = useState('')
   const [previewBlocks, setPreviewBlocks] = useState<GenerateResponseWithCode['blocks'] | null>(null)
-  
-  // Dynamic models state for providers that support unauthenticated listing (OpenRouter)
-  const [dynamicModels, setDynamicModels] = useState<Record<string, { value: string; label: string }[]>>({})
-  const [isLoadingModels, setIsLoadingModels] = useState(false)
-
-  // Fetch OpenRouter models dynamically
-  useEffect(() => {
-    async function fetchOpenRouterModels() {
-      if (dynamicModels['openrouter']) return
-      setIsLoadingModels(true)
-      try {
-        const res = await fetch('https://openrouter.ai/api/v1/models')
-        if (res.ok) {
-          const data = await res.json()
-          const models = data.data
-            .map((m: any) => ({
-              value: m.id,
-              label: m.name || m.id,
-            }))
-            .sort((a: any, b: any) => a.label.localeCompare(b.label))
-          
-          setDynamicModels(prev => ({ ...prev, openrouter: models }))
-        }
-      } catch (err) {
-        console.error('Failed to fetch OpenRouter models:', err)
-      } finally {
-        setIsLoadingModels(false)
-      }
-    }
-
-    if (settings.provider === 'openrouter' && isOpen) {
-      fetchOpenRouterModels()
-    }
-  }, [settings.provider, isOpen, dynamicModels])
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(AI_SETTINGS_KEY)
-      if (saved) {
-        const parsed = JSON.parse(saved) as AISettings
-        if (parsed.provider && PROVIDERS[parsed.provider]) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect
-          setSettings(parsed)
-        }
-      }
-    } catch { /* ignore */ }
-  }, [])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      try {
-        localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(settings))
-      } catch { /* ignore */ }
-    }, 500)
-    return () => clearTimeout(timeout)
-  }, [settings])
 
   const handleProviderChange = (provider: AIProvider) => {
-    const defaultModel = PROVIDERS[provider].models[0].value
-    setSettings((prev) => ({
-      ...prev,
-      provider,
-      model: defaultModel, // We temporarily set this, it can be updated once dynamic models load
-    }))
+    updateSettings({ provider })
   }
 
   const handleGenerate = async () => {
@@ -217,7 +147,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
                 <label className="bb-modal-label">Model</label>
                 <select
                   value={settings.model}
-                  onChange={(e) => setSettings((s) => ({ ...s, model: e.target.value }))}
+                  onChange={(e) => updateSettings({ model: e.target.value })}
                   disabled={isLoading || isLoadingModels}
                   className="bb-modal-select"
                 >
@@ -236,7 +166,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
               <input
                 type="password"
                 value={settings.apiKey}
-                onChange={(e) => setSettings((s) => ({ ...s, apiKey: e.target.value }))}
+                onChange={(e) => updateSettings({ apiKey: e.target.value })}
                 disabled={isLoading}
                 placeholder={currentProvider.apiKeyPlaceholder}
                 className="bb-modal-input"

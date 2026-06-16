@@ -4,6 +4,12 @@ export type AIProvider = 'gemini' | 'openai' | 'anthropic' | 'openrouter' | 'gro
 
 export type GenerationMode = 'block' | 'page'
 
+export interface AISettings {
+  provider: AIProvider
+  model: string
+  apiKey: string
+}
+
 export interface GenerateRequest {
   prompt: string
   mode: GenerationMode

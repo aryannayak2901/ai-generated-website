@@ -1,104 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { PROVIDERS, AI_SETTINGS_KEY, DEFAULT_PROVIDER } from '@/lib/ai/providers';
-import type { AIProvider } from '@/lib/ai/types';
+import { PROVIDERS, DEFAULT_PROVIDER } from '@/lib/ai/providers';
+import type { AIProvider, AISettings } from '@/lib/ai/types';
+import { useAISettings } from '@/lib/ai/useAISettings';
 
-export interface AISettings {
-  provider: AIProvider | string;
-  model: string;
-  apiKey: string;
-}
-
-interface SettingsPanelProps {
-  settings: AISettings;
-  onSettingsChange: (newSettings: AISettings) => void;
-}
-
-export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettingsChange }) => {
+export const SettingsPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false); // For mobile toggle
-  const [providers, setProviders] = useState<Record<string, any>>(PROVIDERS);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Load initial settings from localStorage on mount
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(AI_SETTINGS_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.provider && parsed.model) {
-          onSettingsChange(parsed);
-        }
-      }
-    } catch (err) {
-      console.error('Failed to parse settings from localStorage', err);
-    } finally {
-      setIsInitialized(true);
-    }
-    // We intentionally only run this on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Save to localStorage when settings change
-  useEffect(() => {
-    if (isInitialized && settings.provider && settings.model) {
-      localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(settings));
-    }
-  }, [settings, isInitialized]);
-
-  // Fetch OpenRouter models dynamically if OpenRouter is selected
-  useEffect(() => {
-    if (settings.provider === 'openrouter') {
-      const fetchOpenRouterModels = async () => {
-        try {
-          const res = await fetch('https://openrouter.ai/api/v1/models');
-          const data = await res.json();
-          if (data && data.data) {
-            const dynamicModels = data.data.map((m: any) => ({
-              value: m.id,
-              label: m.name || m.id,
-            }));
-            
-            setProviders((prev) => {
-              // Merge to avoid duplicates
-              const existingOpenRouterModels = prev.openrouter.models;
-              const existingValues = new Set(existingOpenRouterModels.map((m: any) => m.value));
-              const newModels = dynamicModels.filter((m: any) => !existingValues.has(m.value));
-              
-              return {
-                ...prev,
-                openrouter: {
-                  ...prev.openrouter,
-                  models: [...existingOpenRouterModels, ...newModels],
-                }
-              };
-            });
-          }
-        } catch (error) {
-          console.error('Failed to fetch OpenRouter models', error);
-        }
-      };
-      
-      fetchOpenRouterModels();
-    }
-  }, [settings.provider]);
+  const { settings, updateSettings, dynamicModels, isLoadingModels } = useAISettings();
 
   const handleChange = (field: keyof AISettings, value: string) => {
-    const newSettings = { ...settings, [field]: value };
-    
-    // When provider changes, select the first model of that provider automatically
-    if (field === 'provider') {
-      const providerInfo = providers[value];
-      if (providerInfo && providerInfo.models.length > 0) {
-        newSettings.model = providerInfo.models[0].value;
-      }
-    }
-    
-    onSettingsChange(newSettings);
+    updateSettings({ [field]: value });
   };
 
-  const currentProviderInfo = providers[settings.provider] || providers[DEFAULT_PROVIDER];
+  const currentProviderInfo = PROVIDERS[settings.provider] || PROVIDERS[DEFAULT_PROVIDER];
+  const models = dynamicModels[settings.provider] || currentProviderInfo.models;
 
   return (
     <div className={`bb-generate-panel bb-generate-settings ${isOpen ? 'open' : ''}`}>
@@ -122,9 +39,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
           <select 
             className="bb-generate-select"
             value={settings.provider || DEFAULT_PROVIDER}
-            onChange={(e) => handleChange('provider', e.target.value)}
+            onChange={(e) => handleChange('provider', e.target.value as AIProvider)}
           >
-            {Object.entries(providers).map(([key, info]) => (
+            {Object.entries(PROVIDERS).map(([key, info]) => (
               <option key={key} value={key}>{info.label}</option>
             ))}
           </select>
@@ -138,11 +55,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
             className="bb-generate-select"
             value={settings.model || ''}
             onChange={(e) => handleChange('model', e.target.value)}
+            disabled={isLoadingModels}
           >
-            {currentProviderInfo.models.map((model: any) => (
+            {models.map((model: any) => (
               <option key={model.value} value={model.value}>{model.label}</option>
             ))}
           </select>
+          {isLoadingModels && <span style={{ fontSize: '10px', color: 'var(--bb-muted)', marginTop: '4px', display: 'block' }}>Loading models...</span>}
         </div>
 
         <div className="bb-generate-form-group">
