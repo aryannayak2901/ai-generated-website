@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Settings2, Cpu, Key, Zap } from 'lucide-react';
+import { ChevronDown, ChevronUp, Settings, Share2, Package, Lock, Eye, EyeOff } from 'lucide-react';
 import { PROVIDERS, DEFAULT_PROVIDER } from '@/lib/ai/providers';
 import type { AIProvider, AISettings } from '@/lib/ai/types';
 import { useAISettings } from '@/lib/ai/useAISettings';
 
 export const SettingsPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { settings, updateSettings, activeModels, isLoadingModels } = useAISettings();
 
   const handleChange = (field: keyof AISettings, value: string) => {
@@ -18,11 +19,14 @@ export const SettingsPanel: React.FC = () => {
 
   return (
     <div className={`bb-generate-panel bb-generate-settings ${isOpen ? 'open' : ''}`}>
+      {/* Top Glow */}
+      <div className="bb-generate-settings-glow" />
+
       {/* Panel Header */}
       <div className="bb-generate-panel-header">
         <div className="bb-generate-panel-header-title">
           <div className="bb-generate-panel-header-icon">
-            <Settings2 size={14} strokeWidth={2.2} />
+            <Settings size={18} strokeWidth={2} color="#D4AF37" />
           </div>
           <span>AI Settings</span>
         </div>
@@ -31,7 +35,7 @@ export const SettingsPanel: React.FC = () => {
           className="bb-generate-panel-toggle"
           aria-label={isOpen ? 'Close AI Settings' : 'Open AI Settings'}
         >
-          {isOpen ? <ChevronUp size={13} strokeWidth={2.5} /> : <ChevronDown size={13} strokeWidth={2.5} />}
+          {isOpen ? <ChevronUp size={16} strokeWidth={2} /> : <ChevronDown size={16} strokeWidth={2} />}
         </button>
       </div>
 
@@ -40,7 +44,7 @@ export const SettingsPanel: React.FC = () => {
         {/* Provider */}
         <div className="bb-generate-form-group">
           <label className="bb-generate-label">
-            <Zap size={10} strokeWidth={2.5} />
+            <Share2 size={14} strokeWidth={2} />
             AI Provider
           </label>
           <select
@@ -56,12 +60,10 @@ export const SettingsPanel: React.FC = () => {
           </select>
         </div>
 
-        <div className="bb-generate-divider" />
-
         {/* Model */}
         <div className="bb-generate-form-group">
           <label className="bb-generate-label">
-            <Cpu size={10} strokeWidth={2.5} />
+            <Package size={14} strokeWidth={2} />
             Model
           </label>
           <select
@@ -95,21 +97,29 @@ export const SettingsPanel: React.FC = () => {
           )}
         </div>
 
-        <div className="bb-generate-divider" />
-
         {/* API Key */}
         <div className="bb-generate-form-group" style={{ marginBottom: 0 }}>
           <label className="bb-generate-label">
-            <Key size={10} strokeWidth={2.5} />
-            API Key
+            <Lock size={14} strokeWidth={2} />
+            API Key password
           </label>
-          <input
-            type="password"
-            className="bb-generate-input"
-            value={settings.apiKey || ''}
-            onChange={(e) => handleChange('apiKey', e.target.value)}
-            placeholder={currentProviderInfo.apiKeyPlaceholder}
-          />
+          <div className="bb-generate-input-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="bb-generate-input"
+              value={settings.apiKey || ''}
+              onChange={(e) => handleChange('apiKey', e.target.value)}
+              placeholder={currentProviderInfo.apiKeyPlaceholder || "........."}
+              style={{ paddingRight: '2.5rem' }}
+            />
+            <button
+              type="button"
+              className="bb-generate-password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <Eye size={16} strokeWidth={2} /> : <EyeOff size={16} strokeWidth={2} />}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { FilePlus, ChevronRight, ChevronDown, Trash2 } from 'lucide-react';
+import { Plus, ChevronRight, ChevronDown, Trash2, Search } from 'lucide-react';
 
 export interface FileTreeSidebarProps {
   onFileSelect: (path: string) => void;
@@ -208,15 +208,17 @@ export const FileTreeSidebar: React.FC<FileTreeSidebarProps> = ({
           className="bb-file-tree__new-file-btn"
           title="New File"
         >
-          <FilePlus size={13} strokeWidth={2} />
+          <Plus size={14} strokeWidth={2.5} />
         </button>
       </div>
-      <div className="bb-file-tree__search">
+      <div className="bb-file-tree__search" style={{ position: 'relative' }}>
+        <Search size={12} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: 'var(--bb-muted)' }} strokeWidth={2.5} />
         <input
           type="text"
           placeholder="Search files…"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ paddingLeft: '32px' }}
         />
       </div>
       <div className="bb-file-tree__content">

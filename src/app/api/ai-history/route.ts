@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import config from '@/payload.config'
 
 export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   try {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config })
     const { user } = await payload.auth({ headers: request.headers })
 
     if (!user) {
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 })
     }
 
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config })
     const { user } = await payload.auth({ headers: request.headers })
 
     if (!user) {
@@ -83,7 +83,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Missing id parameter' }, { status: 400 })
     }
 
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config })
     const { user } = await payload.auth({ headers: request.headers })
 
     if (!user) {

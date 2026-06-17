@@ -16,26 +16,24 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
   onAddToPage,
 }) => {
   return (
-    <div className="bb-generate-panel bb-generate-results">
+    <div className="bb-generate-panel bb-generate-results" style={{ width: '340px', flexShrink: 0, position: 'relative' }}>
       {/* Header */}
-      <div className="bb-generate-panel-header">
-        <div className="bb-generate-panel-header-title">
-          <div className="bb-generate-panel-header-icon">
-            <Sparkles size={14} strokeWidth={2.2} />
+      <div className="bb-generate-panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 1.5rem 0.5rem', borderBottom: 'none', background: 'transparent' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="bb-generate-panel-header-icon" style={{ backgroundColor: 'rgba(212, 175, 55, 0.1)', border: '1px solid rgba(212, 175, 55, 0.3)', padding: '0.5rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Sparkles size={16} strokeWidth={2} color="#D4AF37" />
           </div>
-          <span>Recent Generations</span>
+          <span style={{ color: 'var(--bb-white)', fontSize: '1.125rem', fontWeight: 600 }}>Recent Generations</span>
         </div>
         {history.length > 0 && (
           <span
             style={{
-              fontSize: '0.68rem',
-              fontWeight: 700,
-              letterSpacing: '0.06em',
+              fontSize: '0.75rem',
+              fontWeight: 600,
               padding: '0.15rem 0.5rem',
               borderRadius: '9999px',
-              background: 'var(--gs-gold-dim)',
-              color: 'var(--gs-gold-light)',
-              border: '1px solid rgba(201, 168, 76, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              color: 'var(--bb-muted)',
             }}
           >
             {history.length}
@@ -45,19 +43,28 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
 
       {/* Body */}
       {history.length === 0 ? (
-        <div className="bb-generate-panel-body" style={{ display: 'flex', flex: 1 }}>
-          <div className="bb-generate-empty-state">
+        <div className="bb-generate-panel-body" style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+          <div className="bb-generate-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '1rem' }}>
             <motion.div
               className="bb-generate-empty-icon"
-              animate={{ scale: [1, 1.06, 1] }}
+              animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                width: '64px',
+                height: '64px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px dashed rgba(212, 175, 55, 0.4)',
+                backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                borderRadius: '1rem',
+                marginBottom: '0.5rem'
+              }}
             >
-              ✦
+              <Sparkles size={28} color="#D4AF37" strokeWidth={2} />
             </motion.div>
-            <h3 className="bb-generate-empty-title">Your generated blocks will appear here</h3>
-            <p className="bb-generate-empty-sub">
-              Enter a prompt in the left panel to create new UI components and layout blocks.
-            </p>
+            <h3 style={{ color: 'var(--bb-white)', fontSize: '1.125rem', fontWeight: 600, margin: 0, letterSpacing: '-0.01em' }}>Your generated blocks will appear here</h3>
+            <p style={{ color: 'var(--bb-muted)', fontSize: '0.9rem', margin: 0 }}>Your generated blocks will appear here</p>
           </div>
         </div>
       ) : (

@@ -29,53 +29,43 @@ export const GenerationHistoryCard: React.FC<GenerationHistoryCardProps> = ({
   const blockIcon = block?.icon;
 
   return (
-    <div className="bb-generate-history-card">
+    <div className="bb-generate-history-card" style={{ padding: '1.25rem 1.5rem', border: 'none', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'transparent', borderRadius: 0, boxShadow: 'none' }}>
       {/* Header */}
-      <div className="bb-generate-history-card-header">
-        <div className="bb-generate-history-card-type">
-          {blockIcon ? (
-            <span style={{ fontSize: '0.95rem', lineHeight: 1 }}>{blockIcon}</span>
-          ) : (
-            <Box size={13} strokeWidth={2} />
-          )}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#D4AF37', fontWeight: 500, fontSize: '0.95rem' }}>
+          {blockIcon ? <span>{blockIcon}</span> : <Box size={14} />}
           <span>{blockName}</span>
-          <span className="bb-generate-history-card-badge">
-            {item.mode === 'page' ? 'Page' : 'Block'}
-          </span>
         </div>
-        <span className="bb-generate-history-card-time">
+        <span style={{ color: 'var(--bb-muted)', fontSize: '0.8rem' }}>
           {getRelativeTime(item.timestamp)}
         </span>
       </div>
 
       {/* Prompt preview */}
-      <p className="bb-generate-history-card-prompt">{item.prompt}</p>
+      <p style={{ color: 'var(--bb-white)', fontSize: '0.9rem', margin: 0, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        {item.prompt}
+      </p>
 
       {/* Footer */}
-      <div className="bb-generate-history-card-footer">
-        <span
-          className="bb-generate-history-card-meta"
-          title={`${item.provider} / ${item.model}`}
-        >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.25rem' }}>
+        <span style={{ color: 'var(--bb-white)', fontSize: '0.9rem' }}>
           {item.provider} / {item.model}
         </span>
 
-        <div className="bb-generate-history-actions">
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button
             onClick={() => onOpenInEditor(item)}
-            className="bb-generate-icon-btn bb-generate-icon-btn--secondary"
-            title="Open in Editor"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.25)', color: 'var(--bb-white)', border: 'none', borderRadius: '0.25rem', fontSize: '0.8rem', cursor: 'pointer', transition: 'background-color 0.2s' }}
           >
-            <Code size={11} strokeWidth={2.2} />
+            <Code size={12} strokeWidth={2.2} />
             Editor
           </button>
           <button
             onClick={() => onAddToPage(item)}
-            className="bb-generate-icon-btn bb-generate-icon-btn--primary"
-            title="Add to Page"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.25)', color: 'var(--bb-white)', border: 'none', borderRadius: '0.25rem', fontSize: '0.8rem', cursor: 'pointer', transition: 'background-color 0.2s' }}
           >
             Add
-            <ArrowRight size={11} strokeWidth={2.2} />
+            <ArrowRight size={12} strokeWidth={2.2} />
           </button>
         </div>
       </div>

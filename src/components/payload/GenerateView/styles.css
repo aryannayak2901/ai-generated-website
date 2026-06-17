@@ -121,8 +121,63 @@
 
 /* Settings Panel (Left) */
 .bb-generate-settings {
-  width: 300px;
+  width: 280px;
   flex-shrink: 0;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  position: relative;
+  border-radius: var(--bb-radius);
+}
+
+.bb-generate-settings-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: radial-gradient(ellipse at top left, rgba(212, 175, 55, 0.15), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  border-top-left-radius: var(--bb-radius);
+  border-top-right-radius: var(--bb-radius);
+}
+
+.bb-generate-settings .bb-generate-panel-header {
+  border-bottom: none;
+  background: transparent;
+  padding: 1.5rem 1.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.bb-generate-settings .bb-generate-panel-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bb-generate-settings .bb-generate-panel-header-title span {
+  color: var(--bb-white);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.bb-generate-settings .bb-generate-panel-header-icon {
+  background-color: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bb-generate-settings .bb-generate-panel-body {
+  padding: 0.5rem 1.5rem 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .bb-generate-form-group {
@@ -130,10 +185,36 @@
 }
 
 .bb-generate-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.875rem;
   color: var(--bb-muted);
   margin-bottom: 0.5rem;
+}
+
+.bb-generate-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bb-generate-password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--bb-muted);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.bb-generate-password-toggle:hover {
+  color: var(--bb-white);
 }
 
 .bb-generate-input,
@@ -435,6 +516,7 @@
 
 .bb-modal-overlay--wide {
   padding: 0;
+  background-color: var(--bb-navy);
 }
 
 .bb-modal-card--wide {
@@ -444,5 +526,7 @@
   max-height: 100vh;
   border-radius: 0;
   border: none;
+  box-shadow: none;
+  overflow: hidden;
 }
 

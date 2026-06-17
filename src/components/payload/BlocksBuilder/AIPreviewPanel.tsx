@@ -271,17 +271,21 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
       <div className="aip-header">
         <div className="aip-header-left">
           {/* Back */}
-          <button type="button" onClick={onBack} disabled={pushStatus === 'pushing'} className="aip-btn aip-btn--ghost aip-back-btn">
-            <ArrowLeft size={13} strokeWidth={2.5} />
+          <button type="button" onClick={onBack} disabled={pushStatus === 'pushing'} className="aip-btn aip-btn--ghost aip-back-btn" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '0.4rem 0.75rem', borderRadius: '0.4rem' }}>
+            <ArrowLeft size={14} strokeWidth={2} />
             <span>Back</span>
           </button>
 
-          <span className="aip-header-sep" />
+          <span className="aip-header-sep" style={{ margin: '0 0.5rem', opacity: 0 }} />
 
           {/* Icon + Title */}
-          <span className="aip-header-icon"><Code2 size={13} /></span>
-          <span className="aip-header-title">Preview &amp; Push</span>
-          {modifiedCount > 0 && <span className="aip-badge aip-badge--amber">{modifiedCount} modified</span>}
+          <div style={{ display: 'flex', alignItems: 'center', background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05))', padding: '0.4rem 0.5rem', borderRadius: '0.4rem', border: '1px solid rgba(212, 175, 55, 0.4)', marginRight: '0.5rem', boxShadow: '0 0 10px rgba(212, 175, 55, 0.2)' }}>
+            <Code2 size={16} color="#D4AF37" strokeWidth={2.5} />
+          </div>
+          <span className="aip-header-title" style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--bb-white)', marginRight: '0.75rem' }}>Preview &amp; Push</span>
+          <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em', color: '#D4AF37', border: '1px solid rgba(212, 175, 55, 0.4)', padding: '0.15rem 0.4rem', borderRadius: '0.25rem', backgroundColor: 'rgba(212, 175, 55, 0.1)' }}>BLOCK</span>
+          
+          {modifiedCount > 0 && <span className="aip-badge aip-badge--amber" style={{ marginLeft: '0.75rem' }}>{modifiedCount} modified</span>}
 
           {/* Block tabs */}
           {blocks.length > 1 && (
@@ -320,17 +324,17 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
 
           {/* Primary action */}
           {pushStatus !== 'done' ? (
-            <button type="button" onClick={handlePush} disabled={pushStatus === 'pushing' || sandboxHasErrors} className="aip-btn aip-btn--gold">
-              <GitPullRequest size={13} strokeWidth={2} />
+            <button type="button" onClick={handlePush} disabled={pushStatus === 'pushing' || sandboxHasErrors} className="aip-btn aip-btn--gold" style={{ background: 'linear-gradient(135deg, #E2C87A, #C9A84C)', color: '#090F1F', border: 'none', fontWeight: 600, padding: '0.4rem 1rem', borderRadius: '0.4rem', boxShadow: '0 0 15px rgba(212, 175, 55, 0.4)' }}>
+              <GitPullRequest size={15} strokeWidth={2.5} />
               {pushStatus === 'pushing' ? 'Opening…' : 'Open PR'}
             </button>
           ) : (
-            <button type="button" onClick={onClose} className="aip-btn aip-btn--gold">Close</button>
+            <button type="button" onClick={onClose} className="aip-btn aip-btn--gold" style={{ background: 'linear-gradient(135deg, #E2C87A, #C9A84C)', color: '#090F1F', border: 'none', fontWeight: 600, padding: '0.4rem 1rem', borderRadius: '0.4rem' }}>Close</button>
           )}
 
           {/* Close */}
-          <button type="button" onClick={onClose} disabled={pushStatus === 'pushing'} className="aip-btn aip-btn--icon" aria-label="Close">
-            <X size={14} strokeWidth={2.5} />
+          <button type="button" onClick={onClose} disabled={pushStatus === 'pushing'} className="aip-btn aip-btn--icon" aria-label="Close" style={{ background: 'rgba(255, 255, 255, 0.05)', border: 'none', padding: '0.4rem', borderRadius: '0.4rem', marginLeft: '0.5rem' }}>
+            <X size={16} strokeWidth={2} color="var(--bb-muted)" />
           </button>
         </div>
       </div>
