@@ -10,16 +10,13 @@ interface GenerationHistoryCardProps {
 
 function getRelativeTime(timestamp: number) {
   const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-  const daysDifference = Math.round((timestamp - Date.now()) / (1000 * 60 * 60 * 24));
-  if (daysDifference === 0) {
-    const hoursDifference = Math.round((timestamp - Date.now()) / (1000 * 60 * 60));
-    if (hoursDifference === 0) {
-      const minutesDifference = Math.round((timestamp - Date.now()) / (1000 * 60));
-      return rtf.format(minutesDifference, 'minute');
-    }
-    return rtf.format(hoursDifference, 'hour');
-  }
-  return rtf.format(daysDifference, 'day');
+  const diffInSeconds = (timestamp - Date.now()) / 1000;
+  
+  if (Math.abs(diffInSeconds) < 60) return rtf.format(Math.round(diffInSeconds), 'second');
+  if (Math.abs(diffInSeconds) < 3600) return rtf.format(Math.round(diffInSeconds / 60), 'minute');
+  if (Math.abs(diffInSeconds) < 86400) return rtf.format(Math.round(diffInSeconds / 3600), 'hour');
+  
+  return rtf.format(Math.round(diffInSeconds / 86400), 'day');
 }
 
 export const GenerationHistoryCard: React.FC<GenerationHistoryCardProps> = ({
@@ -47,15 +44,7 @@ export const GenerationHistoryCard: React.FC<GenerationHistoryCardProps> = ({
         </div>
       </div>
       
-      <div 
-        className="bb-generate-history-card-prompt text-sm text-muted-foreground mb-4"
-        style={{
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden'
-        }}
-      >
+      <div className="bb-generate-history-card-prompt text-sm text-muted-foreground mb-4 line-clamp-2">
         {item.prompt}
       </div>
       
