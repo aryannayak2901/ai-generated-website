@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PromptPanel } from './PromptPanel';
 import { SettingsPanel } from './SettingsPanel';
@@ -20,6 +20,7 @@ export const GenerateStudio: React.FC = () => {
   const [previewBlocks, setPreviewBlocks] = useState<GenerateResponseWithCode['blocks'] | null>(null);
 
   const { settings } = useAISettings();
+  const isLoaded = useRef(false);
 
   // Load history from localStorage
   useEffect(() => {
@@ -30,11 +31,14 @@ export const GenerateStudio: React.FC = () => {
       }
     } catch (e) {
       console.error('Failed to parse history:', e);
+    } finally {
+      isLoaded.current = true;
     }
   }, []);
 
   // Save history to localStorage
   useEffect(() => {
+    if (!isLoaded.current) return;
     localStorage.setItem('chambers_ai_history', JSON.stringify(history));
   }, [history]);
 
