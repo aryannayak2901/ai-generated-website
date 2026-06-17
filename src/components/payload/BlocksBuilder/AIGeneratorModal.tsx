@@ -243,7 +243,7 @@ export function AIGeneratorModal({ isOpen, onClose, onBlocksGenerated }: AIGener
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="bb-modal-overlay"
+          className="bb-modal-overlay bb-modal-overlay--wide"
         >
           <motion.div
             initial={{ scale: 0.95, y: 24, opacity: 0 }}

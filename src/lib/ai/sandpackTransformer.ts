@@ -254,6 +254,15 @@ export function transformForSandpack(componentCode: string): SandpackTransformRe
   // ── Step 7: Clean up and trim ──────────────────────────────────────────────
   code = code.replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n')
 
+  // ── Step 8: Ensure default export exists for Sandpack ──────────────────────
+  if (!code.includes('export default')) {
+    // Look for the primary React component (PascalCase named export)
+    const match = code.match(/export\s+(?:function|const|let|var)\s+([A-Z]\w*)/)
+    if (match && match[1]) {
+      code += `\n\nexport default ${match[1]};\n`
+    }
+  }
+
   return {
     transformedCode: code,
     stubs: {},

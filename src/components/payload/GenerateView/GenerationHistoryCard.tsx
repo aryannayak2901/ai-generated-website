@@ -11,11 +11,11 @@ interface GenerationHistoryCardProps {
 function getRelativeTime(timestamp: number) {
   const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
   const diffInSeconds = (timestamp - Date.now()) / 1000;
-  
+
   if (Math.abs(diffInSeconds) < 60) return rtf.format(Math.round(diffInSeconds), 'second');
   if (Math.abs(diffInSeconds) < 3600) return rtf.format(Math.round(diffInSeconds / 60), 'minute');
   if (Math.abs(diffInSeconds) < 86400) return rtf.format(Math.round(diffInSeconds / 3600), 'hour');
-  
+
   return rtf.format(Math.round(diffInSeconds / 86400), 'day');
 }
 
@@ -27,46 +27,55 @@ export const GenerationHistoryCard: React.FC<GenerationHistoryCardProps> = ({
   const block = item.response.blocks?.[0];
   const blockName = block?.label || 'Generated Block';
   const blockIcon = block?.icon;
-  
+
   return (
-    <div className="bb-generate-history-card p-4 border rounded-xl bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow">
-      <div className="bb-generate-history-card-header flex items-center justify-between mb-2">
-        <div className="bb-generate-history-card-type flex items-center font-medium">
+    <div className="bb-generate-history-card">
+      {/* Header */}
+      <div className="bb-generate-history-card-header">
+        <div className="bb-generate-history-card-type">
           {blockIcon ? (
-            <span className="mr-2 text-primary">{blockIcon}</span>
+            <span style={{ fontSize: '0.95rem', lineHeight: 1 }}>{blockIcon}</span>
           ) : (
-            <Box className="w-4 h-4 mr-2 text-primary" />
+            <Box size={13} strokeWidth={2} />
           )}
-          {blockName}
+          <span>{blockName}</span>
+          <span className="bb-generate-history-card-badge">
+            {item.mode === 'page' ? 'Page' : 'Block'}
+          </span>
         </div>
-        <div className="bb-generate-history-card-time text-xs text-muted-foreground">
+        <span className="bb-generate-history-card-time">
           {getRelativeTime(item.timestamp)}
-        </div>
+        </span>
       </div>
-      
-      <div className="bb-generate-history-card-prompt text-sm text-muted-foreground mb-4 line-clamp-2">
-        {item.prompt}
-      </div>
-      
-      <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
-        <span className="text-[10px] font-mono bg-muted px-2 py-1 rounded text-muted-foreground uppercase tracking-wide">
+
+      {/* Prompt preview */}
+      <p className="bb-generate-history-card-prompt">{item.prompt}</p>
+
+      {/* Footer */}
+      <div className="bb-generate-history-card-footer">
+        <span
+          className="bb-generate-history-card-meta"
+          title={`${item.provider} / ${item.model}`}
+        >
           {item.provider} / {item.model}
         </span>
-        
-        <div className="flex gap-2">
-          <button 
+
+        <div className="bb-generate-history-actions">
+          <button
             onClick={() => onOpenInEditor(item)}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md transition-colors"
+            className="bb-generate-icon-btn bb-generate-icon-btn--secondary"
+            title="Open in Editor"
           >
-            <Code className="w-3.5 h-3.5" />
-            Open in Editor
+            <Code size={11} strokeWidth={2.2} />
+            Editor
           </button>
-          <button 
+          <button
             onClick={() => onAddToPage(item)}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors shadow-sm"
+            className="bb-generate-icon-btn bb-generate-icon-btn--primary"
+            title="Add to Page"
           >
-            Add to Page
-            <ArrowRight className="w-3.5 h-3.5" />
+            Add
+            <ArrowRight size={11} strokeWidth={2.2} />
           </button>
         </div>
       </div>

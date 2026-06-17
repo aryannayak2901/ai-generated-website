@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GenerationHistoryItem } from './types';
 import { GenerationHistoryCard } from './GenerationHistoryCard';
 import { Sparkles } from 'lucide-react';
@@ -15,35 +16,71 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
   onAddToPage,
 }) => {
   return (
-    <div className="bb-generate-results flex flex-col h-full overflow-hidden">
-      <div className="px-6 py-4 border-b bg-background/50 backdrop-blur-sm sticky top-0 z-10">
-        <h2 className="text-lg font-semibold tracking-tight">Recent Generations</h2>
+    <div className="bb-generate-panel bb-generate-results">
+      {/* Header */}
+      <div className="bb-generate-panel-header">
+        <div className="bb-generate-panel-header-title">
+          <div className="bb-generate-panel-header-icon">
+            <Sparkles size={14} strokeWidth={2.2} />
+          </div>
+          <span>Recent Generations</span>
+        </div>
+        {history.length > 0 && (
+          <span
+            style={{
+              fontSize: '0.68rem',
+              fontWeight: 700,
+              letterSpacing: '0.06em',
+              padding: '0.15rem 0.5rem',
+              borderRadius: '9999px',
+              background: 'var(--gs-gold-dim)',
+              color: 'var(--gs-gold-light)',
+              border: '1px solid rgba(201, 168, 76, 0.2)',
+            }}
+          >
+            {history.length}
+          </span>
+        )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
-        {history.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center p-8 border-2 border-dashed rounded-2xl border-border/50 bg-muted/10">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Sparkles className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="text-base font-medium text-foreground mb-2">Your generated blocks will appear here</h3>
-            <p className="text-sm text-muted-foreground max-w-[280px]">
+      {/* Body */}
+      {history.length === 0 ? (
+        <div className="bb-generate-panel-body" style={{ display: 'flex', flex: 1 }}>
+          <div className="bb-generate-empty-state">
+            <motion.div
+              className="bb-generate-empty-icon"
+              animate={{ scale: [1, 1.06, 1] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              ✦
+            </motion.div>
+            <h3 className="bb-generate-empty-title">Your generated blocks will appear here</h3>
+            <p className="bb-generate-empty-sub">
               Enter a prompt in the left panel to create new UI components and layout blocks.
             </p>
           </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {history.map((item) => (
-              <GenerationHistoryCard 
-                key={item.id} 
-                item={item} 
-                onOpenInEditor={onOpenInEditor} 
-                onAddToPage={onAddToPage} 
-              />
+        </div>
+      ) : (
+        <div className="bb-generate-history-list">
+          <AnimatePresence initial={false}>
+            {history.map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25, delay: i === 0 ? 0 : 0 }}
+              >
+                <GenerationHistoryCard
+                  item={item}
+                  onOpenInEditor={onOpenInEditor}
+                  onAddToPage={onAddToPage}
+                />
+              </motion.div>
             ))}
-          </div>
-        )}
-      </div>
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 };
