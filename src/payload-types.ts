@@ -71,6 +71,7 @@ export interface Config {
     users: User;
     media: Media;
     posts: Post;
+    'ai-generations': AiGeneration;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -82,6 +83,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    'ai-generations': AiGenerationsSelect<false> | AiGenerationsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -638,6 +640,29 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-generations".
+ */
+export interface AiGeneration {
+  id: string;
+  user: string | User;
+  prompt: string;
+  mode?: ('block' | 'page') | null;
+  provider?: string | null;
+  model?: string | null;
+  blocks:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -662,6 +687,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'posts';
         value: string | Post;
+      } | null)
+    | ({
+        relationTo: 'ai-generations';
+        value: string | AiGeneration;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1183,6 +1212,20 @@ export interface PostsSelect<T extends boolean = true> {
   status?: T;
   externalLink?: T;
   publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-generations_select".
+ */
+export interface AiGenerationsSelect<T extends boolean = true> {
+  user?: T;
+  prompt?: T;
+  mode?: T;
+  provider?: T;
+  model?: T;
+  blocks?: T;
   updatedAt?: T;
   createdAt?: T;
 }
