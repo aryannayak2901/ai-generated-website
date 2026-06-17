@@ -30,6 +30,13 @@ export default buildConfig({
         Icon: "@/components/payload/Icon#Icon",
       },
       Nav: "@/components/payload/Nav#Nav",
+      views: {
+        GenerateAI: {
+          Component: "@/components/payload/GenerateView#GenerateView",
+          path: "/generate",
+          exact: true,
+        },
+      },
       beforeLogin: ["@/components/payload/BeforeLogin#BeforeLogin"],
     },
   },

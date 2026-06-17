@@ -14,6 +14,7 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 
 /**
@@ -103,6 +104,17 @@ export const Nav: React.FC = () => {
               </Link>
             );
           })}
+        </div>
+
+        <div className="bb-nav-group">
+          <h3 className="bb-nav-group-title">AI Tools</h3>
+          <Link
+            href={`${adminPath}/generate`}
+            className={`bb-nav-item ${isActive(`${adminPath}/generate`) ? "bb-nav-item--active" : ""}`}
+          >
+            <div className="bb-nav-icon"><Sparkles size={18} /></div>
+            <span className="bb-nav-label">Generate</span>
+          </Link>
         </div>
 
         <div className="bb-nav-group">
