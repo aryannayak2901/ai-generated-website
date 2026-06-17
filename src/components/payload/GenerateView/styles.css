@@ -384,3 +384,17 @@
     transform: rotate(180deg);
   }
 }
+
+.bb-modal-overlay--wide {
+  padding: 0;
+}
+
+.bb-modal-card--wide {
+  max-width: 100vw;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+  border: none;
+}
+
