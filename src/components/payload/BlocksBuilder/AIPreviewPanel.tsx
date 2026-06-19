@@ -7,6 +7,7 @@ import {
   SandpackPreview,
   useSandpack,
   useActiveCode,
+  useSandpackNavigation,
 } from '@codesandbox/sandpack-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -41,21 +42,26 @@ interface SandboxErrorWatcherProps {
 
 function SandboxErrorWatcher({ onError, onResolved }: SandboxErrorWatcherProps) {
   const { sandpack } = useSandpack()
-  const prevHadErrorRef = useRef(false)
 
   useEffect(() => {
-    const err = sandpack.error as null | { message: string } | undefined
-    const hasError = !!err
-    if (hasError && !prevHadErrorRef.current) {
-      prevHadErrorRef.current = true
-      onError([err?.message ?? 'Sandbox preview error'])
-    } else if (!hasError && prevHadErrorRef.current) {
-      prevHadErrorRef.current = false
+    if (sandpack.error) {
+      onError([sandpack.error.message])
+    } else {
       onResolved()
     }
   }, [sandpack.error, onError, onResolved])
 
   return null
+}
+
+/* ── Preview Refresher ────────────────────────────────────────────────────── */
+function CustomRefreshButton() {
+  const { refresh } = useSandpackNavigation()
+  return (
+    <button type="button" onClick={() => refresh()} className="aip-vp-btn" title="Refresh Preview">
+      <RefreshCw size={14} strokeWidth={1.8} />
+    </button>
+  )
 }
 
 function CodeEditorSync({
@@ -73,8 +79,8 @@ function CodeEditorSync({
   const { code } = useActiveCode()
 
   useEffect(() => {
-    if (sandpack.files['/App.tsx']?.code !== transformedCode) {
-      sandpack.updateFile('/App.tsx', transformedCode)
+    if (sandpack.files['/App.js']?.code !== transformedCode) {
+      sandpack.updateFile('/App.js', transformedCode)
     }
   }, [transformedCode, sandpack])
 
@@ -161,7 +167,6 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
   const [editorWidth, setEditorWidth] = useState(0.47)
   const [viewport, setViewport] = useState<Viewport>('desktop')
   const [zoom, setZoom] = useState(75)
-  const [refreshKey, setRefreshKey] = useState(0)
 
   /* derived */
   const block = blocks[activeBlockIdx]
@@ -245,11 +250,11 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
 
   const sandpackFiles = useMemo(() => {
     const f: Record<string, any> = {
-      '/index.tsx': {
-        code: `import React from 'react'\nimport { createRoot } from 'react-dom/client'\nimport App from './App'\nconst root = createRoot(document.getElementById('root')!)\nroot.render(<App />)\n`,
+      '/index.js': {
+        code: `import React from 'react'\nimport { createRoot } from 'react-dom/client'\nimport App from './App'\nconst root = createRoot(document.getElementById('root'))\nroot.render(<App />)\n`,
         hidden: true,
       },
-      '/App.tsx': { code: transformedCode, hidden: true },
+      '/App.js': { code: transformedCode, hidden: true },
     }
     for (const path of new Set([...Object.keys(projectFiles), ...Object.keys(modifiedFiles)])) {
       if (deletedFiles.includes(path)) continue
@@ -344,7 +349,6 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
       {/* explicit flex:1 so the IDE body fills all remaining height.         */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <SandpackProvider
-          key={refreshKey}
           template={template}
           files={sandpackFiles}
           theme="dark"
@@ -433,9 +437,7 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
                 </button>
               </div>
 
-              <button type="button" onClick={() => setRefreshKey(k => k + 1)} className="aip-vp-btn" title="Refresh">
-                <RefreshCw size={14} strokeWidth={1.8} />
-              </button>
+              <CustomRefreshButton />
             </div>
 
             {/* Error banner */}
@@ -459,6 +461,7 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
                 className="aip-canvas__frame"
                 style={{
                   width: VIEWPORT_WIDTHS[viewport],
+                  maxWidth: '100%',
                   transform: zoom !== 100 ? `scale(${zoom / 100})` : undefined,
                   transformOrigin: 'top center',
                 }}
@@ -466,6 +469,8 @@ export function AIPreviewPanel({ blocks, prompt, provider, model, onBack, onClos
                 <SandpackPreview
                   showNavigator={false}
                   showOpenInCodeSandbox={false}
+                  showRefreshButton={false}
+                  style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}
                 />
               </div>
             </div>
