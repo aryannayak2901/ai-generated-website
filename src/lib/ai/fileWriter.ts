@@ -2,7 +2,6 @@
 import fs from 'fs/promises'
 import path from 'path'
 import { GeneratedBlock } from './types'
-import { patchRenderBlocksString, patchPagesString } from './githubPatcher'
 
 const PROJECT_ROOT = process.cwd()
 const SRC = path.join(PROJECT_ROOT, 'src')
@@ -44,12 +43,6 @@ export async function writeGeneratedBlock(block: GeneratedBlock): Promise<Writte
 
   // 3. Patch blockMeta.ts
   await patchBlockMeta(block)
-
-  // 4. Patch RenderBlocks.tsx
-  await patchRenderBlocks(block)
-
-  // 5. Patch Pages.ts
-  await patchPages(block)
 
   return {
     blockType: block.blockType,
@@ -101,20 +94,4 @@ async function patchBlockMeta(block: GeneratedBlock): Promise<void> {
   await fs.writeFile(filePath, content, 'utf-8')
 }
 
-async function patchRenderBlocks(block: GeneratedBlock): Promise<void> {
-  const filePath = safeResolvePath(SRC, 'components', 'RenderBlocks.tsx')
-  const content = await fs.readFile(filePath, 'utf-8')
-  const patched = patchRenderBlocksString(content, block)
-  if (patched !== content) {
-    await fs.writeFile(filePath, patched, 'utf-8')
-  }
-}
 
-async function patchPages(block: GeneratedBlock): Promise<void> {
-  const filePath = safeResolvePath(SRC, 'collections', 'Pages.ts')
-  const content = await fs.readFile(filePath, 'utf-8')
-  const patched = patchPagesString(content, block)
-  if (patched !== content) {
-    await fs.writeFile(filePath, patched, 'utf-8')
-  }
-}

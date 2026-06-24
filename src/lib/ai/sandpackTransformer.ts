@@ -37,6 +37,16 @@ export interface SandpackTransformResult {
 function stripTypeScript(code: string): string {
   let result = code
 
+  // 0. Pre-pass: rewrite namespace imports to safe default imports BEFORE the
+  //    'as X' stripping pass — otherwise `import * as React from 'react'`
+  //    becomes the invalid `import * from 'react'` (Babel SyntaxError).
+  //
+  //    `import * as Foo from 'pkg'`  →  `import Foo from 'pkg'`
+  result = result.replace(
+    /^import\s+\*\s+as\s+(\w+)\s+from\s+(['"][^'"]+['"])/gm,
+    'import $1 from $2'
+  )
+
   // 1. Remove interface declarations (with brace-balanced matching)
   result = removeInterfaceBlocks(result)
 
@@ -47,36 +57,39 @@ function stripTypeScript(code: string): string {
   // Multi-line type aliases (ending at next non-indented line)
   result = result.replace(/^(?:export\s+)?type\s+\w+[^=\n]*=[\s\S]*?(?=\n[^\s]|\n{2,})/gm, '')
 
-  // 3. Remove ALL 'as X' type assertions — most impactful fix
-  //    Ordered from most-specific to least-specific to avoid partial matches
+  // 3. Remove ALL 'as X' type assertions — most impactful fix.
+  //    IMPORTANT: every pattern uses a negative lookbehind `(?<!\*)` so that
+  //    the import-namespace alias syntax `* as X` is NEVER matched here.
+  //    (Namespace imports were already rewritten to default imports in step 0.)
+  //    Ordered from most-specific to least-specific to avoid partial matches.
   result = result
     // as const
-    .replace(/\s+as\s+const\b/g, '')
+    .replace(/(?<!\*)\s+as\s+const\b/g, '')
     // as keyof typeof X (the exact pattern that broke the preview)
-    .replace(/\s+as\s+keyof\s+typeof\s+[\w.]+/g, '')
+    .replace(/(?<!\*)\s+as\s+keyof\s+typeof\s+[\w.]+/g, '')
     // as readonly X[] or as readonly Array<X>
-    .replace(/\s+as\s+readonly\s+[\w.<>, ]+(?:\[\])?/g, '')
+    .replace(/(?<!\*)\s+as\s+readonly\s+[\w.<>, ]+(?:\[\])?/g, '')
     // as Record<K, V> / as Array<T> / as Map<K,V> — single nesting level
-    .replace(/\s+as\s+\w+<[^<>]{0,80}>/g, '')
+    .replace(/(?<!\*)\s+as\s+\w+<[^<>]{0,80}>/g, '')
     // as X[] (simple array type)
-    .replace(/\s+as\s+\w+\[\]/g, '')
+    .replace(/(?<!\*)\s+as\s+\w+\[\]/g, '')
     // as X | Y | Z (union type, up to 5 arms, no generics)
-    .replace(/\s+as\s+(?:\w+\s*\|\s*){1,5}\w+/g, '')
+    .replace(/(?<!\*)\s+as\s+(?:\w+\s*\|\s*){1,5}\w+/g, '')
     // as SomeType & OtherType (intersection)
-    .replace(/\s+as\s+\w+(?:\s*&\s*\w+)+/g, '')
+    .replace(/(?<!\*)\s+as\s+\w+(?:\s*&\s*\w+)+/g, '')
     // as PascalCaseType (named type / component type)
-    .replace(/\s+as\s+[A-Z]\w*/g, '')
+    .replace(/(?<!\*)\s+as\s+[A-Z]\w*/g, '')
     // as primitive type
-    .replace(/\s+as\s+(?:string|number|boolean|any|unknown|never|null|undefined|void|object)\b/g, '')
+    .replace(/(?<!\*)\s+as\s+(?:string|number|boolean|any|unknown|never|null|undefined|void|object)\b/g, '')
     // as lowercase simple identifier (last resort)
-    .replace(/\s+as\s+[a-z]\w*(?!\s*[(<])/g, '')
+    .replace(/(?<!\*)\s+as\s+[a-z]\w*(?!\s*[(<])/g, '')
 
   // 4. Remove function return type annotations
   //    ): ReturnType {  →  ) {
   //    ): Promise<X> => →  ) =>
   result = result.replace(
-    /\)\s*:\s*(?:Promise<[^>]+>|ReactNode|ReactElement|JSX\.Element|void|never|string|number|boolean|\w+(?:<[^>]*>)?(?:\[\])?)(\s*(?:\{|=>))/g,
-    ')$1'
+    /\)\s*:\s*(?:Promise<[^>]+>|ReactNode|ReactElement|JSX\.Element|void|never|string|number|boolean|\w+(?:<[^>]*>)?(?:\[\])?)\s*(?=\{|=>)/g,
+    ') '
   )
 
   // 5. Remove variable type annotations (safe patterns only)

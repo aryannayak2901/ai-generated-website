@@ -17,6 +17,8 @@ export const GenerateStudio: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
   const [history, setHistory] = useState<GenerationHistoryItem[]>([]);
+  const [isAgentMode, setIsAgentMode] = useState(false);
+  const [agentLogs, setAgentLogs] = useState<string[]>([]);
   const [previewBlocks, setPreviewBlocks] = useState<GenerateResponseWithCode['blocks'] | null>(null);
 
   const { settings } = useAISettings();
@@ -80,72 +82,131 @@ export const GenerateStudio: React.FC = () => {
     setIsGenerating(true);
 
     try {
-      const response = await fetch('/api/ai-generate-block', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: prompt.trim(),
-          mode,
-          provider: settings.provider,
-          model: settings.model,
-          apiKey: settings.apiKey,
-        }),
-      });
+      if (isAgentMode) {
+        setAgentLogs(['Initializing agent...']);
+        const response = await fetch('/api/ai-agent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt.trim(),
+            mode,
+            provider: settings.provider,
+            model: settings.model,
+            apiKey: settings.apiKey,
+          }),
+        });
 
-      const data = await response.json() as
-        | { success: boolean; mode?: 'code'; blocks?: GenerateResponseWithCode['blocks']; error?: string };
+        if (!response.body) throw new Error('ReadableStream not supported');
 
-      if (!data.success) {
-        throw new Error(data.error ?? 'Generation failed');
-      }
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let resultData = null;
 
-      if (data.blocks) {
-        // Save to DB
-        let dbId = Math.random().toString(36).substring(2, 9);
-        let dbTimestamp = Date.now();
-        
-        try {
-          const dbResponse = await fetch('/api/ai-history', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              prompt: prompt.trim(),
-              mode,
-              provider: settings.provider,
-              model: settings.model,
-              blocks: data.blocks,
-            }),
-          });
-          const dbResult = await dbResponse.json();
-          if (dbResult.success && dbResult.data) {
-            dbId = dbResult.data.id;
-            dbTimestamp = new Date(dbResult.data.createdAt).getTime();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (line.trim() === '') continue;
+            try {
+              const parsed = JSON.parse(line);
+              if (parsed.type === 'log') {
+                setAgentLogs(prev => [...prev, parsed.message]);
+              } else if (parsed.type === 'result') {
+                resultData = parsed.data;
+              } else if (parsed.type === 'error') {
+                throw new Error(parsed.message);
+              }
+            } catch (e) {
+              // Ignore parse errors from partial chunks
+            }
           }
-        } catch (e) {
-          console.error('Failed to save to DB:', e);
         }
 
-        const newItem: GenerationHistoryItem = {
-          id: dbId,
-          prompt: prompt.trim(),
-          mode,
-          provider: settings.provider,
-          model: settings.model,
-          timestamp: dbTimestamp,
-          response: { success: true, mode: 'code', blocks: data.blocks },
-        };
-
-        setHistory((prev) => [newItem, ...prev]);
-        setPreviewBlocks(data.blocks);
-        setPrompt('');
+        if (resultData && resultData.success) {
+          processSuccessResponse(resultData);
+        } else if (resultData && !resultData.success) {
+          throw new Error(resultData.error || 'Agent generation failed');
+        } else {
+          throw new Error('Agent did not return a valid result');
+        }
       } else {
-        throw new Error('No blocks returned from API');
+        const response = await fetch('/api/ai-generate-block', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt.trim(),
+            mode,
+            provider: settings.provider,
+            model: settings.model,
+            apiKey: settings.apiKey,
+          }),
+        });
+
+        const data = await response.json() as
+          | { success: boolean; mode?: 'code'; blocks?: GenerateResponseWithCode['blocks']; error?: string };
+
+        if (!data.success) {
+          throw new Error(data.error ?? 'Generation failed');
+        }
+
+        processSuccessResponse(data);
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'An error occurred';
       setError(message);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const processSuccessResponse = async (data: any) => {
+    if (data.blocks) {
+      // Save to DB
+      let dbId = Math.random().toString(36).substring(2, 9);
+      let dbTimestamp = Date.now();
+      
+      try {
+        const dbResponse = await fetch('/api/ai-history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt.trim(),
+            mode,
+            provider: settings.provider,
+            model: settings.model,
+            blocks: data.blocks,
+          }),
+        });
+        const dbResult = await dbResponse.json();
+        if (dbResult.success && dbResult.data) {
+          dbId = dbResult.data.id;
+          dbTimestamp = new Date(dbResult.data.createdAt).getTime();
+        }
+      } catch (e) {
+        console.error('Failed to save to DB:', e);
+      }
+
+      const newItem: GenerationHistoryItem = {
+        id: dbId,
+        prompt: prompt.trim(),
+        mode,
+        provider: settings.provider,
+        model: settings.model,
+        timestamp: dbTimestamp,
+        response: { success: true, mode: 'code', blocks: data.blocks },
+      };
+
+      setHistory((prev) => [newItem, ...prev]);
+      setPreviewBlocks(data.blocks);
+      setPrompt('');
+    } else {
+      throw new Error('No blocks returned from API');
     }
   };
 
@@ -174,17 +235,53 @@ export const GenerateStudio: React.FC = () => {
             onPromptChange={setPrompt}
             mode={mode}
             onModeChange={setMode}
+            isAgentMode={isAgentMode}
+            onAgentModeChange={setIsAgentMode}
             isGenerating={isGenerating}
             onGenerate={handleGenerate}
             error={error}
           />
         </div>
 
-        <ResultsPanel
-          history={history}
-          onOpenInEditor={handleOpenInEditor}
-          onAddToPage={handleAddToPage}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1, minWidth: '320px' }}>
+          <ResultsPanel
+            history={history}
+            onOpenInEditor={handleOpenInEditor}
+            onAddToPage={handleAddToPage}
+          />
+
+          {isAgentMode && agentLogs.length > 0 && (
+            <div className="bb-generate-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(0,0,0,0.4)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid rgba(255, 255, 255, 0.05)', overflow: 'hidden' }}>
+              <h3 style={{ margin: '0 0 1rem 0', color: '#8b5cf6', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m12 16 4-4-4-4"/><path d="M8 12h8"/></svg>
+                Agent Activity Log
+              </h3>
+              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', fontFamily: 'monospace' }}>
+                {agentLogs.map((log, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    style={{ color: 'var(--bb-muted)', padding: '0.25rem 0' }}
+                  >
+                    <span style={{ color: '#8b5cf6', marginRight: '0.5rem' }}>&gt;</span>
+                    {log}
+                  </motion.div>
+                ))}
+                {isGenerating && (
+                  <motion.div
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                    style={{ color: 'var(--bb-muted)', padding: '0.25rem 0' }}
+                  >
+                    <span style={{ color: '#8b5cf6', marginRight: '0.5rem' }}>&gt;</span>
+                    ...
+                  </motion.div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Preview modal */}

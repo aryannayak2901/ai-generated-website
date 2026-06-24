@@ -36,6 +36,18 @@
       "skillPath": "skills/dispatching-parallel-agents/SKILL.md",
       "computedHash": "e21044ae7496fc285f1df9ff3fb518a3a20bea6f5216c1f59f4987e12c769a0a"
     },
+    "docs-rsc-sandpack": {
+      "source": "reactjs/react.dev",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/docs-rsc-sandpack/SKILL.md",
+      "computedHash": "4f176db575acf5ec28c03f43dbe57ab15dc1d670d6982013d4057dac1c305a05"
+    },
+    "docs-sandpack": {
+      "source": "reactjs/react.dev",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/docs-sandpack/SKILL.md",
+      "computedHash": "ee27a57840bc95d56d200688c06c1f12a00e2ddc70fedaf354cb1f7ddc50ef8a"
+    },
     "enhance-prompt": {
       "source": "google-labs-code/stitch-skills",
       "sourceType": "github",

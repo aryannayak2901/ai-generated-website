@@ -83,6 +83,9 @@ export async function POST(
         componentCode: block.componentCode,
         payloadConfigCode: block.payloadConfigCode,
         defaultValues: block.defaultValues,
+        blockMetaPatch: block.blockMetaPatch,
+        renderBlocksPatch: block.renderBlocksPatch,
+        pagesBlocksPatch: block.pagesBlocksPatch,
       })),
     } satisfies GenerateResponseWithCode)
   } catch (error: unknown) {

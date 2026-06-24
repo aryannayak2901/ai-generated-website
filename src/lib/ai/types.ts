@@ -38,6 +38,18 @@ export interface GeneratedBlock {
   payloadConfigCode: string
   blockMetaEntry: BlockMetaEntryRaw
   defaultValues: Record<string, unknown>
+  blockMetaPatch?: {
+    entryKey: string
+    entryValue: string
+  }
+  renderBlocksPatch?: {
+    importLine: string
+    mapEntry: string
+  }
+  pagesBlocksPatch?: {
+    importLine: string
+    blockEntry: string
+  }
 }
 
 export interface GenerateResponse {
@@ -69,5 +81,17 @@ export interface GenerateResponseWithCode {
     componentCode: string
     payloadConfigCode: string
     defaultValues: Record<string, unknown>
+    blockMetaPatch?: {
+      entryKey: string
+      entryValue: string
+    }
+    renderBlocksPatch?: {
+      importLine: string
+      mapEntry: string
+    }
+    pagesBlocksPatch?: {
+      importLine: string
+      blockEntry: string
+    }
   }>
 }
