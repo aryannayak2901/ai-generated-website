@@ -9,6 +9,8 @@ export interface PromptPanelProps {
   onPromptChange: (prompt: string) => void;
   mode: 'block' | 'page';
   onModeChange: (mode: 'block' | 'page') => void;
+  isAgentMode: boolean;
+  onAgentModeChange: (isAgentMode: boolean) => void;
   isGenerating: boolean;
   onGenerate: () => void;
   error?: string;
@@ -27,6 +29,8 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   onPromptChange,
   mode,
   onModeChange,
+  isAgentMode,
+  onAgentModeChange,
   isGenerating,
   onGenerate,
   error,
@@ -44,27 +48,51 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
           <span style={{ color: 'var(--bb-white)', fontSize: '1.125rem', fontWeight: 600 }}>AI Studio</span>
         </div>
 
-        {/* Mode toggle pill */}
-        <div className="bb-generate-mode-toggle" style={{ margin: 0, padding: '0.25rem', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '9999px', display: 'flex', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-          <button
-            type="button"
-            className={`bb-generate-mode-btn ${mode === 'block' ? 'active' : ''}`}
-            onClick={() => onModeChange('block')}
-            disabled={isGenerating}
-            style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', background: mode === 'block' ? '#D4AF37' : 'transparent', color: mode === 'block' ? '#0A192F' : 'var(--bb-muted)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontWeight: mode === 'block' ? 600 : 400 }}
-          >
-            Single Block
-          </button>
-          <span style={{ color: 'var(--bb-muted)', padding: '0.35rem 0.2rem', fontSize: '0.8rem' }}>/</span>
-          <button
-            type="button"
-            className={`bb-generate-mode-btn ${mode === 'page' ? 'active' : ''}`}
-            onClick={() => onModeChange('page')}
-            disabled={isGenerating}
-            style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', background: mode === 'page' ? '#D4AF37' : 'transparent', color: mode === 'page' ? '#0A192F' : 'var(--bb-muted)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontWeight: mode === 'page' ? 600 : 400 }}
-          >
-            Full Page
-          </button>
+        {/* Mode toggles */}
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          {/* Agent Mode Toggle */}
+          <div className="bb-generate-mode-toggle" style={{ margin: 0, padding: '0.25rem', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '9999px', display: 'flex', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <button
+              type="button"
+              className={`bb-generate-mode-btn ${!isAgentMode ? 'active' : ''}`}
+              onClick={() => onAgentModeChange(false)}
+              disabled={isGenerating}
+              style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', background: !isAgentMode ? '#3b82f6' : 'transparent', color: !isAgentMode ? '#fff' : 'var(--bb-muted)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontWeight: !isAgentMode ? 600 : 400 }}
+            >
+              Standard
+            </button>
+            <button
+              type="button"
+              className={`bb-generate-mode-btn ${isAgentMode ? 'active' : ''}`}
+              onClick={() => onAgentModeChange(true)}
+              disabled={isGenerating}
+              style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', background: isAgentMode ? '#8b5cf6' : 'transparent', color: isAgentMode ? '#fff' : 'var(--bb-muted)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontWeight: isAgentMode ? 600 : 400 }}
+            >
+              Agent
+            </button>
+          </div>
+
+          <div className="bb-generate-mode-toggle" style={{ margin: 0, padding: '0.25rem', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '9999px', display: 'flex', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <button
+              type="button"
+              className={`bb-generate-mode-btn ${mode === 'block' ? 'active' : ''}`}
+              onClick={() => onModeChange('block')}
+              disabled={isGenerating}
+              style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', background: mode === 'block' ? '#D4AF37' : 'transparent', color: mode === 'block' ? '#0A192F' : 'var(--bb-muted)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontWeight: mode === 'block' ? 600 : 400 }}
+            >
+              Single Block
+            </button>
+            <span style={{ color: 'var(--bb-muted)', padding: '0.35rem 0.2rem', fontSize: '0.8rem' }}>/</span>
+            <button
+              type="button"
+              className={`bb-generate-mode-btn ${mode === 'page' ? 'active' : ''}`}
+              onClick={() => onModeChange('page')}
+              disabled={isGenerating}
+              style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', background: mode === 'page' ? '#D4AF37' : 'transparent', color: mode === 'page' ? '#0A192F' : 'var(--bb-muted)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontWeight: mode === 'page' ? 600 : 400 }}
+            >
+              Full Page
+            </button>
+          </div>
         </div>
       </div>
 

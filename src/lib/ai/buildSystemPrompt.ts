@@ -16,6 +16,26 @@ export async function buildSystemPrompt(userPrompt: string, mode: 'block' | 'pag
     'utf-8'
   ).catch(() => '// (reference not available)')
 
+  const renderBlocksTsx = await fs.readFile(
+    path.join(projectRoot, 'src/components/RenderBlocks.tsx'),
+    'utf-8'
+  ).catch(() => '// (RenderBlocks not available)')
+
+  const pagesTs = await fs.readFile(
+    path.join(projectRoot, 'src/collections/Pages.ts'),
+    'utf-8'
+  ).catch(() => '// (Pages.ts not available)')
+
+  const blockMetaTs = await fs.readFile(
+    path.join(projectRoot, 'src/components/payload/BlocksBuilder/constants/blockMeta.ts'),
+    'utf-8'
+  ).catch(() => '// (blockMeta.ts not available)')
+
+  const globalsCss = await fs.readFile(
+    path.join(projectRoot, 'src/app/globals.css'),
+    'utf-8'
+  ).catch(() => '// (globals.css not available)')
+
   const blockMetaInterface = `
 interface FieldSchema {
   name: string
@@ -68,6 +88,26 @@ ${referenceComponent}
 ${referenceConfig}
 \`\`\`
 
+## RenderBlocks.tsx Map
+\`\`\`tsx
+${renderBlocksTsx}
+\`\`\`
+
+## Pages.ts Collection Config
+\`\`\`ts
+${pagesTs}
+\`\`\`
+
+## blockMeta.ts Definitions
+\`\`\`ts
+${blockMetaTs}
+\`\`\`
+
+## Global CSS / Tailwind Config
+\`\`\`css
+${globalsCss}
+\`\`\`
+
 ## BlockMeta Interface
 \`\`\`ts
 ${blockMetaInterface}
@@ -90,12 +130,13 @@ ${modeInstruction}
 
 ### Import Rules (STRICTLY ENFORCED)
 9. ONLY import from these exact packages — no exceptions, no project-internal paths:
-   - \`react\` — always import React explicitly for JSX
+   - \`react\` — use default import \`import React from 'react'\` OR named hook imports \`import { useState, useEffect } from 'react'\`. NEVER use \`import * as React from 'react'\` (namespace import — not supported).
    - \`next/image\` — for images (import as default: \`import Image from 'next/image'\`)
    - \`next/link\` — for links (import as default: \`import Link from 'next/link'\`)
    - \`lucide-react\` — for icons (named imports only: \`import { ChevronRight } from 'lucide-react'\`)
    - \`framer-motion\` — for animations (named imports: \`import { motion } from 'framer-motion'\`)
-   - FORBIDDEN: \`next/navigation\`, \`next/font\`, \`next/headers\`, \`@/\` path aliases, \`../\` relative paths, any other package
+   - FORBIDDEN: \`import * as X from 'pkg'\` namespace imports, \`next/navigation\`, \`next/font\`, \`next/headers\`, \`@/\` path aliases, \`../\` relative paths, any other package
+
 
 ### Tailwind CSS Rules
 10. Use ONLY Tailwind CSS v4 utility classes — NO inline styles, NO CSS modules, NO hardcoded hex values.
@@ -125,7 +166,19 @@ ${modeInstruction}
       "componentCode": "full TSX source code as a string",
       "payloadConfigCode": "full Payload block config TS source code as a string",
       "blockMetaEntry": {},
-      "defaultValues": { "blockType": "camelCaseBlockName" }
+      "defaultValues": { "blockType": "camelCaseBlockName" },
+      "blockMetaPatch": {
+        "entryKey": "camelCaseBlockName",
+        "entryValue": "{\\n  label: 'Human Readable Label',\\n  category: 'Content',\\n  icon: '...',\\n  badgeLabel: '...',\\n  defaultValues: { blockType: 'camelCaseBlockName' },\\n  fields: []\\n}"
+      },
+      "renderBlocksPatch": {
+        "importLine": "import { PascalCaseBlockName } from '@/components/blocks/PascalCaseBlockName'",
+        "mapEntry": "camelCaseBlockName: PascalCaseBlockName"
+      },
+      "pagesBlocksPatch": {
+        "importLine": "import { PascalCaseBlockName } from '../blocks/PascalCaseBlockName'",
+        "blockEntry": "PascalCaseBlockName"
+      }
     }
   ]
 }
