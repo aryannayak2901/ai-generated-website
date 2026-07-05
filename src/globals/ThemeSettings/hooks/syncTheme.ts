@@ -1,10 +1,6 @@
 import type { GlobalBeforeChangeHook, GlobalAfterChangeHook } from "payload";
 import { THEME_PRESETS, WEBSITE_COLOR_KEYS, ADMIN_COLOR_KEYS } from "../../../components/Theme/theme-presets";
-import { generateThemeCSS } from "./generateThemeCSS";
-import { generateAdminCSS } from "./generateAdminCSS";
 import { parseCssOverrides, updateCssOverrides } from "../color-utils";
-import fs from "fs/promises";
-import path from "path";
 
 /**
  * beforeChange Hook: Handles preset synchronization and auto-switching to 'custom'.
@@ -112,36 +108,11 @@ export const syncThemeBeforeChange: GlobalBeforeChangeHook = async ({ data, orig
 };
 
 /**
- * afterChange Hook: Compiles settings to static CSS files under the /public directory in parallel.
+ * afterChange Hook: Logs theme synchronization.
+ * Note: CSS is served dynamically via Route Handlers (/admin-theme.css and /theme-overrides.css)
+ * and injected inline in the layouts to ensure instant updates in serverless production environments.
  */
 export const syncThemeAfterChange: GlobalAfterChangeHook = async ({ doc, req: { payload } }) => {
-  try {
-    // 1. Generate CSS strings
-    const websiteCSS = generateThemeCSS(doc);
-    const adminCSS = generateAdminCSS(doc);
-
-    // 2. Determine paths under public directory
-    const publicDir = path.join(process.cwd(), "public");
-    const websiteCSSPath = path.join(publicDir, "theme-overrides.css");
-    const adminCSSPath = path.join(publicDir, "admin-theme.css");
-
-    // 3. Ensure public directory exists
-    await fs.mkdir(publicDir, { recursive: true });
-
-    // 4. Write files asynchronously in parallel
-    await Promise.all([
-      fs.writeFile(websiteCSSPath, websiteCSS, "utf-8"),
-      fs.writeFile(adminCSSPath, adminCSS, "utf-8")
-    ]);
-
-    payload.logger.info(`✅ Unified Dynamic CSS compiled and saved:`);
-    payload.logger.info(`   - Website theme: ${websiteCSSPath}`);
-    payload.logger.info(`   - Admin theme:   ${adminCSSPath}`);
-  } catch (error) {
-    payload.logger.error(
-      `❌ Failed to compile static CSS theme files: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
-
+  payload.logger.info("✅ Theme settings updated successfully.");
   return doc;
 };

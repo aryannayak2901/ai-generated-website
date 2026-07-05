@@ -10,10 +10,7 @@ import config from "@/payload.config";
 import { GoogleAnalyticsTracker } from "@/components/GoogleAnalyticsTracker";
 import { EnhancedTracker } from "@/components/Analytics/EnhancedTracker";
 import { Suspense } from "react";
-import fs from "fs/promises";
-import path from "path";
 import { generateThemeCSS } from "@/globals/ThemeSettings/hooks/generateThemeCSS";
-import { generateAdminCSS } from "@/globals/ThemeSettings/hooks/generateAdminCSS";
 
 import { generateSeoMetadata } from "@/lib/seo/metadata-generator";
 import StructuredData from "@/components/SEO/StructuredData";
@@ -93,38 +90,6 @@ export default async function FrontendLayout({
     }
   } catch (error) {
     console.error("Failed to load settings from DB:", error);
-  }
-
-  // Ensure static CSS assets exist under public dir to prevent FOUC or 404s
-  try {
-    const publicDir = path.join(process.cwd(), "public");
-    const themeOverridesPath = path.join(publicDir, "theme-overrides.css");
-    const adminThemePath = path.join(publicDir, "admin-theme.css");
-
-    let themeExists = false;
-    try {
-      await fs.access(themeOverridesPath);
-      themeExists = true;
-    } catch {
-      themeExists = false;
-    }
-
-    if (!themeExists) {
-      const payload = await getPayload({ config });
-      const theme = await payload.findGlobal({
-        slug: "theme-settings",
-        depth: 0,
-      });
-      const themeCss = generateThemeCSS(theme || {});
-      const adminCss = generateAdminCSS(theme || {});
-      await fs.mkdir(publicDir, { recursive: true });
-      await Promise.all([
-        fs.writeFile(themeOverridesPath, themeCss, "utf-8"),
-        fs.writeFile(adminThemePath, adminCss, "utf-8"),
-      ]);
-    }
-  } catch (err) {
-    console.error("Failed to pre-generate dynamic CSS theme overrides:", err);
   }
 
   const headingFontSafe = headingFont.replace(/ /g, "+");
