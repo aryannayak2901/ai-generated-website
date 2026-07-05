@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Force dynamic rendering — ensures Payload content & theme changes are
+// reflected immediately in production without requiring a redeploy.
+export const dynamic = 'force-dynamic';
+
 export default async function AboutPage() {
   const payload = await getPayload({ config: configPromise });
   const { docs } = await payload.find({

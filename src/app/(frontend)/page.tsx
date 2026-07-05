@@ -10,6 +10,10 @@ import { AwardsMarquee } from "@/components/home/AwardsMarquee";
 import { RenderBlocks } from "@/components/RenderBlocks";
 import type { Page } from "@/payload-types";
 
+// Force dynamic rendering — ensures Payload content & theme changes are
+// reflected immediately in production without requiring a redeploy.
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const { isEnabled: isDraft } = await draftMode();
   const payload = await getPayload({ config: configPromise });
