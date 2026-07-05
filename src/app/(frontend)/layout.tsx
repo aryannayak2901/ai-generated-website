@@ -16,6 +16,13 @@ import { generateSeoMetadata } from "@/lib/seo/metadata-generator";
 import StructuredData from "@/components/SEO/StructuredData";
 import { generateGeneralPageSchema } from "@/lib/seo/schema-generator";
 
+// Force dynamic rendering on every request so theme changes from Payload CMS
+// are reflected immediately in production without requiring a redeploy.
+// Without this, Next.js statically renders the layout once and caches it,
+// meaning revalidatePath calls after theme changes have no effect.
+export const dynamic = 'force-dynamic';
+
+
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
   subsets: ["latin"],
@@ -101,19 +108,24 @@ export default async function FrontendLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href={`https://fonts.googleapis.com/css2?family=${bodyFontSafe}:wght@300;400;500;600;700&family=${headingFontSafe}:wght@300;400;500;600;700;800&display=swap`}
-        />
-        {/* Inline CSS Theme Overrides directly from Payload settings to ensure instant updates and bypass browser caching */}
+      <head suppressHydrationWarning>
+        {/*
+         * IMPORTANT: The inline theme style MUST come first in <head>.
+         * This ensures CSS variables from Payload are declared before the
+         * compiled Tailwind stylesheet is parsed by the browser, preventing
+         * a Flash of Unstyled Content (FOUC) in production builds.
+         */}
         <style
           id="payload-theme-overrides"
           dangerouslySetInnerHTML={{
             __html: generateThemeCSS(themeDoc || {}),
           }}
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href={`https://fonts.googleapis.com/css2?family=${bodyFontSafe}:wght@300;400;500;600;700&family=${headingFontSafe}:wght@300;400;500;600;700;800&display=swap`}
         />
       </head>
       <body

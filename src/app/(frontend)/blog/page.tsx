@@ -7,6 +7,10 @@ import { BlogList } from "@/components/blog/BlogList";
 import { BLOG_POSTS, BlogPost } from "@/lib/blog-data";
 import { Page, Post, Media } from "@/payload-types";
 
+// Force dynamic rendering — ensures Payload content & theme changes are
+// reflected immediately in production without requiring a redeploy.
+export const dynamic = 'force-dynamic';
+
 // Helper to normalize Payload Post to BlogPost interface
 const normalizePayloadPost = (post: Post): BlogPost => {
   const generatedSlug = post.slug || post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'blog-post';

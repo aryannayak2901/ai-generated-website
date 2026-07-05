@@ -1315,4 +1315,4 @@ Haresh’s hard-working approach, combined with his ability to adapt to the comp
 seed().catch((err) => {
   console.error('Seeding failed:', err)
   process.exit(1)
-})
+});
