@@ -12,6 +12,7 @@ import { BlogHero, BlogFiltersBlock, Newsletter } from '../blocks/BlogBlocks'
 import { OfficeHero, OfficeSelector, MapSection, OfficeCTA } from '../blocks/OfficeBlocks'
 import { HeroBlock } from '../blocks/HeroBlock'
 import { ProductList } from '../blocks/ProductList'
+import { ImageGalleryBlock } from '../blocks/ImageGalleryBlock'
 
 const formatSlug = (val: string): string =>
   val
@@ -90,6 +91,7 @@ export const Pages: CollectionConfig = {
         MapSection,
         OfficeCTA,
         ProductList,
+        ImageGalleryBlock,
       ],
       admin: {
         components: {
